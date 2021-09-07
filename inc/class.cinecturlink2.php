@@ -97,7 +97,7 @@ class cinecturlink2
 
         if (!empty($params['link_id'])) {
             if (is_array($params['link_id'])) {
-                array_walk($params['link_id'], function(&$v, $k'){ if($v !== null) { $v = (integer) $v;}});
+                array_walk($params['link_id'], function(&$v, $k){ if($v !== null) { $v = (integer) $v;}});
             } else {
                 $params['link_id'] = [(integer) $params['link_id']];
             }
