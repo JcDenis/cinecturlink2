@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+  xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+  xml:lang="{{tpl:BlogLanguage}}">
+  
+  <title type="html">{{tpl:BlogName encode_xml="1"}} - {{tpl:c2PageTitle encode_xml="1"}}</title>
+  <subtitle type="html">{{tpl:c2PageDescription encode_xml="1"}}</subtitle>
+  <link href="{{tpl:SysSelfURI}}" rel="self" type="application/atom+xml"/>
+  <link href="{{tpl:BlogURL}}" rel="alternate" type="text/html" title="{{tpl:BlogDescription encode_xml="1"}}"/>
+  <updated>{{tpl:BlogUpdateDate iso8601="1"}}</updated>
+  <author>
+    <name>{{tpl:BlogEditor encode_xml="1"}}</name>
+  </author>
+  <id>{{tpl:c2PageFeedID}}</id>
+  <generator uri="http://www.dotclear.net/">Dotclear</generator>
+  
+  <tpl:c2Entries>
+
+  <entry>
+    <title>{{tpl:c2EntryTitle encode_xml="1"}}</title>
+	<link href="{{tpl:c2EntryURL encode_xml="1"}}" rel="alternate" type="text/html" title="{{tpl:c2EntryTitle encode_xml="1"}}" />
+    <id>{{tpl:c2EntryFeedID}}</id>
+    <updated>{{tpl:c2EntryDate iso8601="1"}}</updated>
+    <author><name>{{tpl:c2EntryFromAuthor encode_xml="1"}}</name></author>   
+	<tpl:c2EntryIf has_category="1"><dc:subject>{{tpl:c2EntryCategory encode_xml="1"}}</dc:subject></tpl:c2EntryIf>
+    <content type="html">
+	  &lt;p&gt;{{tpl:c2EntryImg absolute_urls="1" encode_xml="1"}}&lt;br /&gt;
+	  {{tpl:c2EntryDescription absolute_urls="1" encode_xml="1"}}&lt;/p&gt;
+    </content>
+  </entry>
+
+  </tpl:c2Entries>
+
+</feed>
