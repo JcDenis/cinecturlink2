@@ -13,30 +13,17 @@
 # -- END LICENSE BLOCK ------------------------------------
 
 if (!defined('DC_CONTEXT_ADMIN')) {
-
 	return null;
 }
 
+$new_version = $core->plugins->moduleInfo('cinecturlink2', 'version');
+$old_version = $core->getVersion('cinecturlink2');
+
+if (version_compare($old_version, $new_version, '>=')) {
+    return;
+}
+
 try {
-	# Check module version
-	if (version_compare(
-		$core->getVersion('cinecturlink2'),
-		$core->plugins->moduleInfo('cinecturlink2', 'version'),
-		'>='
-	)) {
-
-		return null;
-	}
-
-	# Check Dotclear version
-	if (!method_exists('dcUtils', 'versionsCompare') 
-	 || dcUtils::versionsCompare(DC_VERSION, '2.6', '>', false)) {
-		throw new Exception(sprintf(
-			'%s requires Dotclear %s', 'cinecturlink2', '2.6'
-		));
-	}
-
-	# Tables
 	$s = new dbStruct($core->con, $core->prefix);
 	$s->cinecturlink2
 		->link_id ('bigint', 0, false)
@@ -80,7 +67,6 @@ try {
 	$si = new dbStruct($core->con,$core->prefix);
 	$changes = $si->synchronize($s);
 
-	# Settings
 	$core->blog->settings->addNamespace('cinecturlink2');
 	$s = $core->blog->settings->cinecturlink2;
 	$s->put('cinecturlink2_active', true, 'boolean', 'Enable cinecturlink2', false, true);
@@ -93,16 +79,13 @@ try {
 	$s->put('cinecturlink2_public_nbrpp', 20, 'integer', 'Number of entries per page on public page', false, true);
 	$s->put('cinecturlink2_public_caturl', 'c2cat', 'string', 'Part of URL for a category list', false, true);
 
-
-	# Set module version
 	$core->setVersion(
 		'cinecturlink2',
 		$core->plugins->moduleInfo('cinecturlink2', 'version')
 	);
 
 	return true;
-}
-catch (Exception $e) {
+} catch (Exception $e) {
 	$core->error->add($e->getMessage());
 }
 
