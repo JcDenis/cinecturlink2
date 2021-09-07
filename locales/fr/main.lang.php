@@ -323,5 +323,3 @@ $GLOBALS['__l10n']['Check to delete'] = 'Cocher pour supprimer';
 
 #index.php:638
 $GLOBALS['__l10n']['update categories'] = 'mettre à jour les catégories';
-
-?>

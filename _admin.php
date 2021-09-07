@@ -1,65 +1,56 @@
 <?php
-# -- BEGIN LICENSE BLOCK ----------------------------------
-#
-# This file is part of cinecturlink2, a plugin for Dotclear 2.
-# 
-# Copyright (c) 2009-2013 Jean-Christian Denis and contributors
-# contact@jcdenis.fr http://jcd.lv
-# 
-# Licensed under the GPL version 2.0 license.
-# A copy of this license is available in LICENSE file or at
-# http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
-#
-# -- END LICENSE BLOCK ------------------------------------
+/**
+ * @brief cinecturlink2, a plugin for Dotclear 2
+ * 
+ * @package Dotclear
+ * @subpackage Plugin
+ * 
+ * @author Jean-Christian Denis and Contributors
+ * 
+ * @copyright Jean-Christian Denis
+ * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
 
 if (!defined('DC_CONTEXT_ADMIN')) {
-
-	return null;
+    return null;
 }
 
-require_once dirname(__FILE__).'/_widgets.php';
+require_once dirname(__FILE__) . '/_widgets.php';
 
-# Admin menu
 $_menu['Plugins']->addItem(
-	__('My cinecturlink'),
-	'plugin.php?p=cinecturlink2',
-	'index.php?pf=cinecturlink2/icon.png',
-	preg_match(
-		'/plugin.php\?p=cinecturlink2(&.*)?$/',
-		$_SERVER['REQUEST_URI'])
-	,
-	$core->auth->check('contentadmin', $core->blog->id)
+    __('My cinecturlink'),
+    $core->adminurl->get('admin.plugin.cinecturlink2'),
+    dcPage::getPF('cinecturlink2/icon.png'),
+    preg_match(
+        '/' . preg_quote($core->adminurl->get('admin.plugin.dcAdvancedCleaner')) . '(&.*)?$/', 
+        $_SERVER['REQUEST_URI']
+    ),
+    $core->auth->check('contentadmin', $core->blog->id)
 );
 
 $core->addBehavior(
-	'adminDashboardFavorites',
-	array('cinecturlink2AdminBehaviors', 'adminDashboardFavorites')
+    'adminDashboardFavorites',
+    ['cinecturlink2AdminBehaviors', 'adminDashboardFavorites']
 );
 
 class cinecturlink2AdminBehaviors
 {
-	public static function adminDashboardFavorites($core, $favs)
-	{
-		$favs->register('cinecturlink2', array(
-			'title'		=> __('My cinecturlink'),
-			'url'		=> 'plugin.php?p=cinecturlink2#links',
-			'small-icon'	=> 'index.php?pf=cinecturlink2/icon.png',
-			'large-icon'	=> 'index.php?pf=cinecturlink2/icon-big.png',
-			'permissions'	=> $core->auth->check(
-				'contentadmin',
-				$core->blog->id
-			),
-			'active_cb'	=> array(
-				'cinecturlink2AdminBehaviors', 
-				'adminDashboardFavoritesActive'
-			)
-		));
-	}
+    public static function adminDashboardFavorites($core, $favs)
+    {
+	    $favs->register('cinecturlink2', [
+	        'title' => __('My cinecturlink'),
+	        'url' => $core->adminurl->get('admin.plugin.cinecturlink2').'#links',
+	        'small-icon' => dcPage::getPF('cinecturlink2/icon.png'),
+	        'large-icon' => dcPage::getPF('cinecturlink2/icon-big.png'),
+	        'permissions' => $core->auth->check('contentadmin', $core->blog->id),
+            'active_cb'    => ['cinecturlink2AdminBehaviors', 'adminDashboardFavoritesActive']
+	    ]);
+    }
 
-	public static function adminDashboardFavoritesActive($request, $params)
-	{
-		return $request == 'plugin.php' 
-			&& isset($params['p']) 
-			&& $params['p'] == 'cinecturlink2';
-	}
+    public static function adminDashboardFavoritesActive($request, $params)
+    {
+        return $request == 'plugin.php' 
+            && isset($params['p']) 
+            && $params['p'] == 'cinecturlink2';
+    }
 }

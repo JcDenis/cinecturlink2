@@ -15,9 +15,9 @@
   <copyright>{{tpl:BlogCopyrightNotice encode_xml="1"}}</copyright>
   <docs>http://blogs.law.harvard.edu/tech/rss</docs>
   <generator>Dotclear</generator>
-  
+
   <tpl:c2Entries>
-  
+
   <item>
     <title>{{tpl:c2EntryTitle encode_xml="1"}}</title>
     <link>{{tpl:c2EntryURL encode_xml="1"}}</link>
@@ -31,6 +31,6 @@
     </description>
   </item>
   </tpl:c2Entries>
-  
+
 </channel>
 </rss>
