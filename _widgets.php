@@ -12,17 +12,16 @@
  */
 
 if (!defined('DC_RC_PATH')) {
-
     return null;
 }
 
 $core->addBehavior(
     'initWidgets',
-    array('cinecturlink2Widget', 'adminLinks')
+    ['cinecturlink2Widget', 'adminLinks']
 );
 $core->addBehavior(
     'initWidgets',
-    array('cinecturlink2Widget', 'adminCats')
+    ['cinecturlink2Widget', 'adminCats']
 );
 
 class cinecturlink2Widget
@@ -33,140 +32,128 @@ class cinecturlink2Widget
 
         $C2 = new cinecturlink2($core);
 
-        $categories_combo = array('' => '', __('Uncategorized') => 'null');
+        $categories_combo = ['' => '', __('Uncategorized') => 'null'];
         $categories = $C2->getCategories();
         while($categories->fetch()) {
             $cat_title = html::escapeHTML($categories->cat_title);
             $categories_combo[$cat_title] = $categories->cat_id;
         }
 
-        $sortby_combo = array(
-            __('Update date')        => 'link_upddt',
-            __('My rating')        => 'link_note',
-            __('Title')            => 'link_title',
-            __('Random')            => 'RANDOM',
-            __('Number of views')    => 'COUNTER'
-        );
-        $order_combo = array(
-            __('Ascending')    => 'asc',
-            __('Descending')    => 'desc'
-        );
+        $sortby_combo = [
+            __('Update date') => 'link_upddt',
+            __('My rating') => 'link_note',
+            __('Title') => 'link_title',
+            __('Random') => 'RANDOM',
+            __('Number of views') => 'COUNTER'
+        ];
+        $order_combo = [
+            __('Ascending') => 'asc',
+            __('Descending') => 'desc'
+        ];
 
-        $w->create(
-            'cinecturlink2links',
-            __('My cinecturlink'),
-            array('cinecturlink2Widget', 'publicLinks'),
-            'null',
-            __('Show selection of cinecturlinks')
-        );
-        $w->cinecturlink2links->setting(
-            'title',
-            __('Title:'),
-            __('My cinecturlink'),
-            'text'
-        );
-        $w->cinecturlink2links->setting(
-            'category',
-            __('Category:'),
-            '',
-            'combo',
-            $categories_combo
-        );
-        $w->cinecturlink2links->setting(
-            'sortby',
-            __('Order by:'),
-            'link_upddt',
-            'combo',
-            $sortby_combo
-        );
-        $w->cinecturlink2links->setting(
-            'sort',
-            __('Sort: (only for date, note and title)'),
-            'desc',
-            'combo',
-            $order_combo
-        );
-        $w->cinecturlink2links->setting(
-            'limit',
-            __('Limit:'),
-            10,
-            'text'
-        );
-        $w->cinecturlink2links->setting(
-            'withlink',
-            __('Enable link'),
-            1,
-            'check'
-        );
-        $w->cinecturlink2links->setting(
-            'showauthor',
-            __('Show author'),
-            1,
-            'check'
-        );
-        $w->cinecturlink2links->setting(
-            'shownote',
-            __('Show my rating'),
-            0,
-            'check'
-        );
-        $w->cinecturlink2links->setting(
-            'showdesc',
-            __('Show description'),
-            0,
-            'check'
-        );
-        $w->cinecturlink2links->setting(
-            'showpagelink',
-            __('Show a link to cinecturlink page'),
-            0,
-            'check'
-        );
-        $w->cinecturlink2links->setting(
-            'homeonly',
-            __('Display on:'),
-            1,
-            'combo',
-            array(
-                __('All pages')            => 0,
-                __('Home page only')        => 1,
-                __('Except on home page')    => 2
+        $w
+            ->create(
+                'cinecturlink2links',
+                __('My cinecturlink'),
+                ['cinecturlink2Widget', 'publicLinks'],
+                null,
+                __('Show selection of cinecturlinks')
             )
-        );
+            ->addTitle(
+                __('My cinecturlink'),
+            )
+            ->setting(
+                'category',
+                __('Category:'),
+                '',
+                'combo',
+                $categories_combo
+            )
+            ->setting(
+                'sortby',
+                __('Order by:'),
+                'link_upddt',
+                'combo',
+                $sortby_combo
+            )
+            ->setting(
+                'sort',
+                __('Sort: (only for date, note and title)'),
+                'desc',
+                'combo',
+                $order_combo
+            )
+            ->setting(
+                'limit',
+                __('Limit:'),
+                10,
+                'text'
+            )
+            ->setting(
+                'withlink',
+                __('Enable link'),
+                1,
+                'check'
+            )
+            ->setting(
+                'showauthor',
+                __('Show author'),
+                1,
+                'check'
+            )
+            ->setting(
+                'shownote',
+                __('Show my rating'),
+                0,
+                'check'
+            )
+            ->setting(
+                'showdesc',
+                __('Show description'),
+                0,
+                'check'
+            )
+            ->setting(
+                'showpagelink',
+                __('Show a link to cinecturlink page'),
+                0,
+                'check'
+            )
+            ->addHomeOnly()
+            ->addContentOnly()
+            ->addClass()
+            ->addOffline();
     }
 
     public static function adminCats($w)
     {
-        $w->create(
-            'cinecturlink2cats',
-            __('List of categories of cinecturlink'),
-            array('cinecturlink2Widget', 'publicCats'),
-            null,
-            __('List of categories of cinecturlink')
-        );
-        $w->cinecturlink2cats->setting(
-            'title',
-            __('Title:'),
-            __('My cinecturlink by categories'),
-            'text'
-        );
-        $w->cinecturlink2cats->setting(
-            'shownumlink',
-            __('Show number of links'),
-            0,
-            'check'
-        );
-        $w->cinecturlink2cats->setting(
-            'homeonly',
-            __('Display on:'),
-            1,
-            'combo',
-            array(
-                __('All pages')            => 0,
-                __('Home page only')        => 1,
-                __('Except on home page')    => 2
+        $w
+            ->create(
+                'cinecturlink2cats',
+                __('List of categories of cinecturlink'),
+                ['cinecturlink2Widget', 'publicCats'],
+                null,
+                __('List of categories of cinecturlink')
             )
-        );
+            ->addTitle(
+                __('My cinecturlink by categories')
+            )
+            ->setting(
+                'title',
+                __('Title:'),
+                __('My cinecturlink by categories'),
+                'text'
+            )
+            ->setting(
+                'shownumlink',
+                __('Show number of links'),
+                0,
+                'check'
+            )
+            ->addHomeOnly()
+            ->addContentOnly()
+            ->addClass()
+            ->addOffline();
     }
 
     public static function publicLinks($w)
@@ -175,9 +162,9 @@ class cinecturlink2Widget
 
         $core->blog->settings->addNamespace('cinecturlink2'); 
 
-        if (!$core->blog->settings->cinecturlink2->cinecturlink2_active 
-         || $w->homeonly == 1 && $core->url->type != 'default'
-         || $w->homeonly == 2 && $core->url->type == 'default'
+        if (!$core->blog->settings->cinecturlink2->cinecturlink2_active
+            || $w->homeonly == 1 && !$core->url->isHome($core->url->type)
+            || $w->homeonly == 2 && $core->url->isHome($core->url->type)
         ) {
             return null;
         }
@@ -195,33 +182,29 @@ class cinecturlink2Widget
 
         $limit = abs((integer) $w->limit);
 
-        # Tirage aléatoire
-        # Consomme beaucoup de ressources!
+        // Tirage aléatoire: Consomme beaucoup de ressources!
         if ($w->sortby == 'RANDOM') {
             $big_rs = $C2->getLinks($params);
 
             if ($big_rs->isEmpty()) {
-
                 return null;
             }
 
-            $ids= array();
+            $ids= [];
             while($big_rs->fetch()) {
                 $ids[] = $big_rs->link_id;
             }
             shuffle($ids);
             $ids = array_slice($ids, 0, $limit);
 
-            $params['link_id'] = array();
+            $params['link_id'] = [];
             foreach($ids as $id) {
                 $params['link_id'][] = $id;
             }
-        }
-        elseif ($w->sortby == 'COUNTER') {
+        } elseif ($w->sortby == 'COUNTER') {
             $params['order'] = 'link_count asc';
             $params['limit'] = $limit;
-        }
-        else {
+        } else {
             $params['order'] = $w->sortby;
             $params['order'] .= $w->sort == 'asc' ? ' asc' : ' desc';
             $params['limit'] = $limit;
@@ -230,50 +213,48 @@ class cinecturlink2Widget
         $rs = $C2->getLinks($params);
 
         if ($rs->isEmpty()) {
-
             return null;
         }
 
         $widthmax = (integer) $core->blog->settings->cinecturlink2->cinecturlink2_widthmax;
-        $style = $widthmax ? ' style="width:'.$widthmax.'px;"' : '';
+        $style = $widthmax ? ' style="width:' . $widthmax . 'px;"' : '';
 
-        $entries = array();
+        $entries = [];
         while($rs->fetch()) {
-            $url    = $rs->link_url;
-            $img    = $rs->link_img;
-            $title    = html::escapeHTML($rs->link_title);
-            $author    = html::escapeHTML($rs->link_author);
-            $cat        = html::escapeHTML($rs->cat_title);
-            $note    = $w->shownote ? ' <em>('.$rs->link_note.'/20)</em>' : '';
-            $desc    = $w->showdesc ? '<br /><em>'.html::escapeHTML($rs->link_desc).'</em>' : '';
-            $lang    = $rs->link_lang ? ' hreflang="'.$rs->link_lang.'"' : '';
-            $count    = abs((integer) $rs->link_count);
+            $url = $rs->link_url;
+            $img = $rs->link_img;
+            $title = html::escapeHTML($rs->link_title);
+            $author = html::escapeHTML($rs->link_author);
+            $cat = html::escapeHTML($rs->cat_title);
+            $note = $w->shownote ? ' <em>(' . $rs->link_note . '/20)</em>' : '';
+            $desc = $w->showdesc ? '<br /><em>' . html::escapeHTML($rs->link_desc) . '</em>' : '';
+            $lang = $rs->link_lang ? ' hreflang="' . $rs->link_lang . '"' : '';
+            $count = abs((integer) $rs->link_count);
 
             # --BEHAVIOR-- cinecturlink2WidgetLinks
             $bhv = $core->callBehavior('cinecturlink2WidgetLinks', $rs->link_id);
 
             $entries[] = 
-            '<p style="text-align:center;">'.
-            ($w->withlink && !empty($url) ? '<a href="'.$url.'"'.$lang.' title="'.$cat.'">' : '').
-            '<strong>'.$title.'</strong>'.$note.'<br />'.
-            ($w->showauthor ? $author.'<br />' : '').'<br />'.
-            '<img src="'.$img.'" alt="'.$title.' - '.$author.'"'.$style.' />'.
-            $desc.
-            ($w->withlink && !empty($url) ? '</a>' : '').
-            '</p>'.$bhv;
+            '<p style="text-align:center;">' .
+            ($w->withlink && !empty($url) ? '<a href="' . $url . '"' . $lang . ' title="' . $cat . '">' : '') .
+            '<strong>' . $title . '</strong>' . $note . '<br />' .
+            ($w->showauthor ? $author . '<br />' : '') . '<br />' .
+            '<img src="' . $img . '" alt="' . $title . ' - ' . $author . '"' . $style . ' />' .
+            $desc .
+            ($w->withlink && !empty($url) ? '</a>' : '') .
+            '</p>' . $bhv;
 
             try {
                 $cur = $core->con->openCursor($C2->table);
                 $cur->link_count = ($count + 1);
                 $C2->updLink($rs->link_id, $cur, false);
-            }
-            catch (Exception $e) {
+            } catch (Exception $e) {
 
             }
         }
         # Tirage aléatoire
         if ($w->sortby == 'RANDOM' 
-         || $w->sortby == 'COUNTER'
+            || $w->sortby == 'COUNTER'
         ) {
             shuffle($entries);
             if ($core->blog->settings->cinecturlink2->cinecturlink2_triggeronrandom) {
@@ -281,14 +262,15 @@ class cinecturlink2Widget
             }
         }
 
-        return 
-        '<div class="cinecturlink2list">'.
-        ($w->title ? '<h2>'.html::escapeHTML($w->title).'</h2>' : '').
-        implode(' ',$entries).
-        ($w->showpagelink && $core->blog->settings->cinecturlink2->cinecturlink2_public_active ? 
-        '<p><a href="'.$core->blog->url.$core->url->getBase('cinecturlink2').'" title="'.__('view all links').'">'.__('More links').'</a></p>' : ''
-        ).
-        '</div>';
+        return $w->renderDiv(
+            $w->content_only, 
+            'cinecturlink2list '. $w->class, 
+            '', 
+            ($w->title ? $w->renderTitle(html::escapeHTML($w->title)) : '') . implode(' ',$entries) .
+            ($w->showpagelink && $core->blog->settings->cinecturlink2->cinecturlink2_public_active ? 
+                '<p><a href="' . $core->blog->url . $core->url->getBase('cinecturlink2') . '" title="' . __('view all links') . '">' . __('More links') . '</a></p>' : ''
+            )
+        );
     }
 
     public static function publicCats($w)
@@ -297,50 +279,47 @@ class cinecturlink2Widget
 
         $core->blog->settings->addNamespace('cinecturlink2'); 
 
-        if (!$core->blog->settings->cinecturlink2->cinecturlink2_active 
-         || !$core->blog->settings->cinecturlink2->cinecturlink2_public_active 
-         || $w->homeonly == 1 && $core->url->type != 'default'
-         || $w->homeonly == 2 && $core->url->type == 'default'
+        if (!$core->blog->settings->cinecturlink2->cinecturlink2_active
+            || !$core->blog->settings->cinecturlink2->cinecturlink2_public_active
+            || $w->homeonly == 1 && !$core->url->isHome($core->url->type)
+            || $w->homeonly == 2 && $core->url->isHome($core->url->type)
         ) {
             return null;
         }
 
         $C2 = new cinecturlink2($core);
-
-        $rs = $C2->getCategories(array());
-
+        $rs = $C2->getCategories([]);
         if ($rs->isEmpty()) {
-
             return null;
         }
 
-        $res = 
-        '<li><a href="'.
-        $core->blog->url.$core->url->getBase('cinecturlink2').
-        '" title="'.__('view all links').'">'.__('all links').
-        '</a>';
-        if ($w->shownumlink) {
-            $res .= ' ('.($C2->getLinks(array(), true)->f(0)).')';
-        }
-        $res .= '</li>';
+        $res = [];
+        $res[] = 
+            '<li><a href="' .
+            $core->blog->url . $core->url->getBase('cinecturlink2') .
+            '" title="' . __('view all links') . '">' . __('all links') .
+            '</a>'. ($w->shownumlink ? ' ('. ($C2->getLinks([], true)->f(0)) . ')' : '') .
+            '</li>';
 
         while($rs->fetch()) {
-            $res .= 
-            '<li><a href="'.
-            $core->blog->url.$core->url->getBase('cinecturlink2').'/'.$core->blog->settings->cinecturlink2->cinecturlink2_public_caturl.'/'.urlencode($rs->cat_title).
-            '" title="'.__('view links of this category').'">'.
-            html::escapeHTML($rs->cat_title).
-            '</a>';
-            if ($w->shownumlink) {
-                $res .= ' ('.($C2->getLinks(array('cat_id'=>$rs->cat_id), true)->f(0)).')';
-            }
-            $res .= '</li>';
+            $res[] = 
+                '<li><a href="' .
+                $core->blog->url . $core->url->getBase('cinecturlink2') . '/' . 
+                $core->blog->settings->cinecturlink2->cinecturlink2_public_caturl . '/' . 
+                urlencode($rs->cat_title) .
+                '" title="'.__('view links of this category') . '">' .
+                html::escapeHTML($rs->cat_title) .
+                '</a>'. ($w->shownumlink ? ' (' . 
+                    ($C2->getLinks(['cat_id' => $rs->cat_id], true)->f(0)) . ')' : '') .
+                '</li>';
         }
 
-        return 
-        '<div class="cinecturlink2cat">'.
-        ($w->title ? '<h2>'.html::escapeHTML($w->title).'</h2>' : '').
-        '<ul>'.$res.'</ul>'.
-        '</div>';
+        return $w->renderDiv(
+            $w->content_only, 
+            'cinecturlink2cat '. $w->class, 
+            '', 
+            ($w->title ? $w->renderTitle(html::escapeHTML($w->title)) : '') . 
+            '<ul>' . implode(' ',$res) . '</ul>'
+        );
     }
 }
