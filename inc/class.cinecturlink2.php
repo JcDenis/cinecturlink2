@@ -12,7 +12,6 @@
  */
 
 if (!defined('DC_RC_PATH')) {
-
     return null;
 }
 
@@ -43,7 +42,7 @@ class cinecturlink2
 
         $this->core = $core;
         $this->con = $core->con;
-        $this->table = $core->prefix.'cinecturlink2';
+        $this->table = $core->prefix . 'cinecturlink2';
         $this->blog = $core->con->escape($core->blog->id);
     }
 
@@ -54,91 +53,85 @@ class cinecturlink2
      * @param  boolean $count_only Count only result
      * @return record              record instance
      */
-    public function getLinks($params=array(), $count_only=false)
+    public function getLinks($params = [], $count_only = false)
     {
         if ($count_only) {
             $strReq = 'SELECT count(L.link_id) ';
-        }
-        else {
+        } else {
             $content_req = '';
             if (!empty($params['columns']) && is_array($params['columns'])) {
-                $content_req .= implode(', ', $params['columns']).', ';
+                $content_req .= implode(', ', $params['columns']) . ', ';
             }
 
             $strReq =
-            'SELECT L.link_id, L.blog_id, L.cat_id, L.user_id, L.link_type, '.
-            $content_req.
-            'L.link_creadt, L.link_upddt, L.link_note, L.link_count, '.
-            'L.link_title, L.link_desc, L.link_author, '.
-            'L.link_lang, L.link_url, L.link_img, '.
-            'U.user_name, U.user_firstname, U.user_displayname, U.user_email, '.
-            'U.user_url, '.
+            'SELECT L.link_id, L.blog_id, L.cat_id, L.user_id, L.link_type, ' .
+            $content_req .
+            'L.link_creadt, L.link_upddt, L.link_note, L.link_count, ' .
+            'L.link_title, L.link_desc, L.link_author, ' .
+            'L.link_lang, L.link_url, L.link_img, ' .
+            'U.user_name, U.user_firstname, U.user_displayname, U.user_email, ' .
+            'U.user_url, ' .
             'C.cat_title, C.cat_desc ';
         }
 
         $strReq .= 
-        'FROM '.$this->table.' L '.
-        'INNER JOIN '.$this->core->prefix.'user U ON U.user_id = L.user_id '.
-        'LEFT OUTER JOIN '.$this->table.'_cat C ON L.cat_id = C.cat_id ';
+        'FROM '. $this->table . ' L ' .
+        'INNER JOIN ' . $this->core->prefix . 'user U ON U.user_id = L.user_id ' .
+        'LEFT OUTER JOIN ' . $this->table . '_cat C ON L.cat_id = C.cat_id ';
 
         if (!empty($params['from'])) {
-            $strReq .= $params['from'].' ';
+            $strReq .= $params['from'] . ' ';
         }
 
-        $strReq .= "WHERE L.blog_id = '".$this->blog."' ";
+        $strReq .= "WHERE L.blog_id = '" . $this->blog . "' ";
 
         if (isset($params['link_type'])) {
             if (is_array($params['link_type']) && !empty($params['link_type'])) {
-                $strReq .= 'AND L.link_type '.$this->con->in($params['link_type']);
+                $strReq .= 'AND L.link_type ' . $this->con->in($params['link_type']);
+            } elseif ($params['link_type'] != '') {
+                $strReq .= "AND L.link_type = '" . $this->con->escape($params['link_type']) . "' ";
             }
-            elseif ($params['link_type'] != '') {
-                $strReq .= "AND L.link_type = '".$this->con->escape($params['link_type'])."' ";
-            }
-        }
-        else {
+        } else {
             $strReq .= "AND L.link_type = 'cinecturlink' ";
         }
 
         if (!empty($params['link_id'])) {
             if (is_array($params['link_id'])) {
-                array_walk($params['link_id'], create_function('&$v,$k', 'if($v!==null){$v=(integer)$v;}'));
+                array_walk($params['link_id'], function(&$v, $k'){ if($v !== null) { $v = (integer) $v;}});
+            } else {
+                $params['link_id'] = [(integer) $params['link_id']];
             }
-            else {
-                $params['link_id'] = array((integer) $params['link_id']);
-            }
-            $strReq .= 'AND L.link_id '.$this->con->in($params['link_id']);
+            $strReq .= 'AND L.link_id ' . $this->con->in($params['link_id']);
         }
 
         if (!empty($params['cat_id'])) {
             if (is_array($params['cat_id'])) {
-                array_walk($params['cat_id'], create_function('&$v,$k', 'if($v!==null){$v=(integer)$v;}'));
+                array_walk($params['cat_id'], function(&$v, $k) { if($v !== null) { $v = (integer) $v;}});
+            } else {
+                $params['cat_id'] = [(integer) $params['cat_id']];
             }
-            else {
-                $params['cat_id'] = array((integer) $params['cat_id']);
-            }
-            $strReq .= 'AND L.cat_id '.$this->con->in($params['cat_id']);
+            $strReq .= 'AND L.cat_id ' . $this->con->in($params['cat_id']);
         }
         if (!empty($params['cat_title'])) {
-            $strReq .= "AND C.cat_title = '".$this->con->escape($params['cat_title'])."' ";
+            $strReq .= "AND C.cat_title = '" . $this->con->escape($params['cat_title']) . "' ";
         }
 
         if (!empty($params['link_title'])) {
-            $strReq .= "AND L.link_title = '".$this->con->escape($params['link_title'])."' ";
+            $strReq .= "AND L.link_title = '" . $this->con->escape($params['link_title']) . "' ";
         }
 
         if (!empty($params['link_lang'])) {
-            $strReq .= "AND L.link_lang = '".$this->con->escape($params['link_lang'])."' ";
+            $strReq .= "AND L.link_lang = '" . $this->con->escape($params['link_lang']) . "' ";
         }
 
         if (!empty($params['sql'])) {
-            $strReq .= $params['sql'].' ';
+            $strReq .= $params['sql'] . ' ';
         }
 
         if (!$count_only) {
             if (!empty($params['order'])) {
-                $strReq .= 'ORDER BY '.$this->con->escape($params['order']).' ';
-            }
-            else {
+                $strReq .= 'ORDER BY ' . $this->con->escape($params['order']) . ' ';
+            } else {
                 $strReq .= 'ORDER BY L.link_upddt DESC ';
             }
         }
@@ -182,8 +175,7 @@ class cinecturlink2
             $cur->link_count = 0;
             $cur->insert();
             $this->con->unlock();
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             $this->con->unlock();
             throw $e;
         }
@@ -202,7 +194,7 @@ class cinecturlink2
      * @param  cursor  $cur      cursor instance
      * @param  boolean $behavior Call related behaviors
      */
-    public function updLink($id, cursor $cur, $behavior=true)
+    public function updLink($id, cursor $cur, $behavior = true)
     {
         $id = (integer) $id;
 
@@ -212,7 +204,7 @@ class cinecturlink2
 
         $cur->link_upddt = date('Y-m-d H:i:s');
 
-        $cur->update("WHERE link_id = ".$id." AND blog_id = '".$this->blog."' ");
+        $cur->update("WHERE link_id = " . $id . " AND blog_id = '" . $this->blog . "' ");
         $this->trigger();
 
         if ($behavior) {
@@ -238,9 +230,9 @@ class cinecturlink2
         $this->core->callBehavior('cinecturlink2BeforeDelLink', $id);
 
         $this->con->execute(
-            'DELETE FROM '.$this->table.' '.
-            'WHERE link_id = '.$id.' '.
-            "AND blog_id = '".$this->blog."' "
+            'DELETE FROM ' . $this->table . ' ' .
+            'WHERE link_id = ' . $id . ' ' .
+            "AND blog_id = '" . $this->blog . "' "
         );
 
         $this->trigger();
@@ -254,7 +246,7 @@ class cinecturlink2
     private function getNextLinkId()
     {
         return $this->con->select(
-            'SELECT MAX(link_id) FROM '.$this->table.' '
+            'SELECT MAX(link_id) FROM ' . $this->table . ' '
         )->f(0) + 1;
     }
 
@@ -265,7 +257,7 @@ class cinecturlink2
      * @param  boolean $count_only Count only result
      * @return record              record instance
      */
-    public function getCategories($params=array(), $count_only=false)
+    public function getCategories($params = [], $count_only = false)
     {
         if ($count_only) {
             $strReq = 'SELECT count(C.cat_id) ';
@@ -273,46 +265,53 @@ class cinecturlink2
         else {
             $content_req = '';
             if (!empty($params['columns']) && is_array($params['columns'])) {
-                $content_req .= implode(', ', $params['columns']).', ';
+                $content_req .= implode(', ', $params['columns']) . ', ';
             }
 
             $strReq =
-            'SELECT C.cat_id, C.blog_id, C.cat_title, C.cat_desc, '.
-            $content_req.
+            'SELECT C.cat_id, C.blog_id, C.cat_title, C.cat_desc, ' .
+            $content_req .
             'C.cat_pos, C.cat_creadt, C.cat_upddt ';
         }
 
-        $strReq .= 'FROM '.$this->table.'_cat C  ';
+        $strReq .= 'FROM ' . $this->table . '_cat C  ';
 
         if (!empty($params['from'])) {
-            $strReq .= $params['from'].' ';
+            $strReq .= $params['from'] . ' ';
         }
 
-        $strReq .= "WHERE C.blog_id = '".$this->blog."' ";
+        $strReq .= "WHERE C.blog_id = '" . $this->blog . "' ";
 
         if (!empty($params['cat_id'])) {
             if (is_array($params['cat_id'])) {
-                array_walk($params['cat_id'], create_function('&$v,$k', 'if($v!==null){$v=(integer)$v;}'));
+                array_walk($params['cat_id'], function(&$v, $k) { if($v !== null) { $v = (integer) $v; }});
+            } else {
+                $params['cat_id'] = [(integer) $params['cat_id']];
             }
-            else {
-                $params['cat_id'] = array((integer) $params['cat_id']);
+            $strReq .= 'AND C.cat_id ' . $this->con->in($params['cat_id']);
+        }
+
+        if (isset($params['exclude_cat_id']) && $params['exclude_cat_id'] !== '') {
+            if (is_array($params['exclude_cat_id'])) {
+                array_walk($params['exclude_cat_id'], function (&$v, $k) { if ($v !== null) {$v = (integer) $v;}});
+            } else {
+                $params['exclude_cat_id'] = [(integer) $params['exclude_cat_id']];
             }
-            $strReq .= 'AND C.cat_id '.$this->con->in($params['cat_id']);
+            $strReq .= 'AND C.cat_id NOT ' . $this->con->in($params['exclude_cat_id']);
         }
 
         if (!empty($params['cat_title'])) {
-            $strReq .= "AND C.cat_title = '".$this->con->escape($params['cat_title'])."' ";
+            $strReq .= "AND C.cat_title = '" . $this->con->escape($params['cat_title']) . "' ";
         }
 
         if (!empty($params['sql'])) {
-            $strReq .= $params['sql'].' ';
+            $strReq .= $params['sql'] . ' ';
         }
 
         if (!$count_only) {
             if (!empty($params['order'])) {
-                $strReq .= 'ORDER BY '.$this->con->escape($params['order']).' ';
-            }
-            else {
+                $strReq .= 'ORDER BY ' . $this->con->escape($params['order']) . ' ';
+            } else {
                 $strReq .= 'ORDER BY cat_pos ASC ';
             }
         }
@@ -332,7 +331,7 @@ class cinecturlink2
      */
     public function addCategory(cursor $cur)
     {
-        $this->con->writeLock($this->table.'_cat');
+        $this->con->writeLock($this->table . '_cat');
 
         try {
             if ($cur->cat_title == '') {
@@ -349,8 +348,7 @@ class cinecturlink2
             $cur->cat_upddt = date('Y-m-d H:i:s');
             $cur->insert();
             $this->con->unlock();
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             $this->con->unlock();
             throw $e;
         }
@@ -375,7 +373,7 @@ class cinecturlink2
 
         $cur->cat_upddt = date('Y-m-d H:i:s');
 
-        $cur->update("WHERE cat_id = ".$id." AND blog_id = '".$this->blog."' ");
+        $cur->update("WHERE cat_id = " . $id . " AND blog_id = '" . $this->blog . "' ");
         $this->trigger();
     }
 
@@ -393,16 +391,16 @@ class cinecturlink2
         }
 
         $this->con->execute(
-            'DELETE FROM '.$this->table.'_cat '.
-            'WHERE cat_id = '.$id.' '.
-            "AND blog_id = '".$this->blog."' "
+            'DELETE FROM ' . $this->table . '_cat ' .
+            'WHERE cat_id = ' . $id . ' ' .
+            "AND blog_id = '" . $this->blog . "' "
         );
 
         # Update link cat to NULL
         $cur = $this->con->openCursor($this->table);
         $cur->cat_id = NULL;
         $cur->link_upddt = date('Y-m-d H:i:s');
-        $cur->update("WHERE cat_id = ".$id." AND blog_id = '".$this->blog."' ");
+        $cur->update("WHERE cat_id = " . $id . " AND blog_id = '" . $this->blog . "' ");
 
         $this->trigger();
     }
@@ -415,7 +413,7 @@ class cinecturlink2
     private function getNextCatId()
     {
         return $this->con->select(
-            'SELECT MAX(cat_id) FROM '.$this->table.'_cat '
+            'SELECT MAX(cat_id) FROM ' . $this->table . '_cat '
         )->f(0) + 1;
     }
 
@@ -427,8 +425,8 @@ class cinecturlink2
     private function getNextCatPos()
     {
         return $this->con->select(
-            'SELECT MAX(cat_pos) FROM '.$this->table.'_cat '.
-            "WHERE blog_id = '".$this->blog."' "
+            'SELECT MAX(cat_pos) FROM ' . $this->table . '_cat ' .
+            "WHERE blog_id = '" . $this->blog . "' "
         )->f(0) + 1;
     }
 
@@ -448,18 +446,16 @@ class cinecturlink2
      * @param  boolean $throw  Throw exception or not
      * @return boolean         True if exists and writable
      */
-    public static function test_folder($root, $folder, $throw=false)
+    public static function test_folder($root, $folder, $throw = false)
     {
-        if (!is_dir($root.'/'.$folder)) {
-            if (!is_dir($root) || !is_writable($root) || !mkdir($root.'/'.$folder)) {
+        if (!is_dir($root . '/' . $folder)) {
+            if (!is_dir($root) || !is_writable($root) || !mkdir($root . '/' . $folder)) {
                 if ($throw) {
                     throw new Exception(__('Failed to create public folder for images.'));
                 }
-
                 return false;
             }
         }
-
         return true;
     }
 }

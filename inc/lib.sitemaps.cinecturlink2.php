@@ -24,11 +24,11 @@ class sitemapsCinecturlink2
         $core->blog->settings->addNamespace('sitemaps');
 
         if ($core->plugins->moduleExists('cinecturlink2') 
-         && $core->blog->settings->sitemaps->sitemaps_cinecturlink2_url) {
-
+            && $core->blog->settings->sitemaps->sitemaps_cinecturlink2_url
+        ) {
             $freq = $sitemaps->getFrequency($core->blog->settings->sitemaps->sitemaps_cinecturlink2_fq);
             $prio = $sitemaps->getPriority($core->blog->settings->sitemaps->sitemaps_cinecturlink2_pr);
-            $base = $core->blog->url.$core->url->getBase('cinecturlink2');
+            $base = $core->blog->url . $core->url->getBase('cinecturlink2');
 
             $sitemaps->addEntry($base, $prio, $freq);
 
@@ -36,7 +36,7 @@ class sitemapsCinecturlink2
             $C2 = new cinecturlink2($core);
             $cats = $C2->getCategories();
             while ($cats->fetch()) {
-                $sitemaps->addEntry($base."/".$core->blog->settings->cinecturlink2->cinecturlink2_public_caturl.'/'.urlencode($cats->cat_title), $prio, $freq);
+                $sitemaps->addEntry($base . "/" . $core->blog->settings->cinecturlink2->cinecturlink2_public_caturl . '/' . urlencode($cats->cat_title), $prio, $freq);
             }
         }
     }
