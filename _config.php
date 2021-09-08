@@ -63,7 +63,7 @@ if (!empty($_POST['save'])) {
         $s->put('cinecturlink2_triggeronrandom', $cinecturlink2_triggeronrandom);
 
         dcPage::addSuccessNotice(
-            __('Configuration has been successfully updated.')
+            __('Configuration successfully updated.')
         );
         $core->adminurl->redirect(
             'admin.plugins', 
@@ -80,7 +80,7 @@ echo '
 
 <p><label class="classic" for="cinecturlink2_active">' .
 form::checkbox('cinecturlink2_active', 1, $cinecturlink2_active) .
-__('Enable extension') . '</label></p>
+__('Enable plugin') . '</label></p>
 
 <p><label for="cinecturlink2_widthmax">' . __('Maximum width of images (in pixel):') . ' ' .
 form::field('cinecturlink2_widthmax', 10, 4, $cinecturlink2_widthmax, 'maximal') . '</label></p>
