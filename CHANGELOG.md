@@ -1,9 +1,16 @@
 0.7.1 - dev
-- [ ] fix compatibility Dotclear v2.19
-- [ ] fix compatibility php7.3+, php8.0
-- [ ] fix license
-- [ ] fix translation
-- [ ] fix code style
+- [ ] update public templates
+- [ ] fix javascript
+
+0.8 - 2021.09.09
+- fix compatibility Dotclear v2.19
+- fix compatibility php7.3+, php8.0
+- fix license
+- fix translation
+- fix code style (near PSR2)
+- fix widget options
+- add option to show how many links use a category
+- rewrite admin page (filter, sortable, breadcrumb, etc...)
 
 0.7 - 2013.11.03
 - Switch to Dotclear 2.6
