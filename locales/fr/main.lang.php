@@ -339,4 +339,3 @@ $GLOBALS['__l10n']['Delete selection'] = 'Effacer la selection';
 
 #index.php:773
 $GLOBALS['__l10n']['No link uses this category.'] = 'Aucun lien n\'utilise cette catégorie.';
-

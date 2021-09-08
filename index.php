@@ -553,7 +553,7 @@ if ($part == "links") {
         '<p><label for="cat_id" class="ib">' . __('Category:') . '</label> ' .
         form::combo('catid', $categories_combo, $catid) . '</p>' .
         '</div>'.
-            
+
         '<div class="cell filters-options">' .
         '<p><label for="sortby" class="ib">' . __('Order by:') . '</label> ' .
         form::combo('sortby', $sortby_combo, $sortby) . '</p>' .

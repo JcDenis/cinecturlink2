@@ -37,14 +37,14 @@ class cinecturlink2AdminBehaviors
 {
     public static function adminDashboardFavorites($core, $favs)
     {
-	    $favs->register('cinecturlink2', [
-	        'title' => __('My cinecturlink'),
-	        'url' => $core->adminurl->get('admin.plugin.cinecturlink2').'#links',
-	        'small-icon' => dcPage::getPF('cinecturlink2/icon.png'),
-	        'large-icon' => dcPage::getPF('cinecturlink2/icon-big.png'),
-	        'permissions' => $core->auth->check('contentadmin', $core->blog->id),
+        $favs->register('cinecturlink2', [
+            'title' => __('My cinecturlink'),
+            'url' => $core->adminurl->get('admin.plugin.cinecturlink2').'#links',
+            'small-icon' => dcPage::getPF('cinecturlink2/icon.png'),
+            'large-icon' => dcPage::getPF('cinecturlink2/icon-big.png'),
+            'permissions' => $core->auth->check('contentadmin', $core->blog->id),
             'active_cb'    => ['cinecturlink2AdminBehaviors', 'adminDashboardFavoritesActive']
-	    ]);
+        ]);
     }
 
     public static function adminDashboardFavoritesActive($request, $params)
