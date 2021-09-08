@@ -1,4 +1,4 @@
-0.7.1 - dev
+0.8.1 - dev
 - [ ] update public templates
 - [ ] fix javascript
 
