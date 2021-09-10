@@ -34,6 +34,20 @@ class adminlistCinecturlink2
         $this->html_next = __('next &#187;');
     }
 
+    public function userColumns($type, $cols)
+    {
+        $cols_user = @$this->core->auth->user_prefs->interface->cols;
+        if (is_array($cols_user) || $cols_user instanceof ArrayObject) {
+            if (isset($cols_user[$type])) {
+                foreach ($cols_user[$type] as $cn => $cd) {
+                    if (!$cd && isset($cols[$cn])) {
+                        unset($cols[$cn]);
+                    }
+                }
+            }
+        }
+    }
+
     public function display($page, $nb_per_page, $enclose_block = '', $filter = false, $redir = '')
     {
         $this->redir = $redir;
@@ -52,6 +66,18 @@ class adminlistCinecturlink2
                 }
             }
 
+            $cols = [
+                    'title' => '<th colspan="2" class="first">' . __('Title') . '</th>',
+                    'author' => '<th scope="col">' . __('Author') . '</th>',
+                    'desc' => '<th scope="col">' . __('Description') . '</th>',
+                    'link' => '<th scope="col">' . __('Links') . '</th>',
+                    'cat' => '<th scope="col">' . __('Category') . '</th>',
+                    'note' => '<th scope="col">' . __('Rating') . '</th>',
+                    'date' => '<th scope="col">' . __('Date') . '</th>'
+            ];
+            $cols = new ArrayObject($cols);
+            $this->userColumns('c2link', $cols);
+
             $html_block =
             '<div class="table-outer">' .
             '<table>' .
@@ -60,15 +86,7 @@ class adminlistCinecturlink2
                 sprintf(__('List of links (%s)'), $this->rs_count)
             ). '</caption>' .
             '<thead>' .
-            '<tr>' .
-            '<th colspan="2" class="first">' . __('Title') . '</th>' .
-            '<th scope="col">' . __('Author') . '</th>' .
-            '<th scope="col">' . __('Description') . '</th>' .
-            '<th scope="col">' . __('Links') . '</th>' .
-            '<th scope="col">' . __('Category') . '</th>' .
-            '<th scope="col">' . __('Rating') . '</th>' .
-            '<th scope="col">' . __('Date') . '</th>' .
-            '</tr>' .
+            '<tr>' . implode(iterator_to_array($cols)) . '</tr>' .
             '</thead>' .
             '<tbody>%s</tbody>' .
             '</table>' .
@@ -91,49 +109,54 @@ class adminlistCinecturlink2
 
     private function linkLine($checked)
     {
-        return
-        '<tr class="line">' .
-        '<td class="nowrap">' .
-            form::checkbox(['entries[]'], $this->rs->link_id, ['checked'  => $checked]) .
-        '</td>' .
-        '<td class="nowrap" scope="row">' .
-        '<a href="' . $this->core->adminurl->get(
-            'admin.plugin.cinecturlink2', 
-            ['part' => 'link', 'linkid' => $this->rs->link_id, 'redir' => $this->redir]
-        ) . '" title="' . __('Edit') . '">' .
-        html::escapeHTML($this->rs->link_title) . '</a>' .
-        '</td>' .
-        '<td class="nowrap">' .
-        html::escapeHTML($this->rs->link_author) .
-        '</td>' .
-        '<td class="maximal">' .
-        html::escapeHTML($this->rs->link_desc) .
-        '</td>' .
-        '<td class="nowrap">' .
-        '<a href="' . $this->rs->link_url . '" title="' . 
-            html::escapeHTML($this->rs->link_url) . 
-        '">' . __('URL') . '</a> ' .
-        '<a href="' . $this->rs->link_img . '" title="' . 
-            html::escapeHTML($this->rs->link_img) . 
-        '">' . __('image') . '</a> ' .
-        '</td>' .
-        '<td class="nowrap">' .
-        '<a href="' . $this->core->adminurl->get(
-            'admin.plugin.cinecturlink2', 
-            ['part' => 'cat', 'catid' => $this->rs->cat_id, 'redir' => $this->redir]
-        ) . '" title="' . __('Edit') . '">' .
-        html::escapeHTML($this->rs->cat_title) . '</a>' .
-        '</td>' .
-        '<td class="nowrap count">' .
-        html::escapeHTML($this->rs->link_note) . '/20' .
-        '</td>' .
-        '<td class="nowrap count">' .
-        dt::dt2str(
-            $this->core->blog->settings->system->date_format . ', ' . $this->core->blog->settings->system->time_format, 
-            $this->rs->link_upddt, 
-            $this->core->auth->getInfo('user_tz')
-        ) .
-        '</td>' .
-        '</tr>' . "\n";
+        $cols = [
+            'check' => '<td class="nowrap minimal">' .
+                form::checkbox(['entries[]'], $this->rs->link_id, ['checked'  => $checked]) .
+                '</td>',
+            'title' => '<td class="nowrap" scope="row">' .
+                '<a href="' . $this->core->adminurl->get(
+                    'admin.plugin.cinecturlink2', 
+                    ['part' => 'link', 'linkid' => $this->rs->link_id, 'redir' => $this->redir]
+                ) . '" title="' . __('Edit') . '">' .
+                html::escapeHTML($this->rs->link_title) . '</a>' .
+                '</td>',
+            'author' => '<td class="nowrap">' .
+                html::escapeHTML($this->rs->link_author) .
+                '</td>',
+            'desc' => '<td class="maximal">' .
+                html::escapeHTML($this->rs->link_desc) .
+                '</td>',
+            'link' => '<td class="nowrap">' .
+                '<a href="' . $this->rs->link_url . '" title="' . 
+                    html::escapeHTML($this->rs->link_url) . 
+                '">' . __('URL') . '</a> ' .
+                '<a href="' . $this->rs->link_img . '" title="' . 
+                    html::escapeHTML($this->rs->link_img) . 
+                '">' . __('image') . '</a> ' .
+                '</td>',
+            'cat' => '<td class="nowrap minimal">' .
+                '<a href="' . $this->core->adminurl->get(
+                    'admin.plugin.cinecturlink2', 
+                    ['part' => 'cat', 'catid' => $this->rs->cat_id, 'redir' => $this->redir]
+                ) . '" title="' . __('Edit') . '">' .
+                html::escapeHTML($this->rs->cat_title) . '</a>' .
+                '</td>',
+            'note' => '</td>' .
+                '<td class="nowrap count minimal">' .
+                html::escapeHTML($this->rs->link_note) . '/20' .
+                '</td>',
+            'date' => '<td class="nowrap count minimal">' .
+                dt::dt2str(
+                    $this->core->blog->settings->system->date_format . ', ' . $this->core->blog->settings->system->time_format, 
+                    $this->rs->link_upddt, 
+                    $this->core->auth->getInfo('user_tz')
+                ) .
+                '</td>'
+        ];
+
+        $cols = new ArrayObject($cols);
+        $this->userColumns('c2link', $cols);
+
+        return '<tr class="line">' .  implode(iterator_to_array($cols)) . '</tr>' . "\n";
     }
 }

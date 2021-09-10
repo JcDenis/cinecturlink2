@@ -1,6 +1,7 @@
 0.8.1 - dev
 - [ ] update public templates
 - [ ] fix javascript
+- [x] add user pref for list options
 
 0.8 - 2021.09.09
 - fix compatibility Dotclear v2.19

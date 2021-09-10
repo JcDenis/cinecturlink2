@@ -22,12 +22,16 @@ $_menu['Plugins']->addItem(
     $core->adminurl->get('admin.plugin.cinecturlink2'),
     dcPage::getPF('cinecturlink2/icon.png'),
     preg_match(
-        '/' . preg_quote($core->adminurl->get('admin.plugin.dcAdvancedCleaner')) . '(&.*)?$/', 
+        '/' . preg_quote($core->adminurl->get('admin.plugin.cinecturlink2')) . '(&.*)?$/', 
         $_SERVER['REQUEST_URI']
     ),
     $core->auth->check('contentadmin', $core->blog->id)
 );
 
+$core->addBehavior(
+    'adminColumnsLists', 
+    ['cinecturlink2AdminBehaviors', 'adminColumnsLists']
+);
 $core->addBehavior(
     'adminDashboardFavorites',
     ['cinecturlink2AdminBehaviors', 'adminDashboardFavorites']
@@ -35,6 +39,20 @@ $core->addBehavior(
 
 class cinecturlink2AdminBehaviors
 {
+    public static function adminColumnsLists($core, $cols)
+    {
+        $cols['c2link'] = [
+            __('Cinecturlink'), [
+                'date' => [true, __('Date')],
+                'cat' => [true, __('Category')],
+                'author' => [true, __('Author')],
+                'desc' => [false, _('Category')],
+                'link' => [true, _('Liens')],
+                'note' => [true, __('Rating')],
+            ]
+        ];
+    }
+
     public static function adminDashboardFavorites($core, $favs)
     {
         $favs->register('cinecturlink2', [
