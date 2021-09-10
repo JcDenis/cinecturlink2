@@ -1,10 +1,10 @@
 <modules xmlns:da="http://dotaddict.org/da/">
 <module id="cinecturlink2">
 <name>Cinecturlink 2</name>
-<version>0.8</version>
+<version>0.9</version>
 <author>Jean-Christian Denis and Contributors</author>
 <desc>Widgets and pages about books, musics, films, blogs you are interested in</desc>
-<file>https://github.com/JcDenis/cinecturlink2/releases/download/v0.8/plugin-cinecturlink2.zip</file>
+<file>https://github.com/JcDenis/cinecturlink2/releases/download/v0.9/plugin-cinecturlink2.zip</file>
 <da:dcmin>2.19</da:dcmin>
 <da:details>https://plugins.dotaddict.org/dc2/details/cinecturlink2</da:details>
 <da:support>https://github.com/JcDenis/cinecturlink2</da:support>

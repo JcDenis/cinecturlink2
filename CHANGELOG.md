@@ -1,7 +1,10 @@
 0.8.1 - dev
 - [ ] update public templates
 - [ ] fix javascript
-- [x] add user pref for list options
+
+0.9 - 2021.09.11
+- add user pref on cinecturlink list
+- fix typo in admin menu
 
 0.8 - 2021.09.09
 - fix compatibility Dotclear v2.19
