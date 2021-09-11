@@ -1,5 +1,11 @@
 # README
 
+[![Release version](https://img.shields.io/github/v/release/JcDenis/cinecturlink2)](https://github.com/JcDenis/cinecturlink2/releases)
+[![Release date](https://img.shields.io/github/release-date/JcDenis/cinecturlink2)](https://github.com/JcDenis/cinecturlink2/releases)
+[![Issue tracking](https://img.shields.io/github/issues/JcDenis/cinecturlink2)](https://github.com/JcDenis/pacKman/issues)
+[![Dotclear version](https://img.shields.io/badge/dotclear-v2.19-blue.svg)](https://fr.dotclear.org/download)
+[![License](https://img.shields.io/badge/license-GPL%20v2-blue.svg)](https://github.com/JcDenis/cinecturlink2/blob/master/LICENSE)
+
 ## WHAT IS CINECTURLINK2 ?
 
 _cinecturlink2_ is a plugin for the open-source 
