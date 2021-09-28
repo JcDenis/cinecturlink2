@@ -137,10 +137,13 @@ if ($part == 'updlinkscat') {
 
 if ($part == 'links') {
     $sortby_combo = [
-        __('Date') => 'link_upddt',
-        __('Title') => 'link_title',
-        __('Category') => 'cat_title',
-        __('Rating') => 'link_note',
+        __('Date')        => 'link_upddt',
+        __('Title')       => 'link_title',
+        __('Category')    => 'cat_id',
+        __('Author')      => 'link_author',
+        __('Description') => 'link_desc',
+        __('Liens')       => 'link_url',
+        __('Rating')      => 'link_note'
     ];
     $order_combo = [
         __('Descending') => 'desc',
@@ -154,9 +157,13 @@ if ($part == 'links') {
 
     $show_filters = false;
     $page = !empty($_GET['page']) ? max(1, (integer) $_GET['page']) : 1;
-    $nb_per_page    = $core->auth->user_prefs->interface->nb_posts_per_page ?: 30;
-    $default_sortby = 'link_upddt';
-    $default_order  = 'desc';
+
+    $core->auth->user_prefs->addWorkspace('interface');
+    $sorts_user = @$core->auth->user_prefs->interface->sorts;
+    $default_sortby = $sorts_user['c2link'][0] ?? 'link_upddt';
+    $default_order  = $sorts_user['c2link'][1] ?? 'desc';
+    $nb_per_page    = !empty($sorts_user['c2link'][2]) ? $sorts_user['c2link'][2] : 30;
+
     $sortby = !empty($_GET['sortby']) ? $_GET['sortby'] : $default_sortby;
     $order  = !empty($_GET['order']) ? $_GET['order'] : $default_order;
 
@@ -562,12 +569,12 @@ if ($part == "links") {
         form::combo('order', $order_combo, $order) . '</p>' .
         '</div><div class="cell">' .
         '<p><span class="label ib">' . __('Show') . '</span> <label for="nb" class="classic">'.
-        form::field('nb', 3, 3, $nb_per_page) . ' ' .
+        form::field('nb', 0, 999, $nb_per_page) . ' ' .
         __('entries per page') . '</label></p>' .
         form::hidden('p', 'cinecturlink2') .
         form::hidden('part', 'links') .
-        //form::hidden('filters-options-id', 'c2links') .
-        //'<p class="hidden-if-no-js"><a href="#" id="filter-options-save">' . __('Save current options') . '</a></p>' .
+        form::hidden('filters-options-id', 'c2link') .
+        '<p class="hidden-if-no-js"><a href="#" id="filter-options-save">' . __('Save current options') . '</a></p>' .
         '</div>' .
 
         '</div>' .

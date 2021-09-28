@@ -32,6 +32,11 @@ $core->addBehavior(
     'adminColumnsLists', 
     ['cinecturlink2AdminBehaviors', 'adminColumnsLists']
 );
+
+$core->addBehavior(
+    'adminSortsLists', 
+    ['cinecturlink2AdminBehaviors', 'adminSortsLists']
+);
 $core->addBehavior(
     'adminDashboardFavorites',
     ['cinecturlink2AdminBehaviors', 'adminDashboardFavorites']
@@ -42,14 +47,34 @@ class cinecturlink2AdminBehaviors
     public static function adminColumnsLists($core, $cols)
     {
         $cols['c2link'] = [
-            __('Cinecturlink'), [
-                'date' => [true, __('Date')],
-                'cat' => [true, __('Category')],
+            __('Cinecturlink'),
+            [
+                'date'   => [true, __('Date')],
+                'cat'    => [true, __('Category')],
                 'author' => [true, __('Author')],
-                'desc' => [false, _('Category')],
-                'link' => [true, _('Liens')],
-                'note' => [true, __('Rating')],
+                'desc'   => [false, __('Description')],
+                'link'   => [true, __('Liens')],
+                'note'   => [true, __('Rating')],
             ]
+        ];
+    }
+
+    public static function adminSortsLists($core, $sorts)
+    {
+        $sorts['c2link'] = [
+            __('Cinecturlink'),
+            [
+                __('Date')        => 'link_upddt',
+                __('Title')       => 'link_title',
+                __('Category')    => 'cat_id',
+                __('Author')      => 'link_author',
+                __('Description') => 'link_desc',
+                __('Link')       => 'link_url',
+                __('Rating')      => 'link_note'
+            ],
+            'link_upddt',
+            'desc',
+            null
         ];
     }
 
