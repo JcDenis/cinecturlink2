@@ -34,8 +34,8 @@ $core->addBehavior(
 );
 
 $core->addBehavior(
-    'adminSortsLists', 
-    ['cinecturlink2AdminBehaviors', 'adminSortsLists']
+    'adminFiltersLists', 
+    ['cinecturlink2AdminBehaviors', 'adminFiltersLists']
 );
 $core->addBehavior(
     'adminDashboardFavorites',
@@ -44,6 +44,19 @@ $core->addBehavior(
 
 class cinecturlink2AdminBehaviors
 {
+    public static function adminSortbyCombo()
+    {
+        return [
+            __('Date')        => 'link_upddt',
+            __('Title')       => 'link_title',
+            __('Category')    => 'cat_id',
+            __('Author')      => 'link_author',
+            __('Description') => 'link_desc',
+            __('Link')        => 'link_url',
+            __('Rating')      => 'link_note'
+        ];
+    }
+
     public static function adminColumnsLists($core, $cols)
     {
         $cols['c2link'] = [
@@ -59,22 +72,14 @@ class cinecturlink2AdminBehaviors
         ];
     }
 
-    public static function adminSortsLists($core, $sorts)
+    public static function adminFiltersLists($core, $sorts)
     {
         $sorts['c2link'] = [
             __('Cinecturlink'),
-            [
-                __('Date')        => 'link_upddt',
-                __('Title')       => 'link_title',
-                __('Category')    => 'cat_id',
-                __('Author')      => 'link_author',
-                __('Description') => 'link_desc',
-                __('Link')       => 'link_url',
-                __('Rating')      => 'link_note'
-            ],
+            self::adminSortbyCombo(),
             'link_upddt',
             'desc',
-            null
+            [__('Links per page'), 30]
         ];
     }
 
