@@ -32,7 +32,6 @@ $catdesc = $_POST['catdesc'] ?? '';
 $redir = $_REQUEST['redir'] ?? '';
 $part = $_REQUEST['part'] ?? 'links';
 $entries = $_POST['entries'] ?? [];
-$page = !empty($_GET['page']) ? max(1, (integer) $_GET['page']) : 1;
 $headers = '';
 $breadcrumb = [
     html::escapeHTML($core->blog->name) => '',
@@ -144,32 +143,15 @@ if ($part == 'links') {
     ];
 
     $c2link_filter = new adminGenericFilter($core, 'c2link');
+    $c2link_filter->add('part', 'links');
+    $c2link_filter->add(dcAdminFilters::getPageFilter());
+    $c2link_filter->add(dcAdminFilters::getSelectFilter(
+        'catid', __('Category:'), $categories_combo, 'cat_id'
+    ));
 
-    $sortby = $c2link_filter->getFilter('sortby');
-    $order  = $c2link_filter->getFilter('order');
-    $nb     = $c2link_filter->getFilter('nb');
-
-    $c2link_filter->setFilter('page', $page);
-    $c2link_filter->setFilter('part', 'links');
-
-    $params = [];
+    $params = $c2link_filter->params();
     $params['link_type'] = 'cinecturlink';
-    $params['limit'] = [(($page - 1) * $nb), $nb];
     $params['no_content'] = true;
-    $params['order'] = $sortby . ' ' . $order;
-
-    if ($catid === '' || !in_array($catid, $categories_combo)) {
-        $catid = '';
-    }
-    $catid = $c2link_filter->setFilter([
-        'id'    => 'catid',
-        'value' => $catid,
-        'title' => __('Category:'),
-        'combo' => $categories_combo
-    ]);
-    if ($catid != '') {
-        $params['cat_id'] = $catid;
-    }
 
     $links_list = null;
 
@@ -498,7 +480,7 @@ if ($part == 'updlinkscat') {
 }
 
 if ($part == "links") {
-    $links_redir = $core->adminurl->get('admin.plugin.cinecturlink2', $c2link_filter->getFilters());
+    $links_redir = $core->adminurl->get('admin.plugin.cinecturlink2', $c2link_filter->values());
 
     echo 
     '<p>' .
@@ -512,14 +494,17 @@ if ($part == "links") {
         $core->adminurl->get('admin.plugin.cinecturlink2', ['part' => 'cat', 'redir' => $links_redir]) . 
     '">' . __('New Category') .' </a></p>';
 
-    if ($links->isEmpty()) {
+    if ($links->isEmpty() && !$c2link_filter->show()) {
         echo '<p>'.__('There is no link').'</p>';
     } else {
         $c2link_filter->display('admin.plugin.cinecturlink2',
             form::hidden('p', 'cinecturlink2') . form::hidden('part', 'links')
         );
 
-        $links_list->display($page, $nb,
+        $hidden = $c2link_filter->values(true);
+        unset($hidden['part']);
+
+        $links_list->display($c2link_filter->page, $c2link_filter->nb,
             '<form action="' . $core->adminurl->get('admin.plugin.cinecturlink2') . '" method="post" id="form-entries">' .
 
             '%s' .
@@ -530,7 +515,7 @@ if ($part == "links") {
             '<p class="col right"><label for="action" class="classic">' . __('Selected links action:') . '</label> ' .
             form::combo('part', $action_combo) .
             '<input id="do-action" type="submit" value="' . __('ok') . '" disabled /></p>' .
-            $core->adminurl->getHiddenFormFields('admin.plugin.cinecturlink2', $c2link_filter->getFilters(true)) .
+            $core->adminurl->getHiddenFormFields('admin.plugin.cinecturlink2', $hidden) .
             form::hidden(['redir'], $links_redir) .
             $core->formNonce() .
             '</div>' .
