@@ -34,7 +34,7 @@ $part = $_REQUEST['part'] ?? 'links';
 $entries = $_POST['entries'] ?? [];
 $headers = '';
 $breadcrumb = [
-    html::escapeHTML($core->blog->name) => '',
+    __('Plugins') => '',
     __('My cinecturlink') => $core->adminurl->get('admin.plugin.cinecturlink2', ['part' => 'links'])
 ];
 if (!in_array($part, ['links', 'link', 'cats', 'cat', 'dellinks', 'updlinksnote', 'updlinkscat'])) {
