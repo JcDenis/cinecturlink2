@@ -1,457 +1,335 @@
-# Language: Français
-# Module: cinecturlink2 - 0.7.1
-# Date: 2021-09-08 22:03:17
-# Translated with translater 2021.09.02.1
-
 msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
-"Project-Id-Version: cinecturlink2 0.7.1\n"
+"Project-Id-Version: cinecturlink2 0.9.1\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2021-09-08T22:03:17+00:00\n"
+"PO-Revision-Date: 2021-10-24T22:24:00+00:00\n"
 "Last-Translator: Jean-Christian Denis\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: _admin.php:21
-#: _admin.php:41
-#: _public.php:195
-#: _widgets.php:57
-#: _widgets.php:63
-#: index.php:38
-#: index.php:202
 msgid "My cinecturlink"
 msgstr "Mes cinecturlink"
 
-#: _config.php:49
-msgid "You must provide a specific folder for images."
-msgstr "Vous devez fournir un dossier spécifique pour les images."
-
-#: _config.php:85
-msgid "Maximum width of images (in pixel):"
-msgstr "Largeur maximum des images (en pixels) :"
-
-#: _config.php:88
-msgid "Public folder of images (under public folder of blog):"
-msgstr "Dossier publique des images (dans le répertoire \"public\" du blog) :"
-
-#: _config.php:98
-msgid "Update cache when use \"Random\" or \"Number of view\" order on widget (Need reload of widgets on change)"
-msgstr "Mettre à jour le cache lors de l'utilisation de l'ordre  \"Aléatoire\" ou \"Nombre d'affichages\" dans le widget (Nécessite le rechargement du widget)"
-
-#: _config.php:99
-msgid "This increases the random effect, but updates the cache of the blog whenever the widget is displayed, which reduces the perfomances of your blog."
-msgstr "Ceci augmente l'effet aléatoire, mais met à jour le cache à chaque affichage du widget, ce qui diminue les performances du blog."
-
-#: _config.php:104
-msgid "Public page"
-msgstr "Page publique"
-
-#: _config.php:108
-msgid "Enable public page"
-msgstr "Activer la page publique"
-
-#: _config.php:109
-msgid "Public page has url: %s"
-msgstr "La page publique à l'URL: %s"
-
-#: _config.php:111
-msgid "Title of the public page:"
-msgstr "Titre de la page publique :"
-
-#: _config.php:114
-msgid "Description of the public page:"
-msgstr "Description de la page publique :"
-
-#: _config.php:117
-msgid "Limit number of entries per page on pulic page to:"
-msgstr "Limiter le nombre d'entrée par page sur la page public à :"
-
-#: _config.php:123
-msgid "Informations"
-msgstr "Informations"
-
-#: _config.php:126
-msgid "Once the extension has been configured and your links have been created, you can place one of the cinecturlink widgets in the sidebar."
-msgstr "Une fois l'extension configurée et vos liens créés, vous pouvez placer un des widgets cinecturlink dans la barre latérale."
-
-#: _config.php:127
-msgid "In order to open links in new window you can use plugin %s."
-msgstr "Afin d'ouvrir les liens dans une nouvelle page vous pouvez utiliser l'extension %s."
-
-#: _config.php:128
-msgid "In order to change URL of public page you can use plugin %s."
-msgstr "Afin de changer l'URL de la page publique vous pouvez utiliser l'extension %s."
-
-#: _config.php:129
-msgid "You can add public pages of cinecturlink to the plugin %s."
-msgstr "Vous pouvez ajouter les pages publiques de cinecturlink à l'extension %s."
-
-#: _config.php:130
-#: _config.php:131
-msgid "The plugin Cinecturlink2 is compatible with plugin %s."
-msgstr "L'extension Cinecturlink2 est compatible avec l'extension %s."
-
-#: _widgets.php:43
-msgid "Update date"
-msgstr "Date de mise à jour"
-
-#: _widgets.php:44
-msgid "My rating"
-msgstr "Mon évaluation"
-
-#: _widgets.php:46
-msgid "Random"
-msgstr "Aléatoire"
-
-#: _widgets.php:47
-msgid "Number of views"
-msgstr "Nombre d'affichages"
-
-#: _widgets.php:60
-msgid "Show selection of cinecturlinks"
-msgstr "Afficher une selection de cinecturlink"
-
-#: _widgets.php:81
-msgid "Sort: (only for date, note and title)"
-msgstr "Ordre: (seulement pour date, note et titre)"
-
-#: _widgets.php:88
-msgid "Limit:"
-msgstr "Limite :"
-
-#: _widgets.php:94
-msgid "Enable link"
-msgstr "Autoriser les liens"
-
-#: _widgets.php:100
-msgid "Show author"
-msgstr "Afficher l'auteur"
-
-#: _widgets.php:106
-msgid "Show my rating"
-msgstr "Afficher mon évaluation"
-
-#: _widgets.php:112
-msgid "Show description"
-msgstr "Afficher la description"
-
-#: _widgets.php:118
-msgid "Show a link to cinecturlink page"
-msgstr "Afficher un lien vers la page publique"
-
-#: _widgets.php:133
-#: _widgets.php:136
-msgid "List of categories of cinecturlink"
-msgstr "Liste des catégories de cinecturlink"
-
-#: _widgets.php:139
-#: _widgets.php:144
-msgid "My cinecturlink by categories"
-msgstr "Mes cinecturlink par catégories"
-
-#: _widgets.php:149
-msgid "Show number of links"
-msgstr "Afficher le nombre de liens"
-
-#: _widgets.php:271
-#: _widgets.php:300
-#: default-templates/cinecturlink2.html:56
-#: default-templates/cinecturlink2.html:56
-msgid "view all links"
-msgstr "voir tous les liens"
-
-#: _widgets.php:271
-msgid "More links"
-msgstr "Plus de liens"
-
-#: _widgets.php:300
-msgid "all links"
-msgstr "tous les liens"
-
-#: _widgets.php:310
-msgid "view links of this category"
-msgstr "voir les liens de cette catégorie"
-
-#: default-templates/cinecturlink2.html:31
-#: default-templates/cinecturlink2.html:106
-msgid "previous links"
-msgstr "liens précédents"
-
-#: default-templates/cinecturlink2.html:35
-#: default-templates/cinecturlink2.html:108
-msgid "next links"
-msgstr "liens suivants"
-
-#: default-templates/cinecturlink2.html:58
-msgid "These entries Atom feed"
-msgstr "Fil atom de ces billets"
-
-#: default-templates/cinecturlink2.html:60
-msgid "Category's entries feed"
-msgstr "Fil de cette catégorie"
-
-#: default-templates/cinecturlink2.html:86
-#: default-templates/cinecturlink2.html:86
-msgid "link"
-msgstr "lien"
-
-#: default-templates/cinecturlink2.html:87
-msgid "category"
-msgstr "catégorie"
-
-#: inc/class.cinecturlink2.php:157
-msgid "No link title"
-msgstr "Pas de titre de lien"
-
-#: inc/class.cinecturlink2.php:160
-msgid "No link description"
-msgstr "Pas de description de lien"
-
-#: inc/class.cinecturlink2.php:202
-#: inc/class.cinecturlink2.php:226
-msgid "No such link ID"
-msgstr "ID de lien inconnu"
-
-#: inc/class.cinecturlink2.php:338
-msgid "No category title"
-msgstr "Pas de titre de catégorie"
-
-#: inc/class.cinecturlink2.php:341
-msgid "No category description"
-msgstr "Pas de description de catégorie"
-
-#: inc/class.cinecturlink2.php:371
-#: inc/class.cinecturlink2.php:390
-msgid "No such category ID"
-msgstr "ID de catégorie inconnu"
-
-#: inc/class.cinecturlink2.php:454
-msgid "Failed to create public folder for images."
-msgstr "Impossible de créer le repertoire publique pour les images."
-
-#: inc/lib.cinecturlink2.activityreport.php:22
-msgid "Plugin cinecturlink2"
-msgstr "Extension cinecturlink 2"
-
-#: inc/lib.cinecturlink2.activityreport.php:28
-msgid "link creation"
-msgstr "Création de lien"
-
-#: inc/lib.cinecturlink2.activityreport.php:29
-msgid "A new cineturlink named \"%s\" was added by \"%s\""
-msgstr "Un nouveau cinecturlink nommé \"%s\" a été ajouté par \"%s\""
-
-#: inc/lib.cinecturlink2.activityreport.php:37
-msgid "updating link"
-msgstr "Mise à jour de lien"
-
-#: inc/lib.cinecturlink2.activityreport.php:38
-msgid "Cinecturlink named \"%s\" has been updated by \"%s\""
-msgstr "Le cinecturlink nommé \"%s\" a été mis à jour par \"%s\""
-
-#: inc/lib.cinecturlink2.activityreport.php:46
-msgid "link deletion"
-msgstr "Suppression de lien"
-
-#: inc/lib.cinecturlink2.activityreport.php:47
-msgid "Cinecturlink named \"%s\" has been deleted by \"%s\""
-msgstr "Le cinecturlink nommé \"%s\" a été effacé par \"%s\""
-
-#: inc/lib.cinecturlink2.list.php:43
-msgid "No link matches the filter"
-msgstr "Aucun lien pour ce filtre"
-
-#: inc/lib.cinecturlink2.list.php:45
-msgid "No link"
-msgstr "Aucun lien"
-
-#: inc/lib.cinecturlink2.list.php:60
-msgid "List of %s links matching the filter."
-msgstr "Liste des %s liens correspondant au filtre."
-
-#: inc/lib.cinecturlink2.list.php:61
-msgid "List of links (%s)"
-msgstr "Listes des liens (%s)"
-
-#: inc/lib.cinecturlink2.list.php:70
-#: index.php:143
-#: index.php:465
 msgid "Rating"
 msgstr "Évaluation"
 
-#: inc/lib.cinecturlink2.list.php:119
+msgid "You must provide a specific folder for images."
+msgstr "Vous devez fournir un dossier spécifique pour les images."
+
+msgid "Maximum width of images (in pixel):"
+msgstr "Largeur maximum des images (en pixels) :"
+
+msgid "Public folder of images (under public folder of blog):"
+msgstr "Dossier publique des images (dans le répertoire \"public\" du blog) :"
+
+msgid "Update cache when use \"Random\" or \"Number of view\" order on widget (Need reload of widgets on change)"
+msgstr "Mettre à jour le cache lors de l'utilisation de l'ordre  \"Aléatoire\" ou \"Nombre d'affichages\" dans le widget (Nécessite le rechargement du widget)"
+
+msgid "This increases the random effect, but updates the cache of the blog whenever the widget is displayed, which reduces the perfomances of your blog."
+msgstr "Ceci augmente l'effet aléatoire, mais met à jour le cache à chaque affichage du widget, ce qui diminue les performances du blog."
+
+msgid "Public page"
+msgstr "Page publique"
+
+msgid "Enable public page"
+msgstr "Activer la page publique"
+
+msgid "Public page has url: %s"
+msgstr "La page publique à l'URL: %s"
+
+msgid "Title of the public page:"
+msgstr "Titre de la page publique :"
+
+msgid "Description of the public page:"
+msgstr "Description de la page publique :"
+
+msgid "Limit number of entries per page on pulic page to:"
+msgstr "Limiter le nombre d'entrée par page sur la page public à :"
+
+msgid "Informations"
+msgstr "Informations"
+
+msgid "Once the extension has been configured and your links have been created, you can place one of the cinecturlink widgets in the sidebar."
+msgstr "Une fois l'extension configurée et vos liens créés, vous pouvez placer un des widgets cinecturlink dans la barre latérale."
+
+msgid "In order to open links in new window you can use plugin %s."
+msgstr "Afin d'ouvrir les liens dans une nouvelle page vous pouvez utiliser l'extension %s."
+
+msgid "In order to change URL of public page you can use plugin %s."
+msgstr "Afin de changer l'URL de la page publique vous pouvez utiliser l'extension %s."
+
+msgid "You can add public pages of cinecturlink to the plugin %s."
+msgstr "Vous pouvez ajouter les pages publiques de cinecturlink à l'extension %s."
+
+msgid "The plugin Cinecturlink2 is compatible with plugin %s."
+msgstr "L'extension Cinecturlink2 est compatible avec l'extension %s."
+
+msgid "Update date"
+msgstr "Date de mise à jour"
+
+msgid "My rating"
+msgstr "Mon évaluation"
+
+msgid "Random"
+msgstr "Aléatoire"
+
+msgid "Number of views"
+msgstr "Nombre d'affichages"
+
+msgid "Show selection of cinecturlinks"
+msgstr "Afficher une selection de cinecturlink"
+
+msgid "Sort: (only for date, note and title)"
+msgstr "Ordre: (seulement pour date, note et titre)"
+
+msgid "Limit:"
+msgstr "Limite :"
+
+msgid "Enable link"
+msgstr "Autoriser les liens"
+
+msgid "Show author"
+msgstr "Afficher l'auteur"
+
+msgid "Show my rating"
+msgstr "Afficher mon évaluation"
+
+msgid "Show description"
+msgstr "Afficher la description"
+
+msgid "Show a link to cinecturlink page"
+msgstr "Afficher un lien vers la page publique"
+
+msgid "List of categories of cinecturlink"
+msgstr "Liste des catégories de cinecturlink"
+
+msgid "My cinecturlink by categories"
+msgstr "Mes cinecturlink par catégories"
+
+msgid "Show number of links"
+msgstr "Afficher le nombre de liens"
+
+msgid "view all links"
+msgstr "voir tous les liens"
+
+msgid "More links"
+msgstr "Plus de liens"
+
+msgid "all links"
+msgstr "tous les liens"
+
+msgid "view links of this category"
+msgstr "voir les liens de cette catégorie"
+
+msgid "previous links"
+msgstr "liens précédents"
+
+msgid "next links"
+msgstr "liens suivants"
+
+msgid "These entries Atom feed"
+msgstr "Fil atom de ces billets"
+
+msgid "Category's entries feed"
+msgstr "Fil de cette catégorie"
+
+msgid "link"
+msgstr "lien"
+
+msgid "category"
+msgstr "catégorie"
+
+msgid "No link title"
+msgstr "Pas de titre de lien"
+
+msgid "No link description"
+msgstr "Pas de description de lien"
+
+msgid "No such link ID"
+msgstr "ID de lien inconnu"
+
+msgid "No category title"
+msgstr "Pas de titre de catégorie"
+
+msgid "No category description"
+msgstr "Pas de description de catégorie"
+
+msgid "No such category ID"
+msgstr "ID de catégorie inconnu"
+
+msgid "Failed to create public folder for images."
+msgstr "Impossible de créer le repertoire publique pour les images."
+
+msgid "Plugin cinecturlink2"
+msgstr "Extension cinecturlink 2"
+
+msgid "link creation"
+msgstr "Création de lien"
+
+msgid "A new cineturlink named \"%s\" was added by \"%s\""
+msgstr "Un nouveau cinecturlink nommé \"%s\" a été ajouté par \"%s\""
+
+msgid "updating link"
+msgstr "Mise à jour de lien"
+
+msgid "Cinecturlink named \"%s\" has been updated by \"%s\""
+msgstr "Le cinecturlink nommé \"%s\" a été mis à jour par \"%s\""
+
+msgid "link deletion"
+msgstr "Suppression de lien"
+
+msgid "Cinecturlink named \"%s\" has been deleted by \"%s\""
+msgstr "Le cinecturlink nommé \"%s\" a été effacé par \"%s\""
+
+msgid "No link matches the filter"
+msgstr "Aucun lien pour ce filtre"
+
+msgid "No link"
+msgstr "Aucun lien"
+
+msgid "List of %s links matching the filter."
+msgstr "Liste des %s liens correspondant au filtre."
+
+msgid "List of links (%s)"
+msgstr "Listes des liens (%s)"
+
 msgid "image"
 msgstr "image"
 
-#: index.php:67
 msgid "Links successfully deleted."
 msgstr "Liens effacés."
 
-#: index.php:74
 msgid "Delete links"
 msgstr "Effacer des liens"
 
-#: index.php:98
-#: index.php:124
 msgid "Links successfully updated."
 msgstr "Liens mis à jour."
 
-#: index.php:109
 msgid "Update links rating"
 msgstr "Changer l'évaluation"
 
-#: index.php:135
 msgid "Update links category"
 msgstr "Changer la catégorie"
 
-#: index.php:152
 msgid "Change rating"
 msgstr "Changer l'évaluation"
 
-#: index.php:240
 msgid "You must provide a title."
 msgstr "Vous devez fournir un titre."
 
-#: index.php:243
 msgid "You must provide an author."
 msgstr "Vous devez spécifier un auteur"
 
-#: index.php:246
 msgid "You must provide a link to an image."
 msgstr "Vous devez fournir un lien vers une image."
 
-#: index.php:263
 msgid "Link with same name already exists."
 msgstr "Un lien avec le même titre existe déjà."
 
-#: index.php:268
 msgid "Link successfully created."
 msgstr "Lien crée."
 
-#: index.php:274
 msgid "Unknown link."
 msgstr "Lien inconnu."
 
-#: index.php:279
 msgid "Link successfully updated."
 msgstr "Lien mis à jour."
 
-#: index.php:299
 msgid "Link successfully deleted."
 msgstr "Lien effacé."
 
-#: index.php:324
 msgid "New link"
 msgstr "Nouveau lien"
 
-#: index.php:359
 msgid "Categories successfully reordered."
 msgstr "Catégories réordonnées."
 
-#: index.php:430
-msgid "Category successfully deleted."
-msgstr "Catégorie effacé."
+msgid "Categories successfully deleted."
+msgstr "Catégories effacées."
 
-#: index.php:395
-#: index.php:412
 msgid "Category with same name already exists."
 msgstr "Une catégorie portant le même nom existe déjà."
 
-#: index.php:404
 msgid "Category successfully created."
 msgstr "Catégory créée."
 
-#: index.php:457
-#: index.php:491
-#: index.php:543
+msgid "Category successfully updated."
+msgstr "Catégorie mise à jour."
+
+msgid "Category successfully deleted."
+msgstr "Catégorie effacé."
+
 msgid "There is no link"
 msgstr "Il n'y a pas de lien"
 
-#: index.php:467
 msgid "New rating:"
 msgstr "Nouvelle évaluation :"
 
-#: index.php:501
 msgid "New category:"
 msgstr "Nouvelle catégorie :"
 
-#: index.php:534
 msgid "Edit categories"
 msgstr "Gérer les catégories"
 
-#: index.php:538
 msgid "New Link"
 msgstr "Nouveau lien"
 
-#: index.php:540
-#: index.php:689
 msgid "New Category"
 msgstr "Nouvelle catégorie"
 
-#: index.php:587
 msgid "Selected links action:"
 msgstr "Action sur les liens selectionnés :"
 
-#: index.php:620
 msgid "Details URL:"
 msgstr "Liens vers les détails :"
 
-#: index.php:623
 msgid "Search with Google"
 msgstr "Rechercher avec Google"
 
-#: index.php:625
 msgid "Image URL:"
 msgstr "Lien vers l'image :"
 
-#: index.php:628
 msgid "Search with Amazon"
 msgstr "Rechercher avec Amazon"
 
-#: index.php:633
 msgid "There is no image in cinecturlink media path."
 msgstr "Il n'y a pas d'image dans le chemin des média cinecturlink."
 
-#: index.php:636
 msgid "or select from repository:"
 msgstr "ou selectionner depuis le dépôt :"
 
-#: index.php:639
 msgid "Go to media manager to add image to cinecturlink path."
 msgstr "Aller dans le gestionnaire de média pour ajouter des images au chemin des cinecturlink."
 
-#: index.php:651
 msgid "Rating:"
 msgstr "Évaluation :"
 
-#: index.php:692
 msgid "There is no category"
 msgstr "Il n'y a pas de catégorie"
 
-#: index.php:699
 msgid "Categories list"
 msgstr "Liste des catégories"
 
-#: index.php:701
 msgid "name"
 msgstr "nom"
 
-#: index.php:702
 msgid "description"
 msgstr "description"
 
-#: index.php:747
 msgid "Check to delete"
 msgstr "Cocher pour supprimer"
 
-#: index.php:753
 msgid "Delete selection"
 msgstr "Effacer la selection"
 
-#: index.php:773
 msgid "No link uses this category."
 msgstr "Aucun lien n'utilise cette catégorie."
+
+msgid "A link uses this category."
+msgid_plural "%s links use this category."
+msgstr[0] "Un lien utilise cette catégorie."
+msgstr[1] "%s liens utilisent cette catégorie."
 
