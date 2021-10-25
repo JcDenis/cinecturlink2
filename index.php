@@ -287,12 +287,7 @@ if ($part == 'link') {
     }
     $breadcrumb[(empty($linkid) ? __('New link') : __('Edit link'))] = '';
     $headers .=
-        "<script type=\"text/javascript\">\n//<![CDATA[
-        \$(function(){if(!document.getElementById){return;} 
-        \$('#newlinksearch').openGoogle('" . $core->auth->getInfo('user_lang') . "','#linktitle'); 
-        \$('#newimagesearch').openAmazon('" . $core->auth->getInfo('user_lang') . "','#linktitle'); 
-        \$('#newimageselect').fillLink('#linkimage'); 
-        });\n//]]>\n</script>\n" .
+        dcPage::jsVars(['dotclear.c2_lang' => $core->auth->getInfo('user_lang')]) .
         dcPage::jsLoad(dcPage::getPF('cinecturlink2/js/c2link.js'));
 }
 
@@ -544,12 +539,12 @@ if ($part == "link") {
     '</label></p>
     <p><label for="linkurl">' . __('Details URL:') . ' ' .
     form::field('linkurl', 60, 255,  html::escapeHTML($linkurl), 'maximal') . '</label>' .
-    '<a class="modal" href="http://google.com" id="newlinksearch">' .
+    '<a class="modal hidden-if-no-js" href="http://google.com" id="newlinksearch">' .
     __('Search with Google') . '</a>' .
     '</p>
     <p><label for="linkimage">' . __('Image URL:') . ' ' .
     form::field('linkimage', 60, 255,  html::escapeHTML($linkimage), 'maximal') . '</label>' .
-    '<a class="modal" href="http://amazon.com" id="newimagesearch">' .
+    '<a class="modal hidden-if-no-js"" href="http://amazon.com" id="newimagesearch">' .
     __('Search with Amazon') . '</a>' .
     '</p>';
 

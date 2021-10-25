@@ -1,11 +1,6 @@
-/*
-$(function() {
-  // checkboxes selection
-  $('.checkboxes-helpers').each(function() {
-    dotclear.checkboxesHelpers(this);
-  });
-});
-*/
+/*global $, dotclear */
+'use strict';
+
 $(function () {
   $('.checkboxes-helpers').each(function () {
     dotclear.checkboxesHelpers(this, undefined, '#form-entries td input[type=checkbox]', '#form-entries #do-action');
