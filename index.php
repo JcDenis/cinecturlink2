@@ -496,9 +496,6 @@ if ($part == "links") {
             form::hidden('p', 'cinecturlink2') . form::hidden('part', 'links')
         );
 
-        $hidden = $c2link_filter->values(true);
-        unset($hidden['part']);
-
         $links_list->display($c2link_filter->page, $c2link_filter->nb,
             '<form action="' . $core->adminurl->get('admin.plugin.cinecturlink2') . '" method="post" id="form-entries">' .
 
@@ -510,7 +507,7 @@ if ($part == "links") {
             '<p class="col right"><label for="action" class="classic">' . __('Selected links action:') . '</label> ' .
             form::combo('part', $action_combo) .
             '<input id="do-action" type="submit" value="' . __('ok') . '" disabled /></p>' .
-            $core->adminurl->getHiddenFormFields('admin.plugin.cinecturlink2', $hidden) .
+            $core->adminurl->getHiddenFormFields('admin.plugin.cinecturlink2', array_diff_key($c2link_filter->values(true), ['part' => ''])) .
             form::hidden(['redir'], $links_redir) .
             $core->formNonce() .
             '</div>' .
@@ -556,7 +553,10 @@ if ($part == "link") {
         <p><label for="newimageselect">' . __('or select from repository:') . ' ' .
         form::combo('newimageselect', $media_combo, '', 'maximal') .
         '</label></p>' .
-        '<p class="form-note">' . __('Go to media manager to add image to cinecturlink path.') . '</p>';
+        '<p class="form-note"><a href="' . 
+            $core->adminurl->get('admin.media', ['d' => (string) $core->blog->settings->cinecturlink2->cinecturlink2_folder]) . '">' . 
+            __('Go to media manager to add image to cinecturlink path.') . 
+        '<a></p>';
     }
 
     echo '

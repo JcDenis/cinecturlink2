@@ -1,6 +1,7 @@
 0.8.1 - dev
 - [ ] update public templates
-- [ ] fix javascript
+- fix javascript
+- fix modal
 - add user pref on sort filters (dc 2.20)
 
 0.9 - 2021.09.11
