@@ -1,33 +1,32 @@
 <?php
 /**
  * @brief cinecturlink2, a plugin for Dotclear 2
- * 
+ *
  * @package Dotclear
  * @subpackage Plugin
- * 
+ *
  * @author Jean-Christian Denis and Contributors
- * 
+ *
  * @copyright Jean-Christian Denis
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-
 if (!defined('DC_CONTEXT_MODULE')) {
     return null;
 }
 
-$redir = empty($_REQUEST['redir']) ? 
-    $list->getURL().'#plugins' : $_REQUEST['redir'];
+$redir = empty($_REQUEST['redir']) ?
+    $list->getURL() . '#plugins' : $_REQUEST['redir'];
 
 $core->blog->settings->addNamespace('cinecturlink2');
-$s = $core->blog->settings->cinecturlink2;
-$cinecturlink2_active = (boolean) $s->cinecturlink2_active;
-$cinecturlink2_widthmax = abs((integer) $s->cinecturlink2_widthmax);
-$cinecturlink2_folder = (string) $s->cinecturlink2_folder;
-$cinecturlink2_triggeronrandom = (boolean) $s->cinecturlink2_triggeronrandom;
-$cinecturlink2_public_active = (boolean) $s->cinecturlink2_public_active;
-$cinecturlink2_public_title = (string) $s->cinecturlink2_public_title;
+$s                                = $core->blog->settings->cinecturlink2;
+$cinecturlink2_active             = (bool) $s->cinecturlink2_active;
+$cinecturlink2_widthmax           = abs((int) $s->cinecturlink2_widthmax);
+$cinecturlink2_folder             = (string) $s->cinecturlink2_folder;
+$cinecturlink2_triggeronrandom    = (bool) $s->cinecturlink2_triggeronrandom;
+$cinecturlink2_public_active      = (bool) $s->cinecturlink2_public_active;
+$cinecturlink2_public_title       = (string) $s->cinecturlink2_public_title;
 $cinecturlink2_public_description = (string) $s->cinecturlink2_public_description;
-$cinecturlink2_public_nbrpp = (integer) $s->cinecturlink2_public_nbrpp;
+$cinecturlink2_public_nbrpp       = (int) $s->cinecturlink2_public_nbrpp;
 if ($cinecturlink2_public_nbrpp < 1) {
     $cinecturlink2_public_nbrpp = 10;
 }
@@ -36,18 +35,17 @@ $combo_dirs = cinecturlink2::getPublicDirs($core);
 
 if (!empty($_POST['save'])) {
     try {
-
-        $cinecturlink2_active = !empty($_POST['cinecturlink2_active']);
-        $cinecturlink2_widthmax = abs((integer) $_POST['cinecturlink2_widthmax']);
-        $cinecturlink2_newdir = (string) files::tidyFileName($_POST['cinecturlink2_newdir']);
-        $cinecturlink2_folder = empty($cinecturlink2_newdir) ? 
+        $cinecturlink2_active   = !empty($_POST['cinecturlink2_active']);
+        $cinecturlink2_widthmax = abs((int) $_POST['cinecturlink2_widthmax']);
+        $cinecturlink2_newdir   = (string) files::tidyFileName($_POST['cinecturlink2_newdir']);
+        $cinecturlink2_folder   = empty($cinecturlink2_newdir) ?
             (string) files::tidyFileName($_POST['cinecturlink2_folder']) :
             $cinecturlink2_newdir;
-        $cinecturlink2_triggeronrandom = !empty($_POST['cinecturlink2_triggeronrandom']);
-        $cinecturlink2_public_active = !empty($_POST['cinecturlink2_public_active']);
-        $cinecturlink2_public_title = (string) $_POST['cinecturlink2_public_title'];
+        $cinecturlink2_triggeronrandom    = !empty($_POST['cinecturlink2_triggeronrandom']);
+        $cinecturlink2_public_active      = !empty($_POST['cinecturlink2_public_active']);
+        $cinecturlink2_public_title       = (string) $_POST['cinecturlink2_public_title'];
         $cinecturlink2_public_description = (string) $_POST['cinecturlink2_public_description'];
-        $cinecturlink2_public_nbrpp = (integer) $_POST['cinecturlink2_public_nbrpp'];
+        $cinecturlink2_public_nbrpp       = (int) $_POST['cinecturlink2_public_nbrpp'];
         if ($cinecturlink2_public_nbrpp < 1) {
             $cinecturlink2_public_nbrpp = 10;
         }
@@ -72,7 +70,7 @@ if (!empty($_POST['save'])) {
             __('Configuration successfully updated.')
         );
         $core->adminurl->redirect(
-            'admin.plugins', 
+            'admin.plugins',
             ['module' => 'cinecturlink2', 'conf' => 1, 'redir' => $list->getRedir()]
         );
     } catch (Exception $e) {
@@ -88,10 +86,10 @@ echo '
 form::checkbox('cinecturlink2_active', 1, $cinecturlink2_active) .
 __('Enable plugin') . '</label></p>
 
-<p><label for="cinecturlink2_folder">'.__('Public folder of images (under public folder of blog):') . '</label>' .
+<p><label for="cinecturlink2_folder">' . __('Public folder of images (under public folder of blog):') . '</label>' .
 form::combo('cinecturlink2_folder', $combo_dirs, $cinecturlink2_folder) . '</p>
 
-<p><label for="cinecturlink2_newdir">'.__('Or create a new public folder of images:') . '</label>' .
+<p><label for="cinecturlink2_newdir">' . __('Or create a new public folder of images:') . '</label>' .
 form::field('cinecturlink2_newdir', 60, 64, '', 'maximal') . '</p>
 
 <p><label for="cinecturlink2_widthmax">' . __('Maximum width of images (in pixel):') . '</label>' .
@@ -115,7 +113,7 @@ __('Update cache when use "Random" or "Number of view" order on widget (Need rel
 <p><label class="classic" for="cinecturlink2_public_active">' .
 form::checkbox('cinecturlink2_public_active', 1, $cinecturlink2_public_active) .
 __('Enable public page') . '</label></p>
-<p class="form-note">' . sprintf(__('Public page has url: %s'), '<a href="' . $core->blog->url.$core->url->getBase('cinecturlink2') . '" title="public page">' . $core->blog->url . $core->url->getBase('cinecturlink2') . '</a>') . '</p>
+<p class="form-note">' . sprintf(__('Public page has url: %s'), '<a href="' . $core->blog->url . $core->url->getBase('cinecturlink2') . '" title="public page">' . $core->blog->url . $core->url->getBase('cinecturlink2') . '</a>') . '</p>
 
 <p><label for="cinecturlink2_public_title">' . __('Title of the public page:') . '</label>' .
 form::field('cinecturlink2_public_title', 60, 255, $cinecturlink2_public_title, 'maximal') . '</p>

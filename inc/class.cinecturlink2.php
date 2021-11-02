@@ -1,16 +1,15 @@
 <?php
 /**
  * @brief cinecturlink2, a plugin for Dotclear 2
- * 
+ *
  * @package Dotclear
  * @subpackage Plugin
- * 
+ *
  * @author Jean-Christian Denis and Contributors
- * 
+ *
  * @copyright Jean-Christian Denis
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-
 if (!defined('DC_RC_PATH')) {
     return null;
 }
@@ -33,22 +32,22 @@ class cinecturlink2
 
     /**
      * Contructor
-     * 
+     *
      * @param dcCore $core dcCore instance
      */
     public function __construct(dcCore $core)
     {
         $core->blog->settings->addNamespace('cinecturlink2');
 
-        $this->core = $core;
-        $this->con = $core->con;
+        $this->core  = $core;
+        $this->con   = $core->con;
         $this->table = $core->prefix . 'cinecturlink2';
-        $this->blog = $core->con->escape($core->blog->id);
+        $this->blog  = $core->con->escape($core->blog->id);
     }
 
     /**
      * Get links
-     * 
+     *
      * @param  array   $params     Query params
      * @param  boolean $count_only Count only result
      * @return record              record instance
@@ -63,8 +62,7 @@ class cinecturlink2
                 $content_req .= implode(', ', $params['columns']) . ', ';
             }
 
-            $strReq =
-            'SELECT L.link_id, L.blog_id, L.cat_id, L.user_id, L.link_type, ' .
+            $strReq = 'SELECT L.link_id, L.blog_id, L.cat_id, L.user_id, L.link_type, ' .
             $content_req .
             'L.link_creadt, L.link_upddt, L.link_note, L.link_count, ' .
             'L.link_title, L.link_desc, L.link_author, ' .
@@ -74,8 +72,7 @@ class cinecturlink2
             'C.cat_title, C.cat_desc ';
         }
 
-        $strReq .= 
-        'FROM '. $this->table . ' L ' .
+        $strReq .= 'FROM ' . $this->table . ' L ' .
         'INNER JOIN ' . $this->core->prefix . 'user U ON U.user_id = L.user_id ' .
         'LEFT OUTER JOIN ' . $this->table . '_cat C ON L.cat_id = C.cat_id ';
 
@@ -97,18 +94,18 @@ class cinecturlink2
 
         if (!empty($params['link_id'])) {
             if (is_array($params['link_id'])) {
-                array_walk($params['link_id'], function(&$v, $k){ if($v !== null) { $v = (integer) $v;}});
+                array_walk($params['link_id'], function (&$v, $k) { if ($v !== null) { $v = (int) $v;}});
             } else {
-                $params['link_id'] = [(integer) $params['link_id']];
+                $params['link_id'] = [(int) $params['link_id']];
             }
             $strReq .= 'AND L.link_id ' . $this->con->in($params['link_id']);
         }
 
         if (!empty($params['cat_id'])) {
             if (is_array($params['cat_id'])) {
-                array_walk($params['cat_id'], function(&$v, $k) { if($v !== null) { $v = (integer) $v;}});
+                array_walk($params['cat_id'], function (&$v, $k) { if ($v !== null) { $v = (int) $v;}});
             } else {
-                $params['cat_id'] = [(integer) $params['cat_id']];
+                $params['cat_id'] = [(int) $params['cat_id']];
             }
             $strReq .= 'AND L.cat_id ' . $this->con->in($params['cat_id']);
         }
@@ -145,7 +142,7 @@ class cinecturlink2
 
     /**
      * Add link
-     * 
+     *
      * @param cursor $cur cursor instance
      */
     public function addLink(cursor $cur)
@@ -166,17 +163,18 @@ class cinecturlink2
                 $cur->link_note = 10;
             }
 
-            $cur->link_id = $this->getNextLinkId();
-            $cur->blog_id = $this->blog;
-            $cur->user_id = $this->core->auth->userID();
+            $cur->link_id     = $this->getNextLinkId();
+            $cur->blog_id     = $this->blog;
+            $cur->user_id     = $this->core->auth->userID();
             $cur->link_creadt = date('Y-m-d H:i:s');
-            $cur->link_upddt = date('Y-m-d H:i:s');
-            $cur->link_pos = 0;
-            $cur->link_count = 0;
+            $cur->link_upddt  = date('Y-m-d H:i:s');
+            $cur->link_pos    = 0;
+            $cur->link_count  = 0;
             $cur->insert();
             $this->con->unlock();
         } catch (Exception $e) {
             $this->con->unlock();
+
             throw $e;
         }
         $this->trigger();
@@ -189,14 +187,14 @@ class cinecturlink2
 
     /**
      * Update link
-     * 
+     *
      * @param  integer $id       Link ID
      * @param  cursor  $cur      cursor instance
      * @param  boolean $behavior Call related behaviors
      */
     public function updLink($id, cursor $cur, $behavior = true)
     {
-        $id = (integer) $id;
+        $id = (int) $id;
 
         if (empty($id)) {
             throw new Exception(__('No such link ID'));
@@ -204,7 +202,7 @@ class cinecturlink2
 
         $cur->link_upddt = date('Y-m-d H:i:s');
 
-        $cur->update("WHERE link_id = " . $id . " AND blog_id = '" . $this->blog . "' ");
+        $cur->update('WHERE link_id = ' . $id . " AND blog_id = '" . $this->blog . "' ");
         $this->trigger();
 
         if ($behavior) {
@@ -215,12 +213,12 @@ class cinecturlink2
 
     /**
      * Delete link
-     * 
+     *
      * @param  integer $id Link ID
      */
     public function delLink($id)
     {
-        $id = (integer) $id;
+        $id = (int) $id;
 
         if (empty($id)) {
             throw new Exception(__('No such link ID'));
@@ -240,7 +238,7 @@ class cinecturlink2
 
     /**
      * Get next link ID
-     * 
+     *
      * @return integer Next link ID
      */
     private function getNextLinkId()
@@ -252,7 +250,7 @@ class cinecturlink2
 
     /**
      * Get categories
-     * 
+     *
      * @param  array   $params     Query params
      * @param  boolean $count_only Count only result
      * @return record              record instance
@@ -261,15 +259,13 @@ class cinecturlink2
     {
         if ($count_only) {
             $strReq = 'SELECT count(C.cat_id) ';
-        }
-        else {
+        } else {
             $content_req = '';
             if (!empty($params['columns']) && is_array($params['columns'])) {
                 $content_req .= implode(', ', $params['columns']) . ', ';
             }
 
-            $strReq =
-            'SELECT C.cat_id, C.blog_id, C.cat_title, C.cat_desc, ' .
+            $strReq = 'SELECT C.cat_id, C.blog_id, C.cat_title, C.cat_desc, ' .
             $content_req .
             'C.cat_pos, C.cat_creadt, C.cat_upddt ';
         }
@@ -284,18 +280,18 @@ class cinecturlink2
 
         if (!empty($params['cat_id'])) {
             if (is_array($params['cat_id'])) {
-                array_walk($params['cat_id'], function(&$v, $k) { if($v !== null) { $v = (integer) $v; }});
+                array_walk($params['cat_id'], function (&$v, $k) { if ($v !== null) { $v = (int) $v; }});
             } else {
-                $params['cat_id'] = [(integer) $params['cat_id']];
+                $params['cat_id'] = [(int) $params['cat_id']];
             }
             $strReq .= 'AND C.cat_id ' . $this->con->in($params['cat_id']);
         }
 
         if (isset($params['exclude_cat_id']) && $params['exclude_cat_id'] !== '') {
             if (is_array($params['exclude_cat_id'])) {
-                array_walk($params['exclude_cat_id'], function (&$v, $k) { if ($v !== null) {$v = (integer) $v;}});
+                array_walk($params['exclude_cat_id'], function (&$v, $k) { if ($v !== null) {$v = (int) $v;}});
             } else {
-                $params['exclude_cat_id'] = [(integer) $params['exclude_cat_id']];
+                $params['exclude_cat_id'] = [(int) $params['exclude_cat_id']];
             }
             $strReq .= 'AND C.cat_id NOT ' . $this->con->in($params['exclude_cat_id']);
         }
@@ -325,7 +321,7 @@ class cinecturlink2
 
     /**
      * Add category
-     * 
+     *
      * @param  cursor  $cur cursor instance
      * @return integer      New category ID
      */
@@ -341,15 +337,16 @@ class cinecturlink2
                 throw new Exception(__('No category description'));
             }
 
-            $cur->cat_id = $this->getNextCatId();
-            $cur->cat_pos = $this->getNextCatPos();
-            $cur->blog_id = $this->blog;
+            $cur->cat_id     = $this->getNextCatId();
+            $cur->cat_pos    = $this->getNextCatPos();
+            $cur->blog_id    = $this->blog;
             $cur->cat_creadt = date('Y-m-d H:i:s');
-            $cur->cat_upddt = date('Y-m-d H:i:s');
+            $cur->cat_upddt  = date('Y-m-d H:i:s');
             $cur->insert();
             $this->con->unlock();
         } catch (Exception $e) {
             $this->con->unlock();
+
             throw $e;
         }
         $this->trigger();
@@ -359,13 +356,13 @@ class cinecturlink2
 
     /**
      * Update category
-     * 
+     *
      * @param  integer $id  Category ID
      * @param  cursor  $cur cursor instance
      */
     public function updCategory($id, cursor $cur)
     {
-        $id = (integer) $id;
+        $id = (int) $id;
 
         if (empty($id)) {
             throw new Exception(__('No such category ID'));
@@ -373,18 +370,18 @@ class cinecturlink2
 
         $cur->cat_upddt = date('Y-m-d H:i:s');
 
-        $cur->update("WHERE cat_id = " . $id . " AND blog_id = '" . $this->blog . "' ");
+        $cur->update('WHERE cat_id = ' . $id . " AND blog_id = '" . $this->blog . "' ");
         $this->trigger();
     }
 
     /**
      * Delete category
-     * 
+     *
      * @param  integer $id Category ID
      */
     public function delCategory($id)
     {
-        $id = (integer) $id;
+        $id = (int) $id;
 
         if (empty($id)) {
             throw new Exception(__('No such category ID'));
@@ -397,17 +394,17 @@ class cinecturlink2
         );
 
         # Update link cat to NULL
-        $cur = $this->con->openCursor($this->table);
-        $cur->cat_id = NULL;
+        $cur             = $this->con->openCursor($this->table);
+        $cur->cat_id     = null;
         $cur->link_upddt = date('Y-m-d H:i:s');
-        $cur->update("WHERE cat_id = " . $id . " AND blog_id = '" . $this->blog . "' ");
+        $cur->update('WHERE cat_id = ' . $id . " AND blog_id = '" . $this->blog . "' ");
 
         $this->trigger();
     }
 
     /**
      * Get next category ID
-     * 
+     *
      * @return integer Next category ID
      */
     private function getNextCatId()
@@ -419,7 +416,7 @@ class cinecturlink2
 
     /**
      * Get next category position
-     * 
+     *
      * @return integer Next category position
      */
     private function getNextCatPos()
@@ -440,7 +437,7 @@ class cinecturlink2
 
     /**
      * Check if a directory exists and is writable
-     * 
+     *
      * @param  string  $root   Root
      * @param  string  $folder Folder to create into root folder
      * @param  boolean $throw  Throw exception or not
@@ -453,24 +450,26 @@ class cinecturlink2
                 if ($throw) {
                     throw new Exception(__('Failed to create public folder for images.'));
                 }
+
                 return false;
             }
         }
+
         return true;
     }
 
     /**
      * Get list of public directories
-     * 
+     *
      * @param  dcCore  $core    Core instance
      * @return array            Directories
      */
     public static function getPublicDirs($core)
     {
         $dirs = [];
-        $all = files::getDirList($core->blog->public_path);
-        foreach($all['dirs'] as $dir) {
-            $dir = substr($dir, strlen($core->blog->public_path) + 1);
+        $all  = files::getDirList($core->blog->public_path);
+        foreach ($all['dirs'] as $dir) {
+            $dir        = substr($dir, strlen($core->blog->public_path) + 1);
             $dirs[$dir] = $dir;
         }
 
