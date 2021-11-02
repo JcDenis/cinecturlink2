@@ -196,7 +196,7 @@ if ($part == 'link') {
 
     if (!empty($_POST['save'])) {
         try {
-            cinecturlink2::test_folder(
+            cinecturlink2::makePublicDir(
                 DC_ROOT . '/'  .$core->blog->settings->system->public_path,
                 $core->blog->settings->cinecturlink2->cinecturlink2_folder
             );

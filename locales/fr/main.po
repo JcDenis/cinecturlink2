@@ -3,7 +3,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Project-Id-Version: cinecturlink2 0.9.1\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2021-10-24T22:24:00+00:00\n"
+"PO-Revision-Date: 2021-11-02T22:51:46+00:00\n"
 "Last-Translator: Jean-Christian Denis\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -19,11 +19,14 @@ msgstr "Évaluation"
 msgid "You must provide a specific folder for images."
 msgstr "Vous devez fournir un dossier spécifique pour les images."
 
-msgid "Maximum width of images (in pixel):"
-msgstr "Largeur maximum des images (en pixels) :"
-
 msgid "Public folder of images (under public folder of blog):"
 msgstr "Dossier publique des images (dans le répertoire \"public\" du blog) :"
+
+msgid "Or create a new public folder of images:"
+msgstr "Ou créer un nouveau dossier public :"
+
+msgid "Maximum width of images (in pixel):"
+msgstr "Largeur maximum des images (en pixels) :"
 
 msgid "Update cache when use \"Random\" or \"Number of view\" order on widget (Need reload of widgets on change)"
 msgstr "Mettre à jour le cache lors de l'utilisation de l'ordre  \"Aléatoire\" ou \"Nombre d'affichages\" dans le widget (Nécessite le rechargement du widget)"

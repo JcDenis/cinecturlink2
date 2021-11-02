@@ -32,11 +32,17 @@ if ($cinecturlink2_public_nbrpp < 1) {
     $cinecturlink2_public_nbrpp = 10;
 }
 
+$combo_dirs = cinecturlink2::getPublicDirs($core);
+
 if (!empty($_POST['save'])) {
     try {
+
         $cinecturlink2_active = !empty($_POST['cinecturlink2_active']);
         $cinecturlink2_widthmax = abs((integer) $_POST['cinecturlink2_widthmax']);
-        $cinecturlink2_folder = (string) files::tidyFileName($_POST['cinecturlink2_folder']);
+        $cinecturlink2_newdir = (string) files::tidyFileName($_POST['cinecturlink2_newdir']);
+        $cinecturlink2_folder = empty($cinecturlink2_newdir) ? 
+            (string) files::tidyFileName($_POST['cinecturlink2_folder']) :
+            $cinecturlink2_newdir;
         $cinecturlink2_triggeronrandom = !empty($_POST['cinecturlink2_triggeronrandom']);
         $cinecturlink2_public_active = !empty($_POST['cinecturlink2_public_active']);
         $cinecturlink2_public_title = (string) $_POST['cinecturlink2_public_title'];
@@ -48,7 +54,7 @@ if (!empty($_POST['save'])) {
         if (empty($cinecturlink2_folder)) {
             throw new Exception(__('You must provide a specific folder for images.'));
         }
-        cinecturlink2::test_folder(
+        cinecturlink2::makePublicDir(
             DC_ROOT . '/' . $core->blog->settings->system->public_path,
             $cinecturlink2_folder,
             true
@@ -82,11 +88,14 @@ echo '
 form::checkbox('cinecturlink2_active', 1, $cinecturlink2_active) .
 __('Enable plugin') . '</label></p>
 
-<p><label for="cinecturlink2_widthmax">' . __('Maximum width of images (in pixel):') . ' ' .
-form::field('cinecturlink2_widthmax', 10, 4, $cinecturlink2_widthmax, 'maximal') . '</label></p>
+<p><label for="cinecturlink2_folder">'.__('Public folder of images (under public folder of blog):') . '</label>' .
+form::combo('cinecturlink2_folder', $combo_dirs, $cinecturlink2_folder) . '</p>
 
-<p><label for="cinecturlink2_folder">'.__('Public folder of images (under public folder of blog):') . ' ' .
-form::field('cinecturlink2_folder', 60, 64, $cinecturlink2_folder, 'maximal') . '</label></p>
+<p><label for="cinecturlink2_newdir">'.__('Or create a new public folder of images:') . '</label>' .
+form::field('cinecturlink2_newdir', 60, 64, '', 'maximal') . '</p>
+
+<p><label for="cinecturlink2_widthmax">' . __('Maximum width of images (in pixel):') . '</label>' .
+form::number('cinecturlink2_widthmax', 10, 512, $cinecturlink2_widthmax) . '</p>
 
 </div>
 
@@ -108,14 +117,14 @@ form::checkbox('cinecturlink2_public_active', 1, $cinecturlink2_public_active) .
 __('Enable public page') . '</label></p>
 <p class="form-note">' . sprintf(__('Public page has url: %s'), '<a href="' . $core->blog->url.$core->url->getBase('cinecturlink2') . '" title="public page">' . $core->blog->url . $core->url->getBase('cinecturlink2') . '</a>') . '</p>
 
-<p><label for="cinecturlink2_public_title">' . __('Title of the public page:') . ' ' .
-form::field('cinecturlink2_public_title', 60, 255, $cinecturlink2_public_title, 'maximal') . '</label></p>
+<p><label for="cinecturlink2_public_title">' . __('Title of the public page:') . '</label>' .
+form::field('cinecturlink2_public_title', 60, 255, $cinecturlink2_public_title, 'maximal') . '</p>
 
-<p><label for="cinecturlink2_public_description">' . __('Description of the public page:') . ' ' .
-form::field('cinecturlink2_public_description', 60, 255, $cinecturlink2_public_description, 'maximal') . '</label></p>
+<p><label for="cinecturlink2_public_description">' . __('Description of the public page:') . '</label>' .
+form::field('cinecturlink2_public_description', 60, 255, $cinecturlink2_public_description, 'maximal') . '</p>
 
-<p><label for="cinecturlink2_public_nbrpp">' . __('Limit number of entries per page on pulic page to:') . ' ' .
-form::field('cinecturlink2_public_nbrpp', 5, 10, $cinecturlink2_public_nbrpp, 'maximal') . '</label></p>
+<p><label for="cinecturlink2_public_nbrpp">' . __('Limit number of entries per page on pulic page to:') . '</label>' .
+form::number('cinecturlink2_public_nbrpp', 1, 100, $cinecturlink2_public_nbrpp) . '</p>
 
 </div>
 

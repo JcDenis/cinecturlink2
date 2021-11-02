@@ -446,7 +446,7 @@ class cinecturlink2
      * @param  boolean $throw  Throw exception or not
      * @return boolean         True if exists and writable
      */
-    public static function test_folder($root, $folder, $throw = false)
+    public static function makePublicDir($root, $folder, $throw = false)
     {
         if (!is_dir($root . '/' . $folder)) {
             if (!is_dir($root) || !is_writable($root) || !mkdir($root . '/' . $folder)) {
@@ -457,5 +457,23 @@ class cinecturlink2
             }
         }
         return true;
+    }
+
+    /**
+     * Get list of public directories
+     * 
+     * @param  dcCore  $core    Core instance
+     * @return array            Directories
+     */
+    public static function getPublicDirs($core)
+    {
+        $dirs = [];
+        $all = files::getDirList($core->blog->public_path);
+        foreach($all['dirs'] as $dir) {
+            $dir = substr($dir, strlen($core->blog->public_path) + 1);
+            $dirs[$dir] = $dir;
+        }
+
+        return $dirs;
     }
 }
