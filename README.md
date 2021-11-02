@@ -42,9 +42,15 @@ default Dotclear's theme. If you want to create your own template
 for your theme, copy files from cinecturlink2/default-templates 
 to your theme tpl path and adapt them.
 
-## MORE
+## LINKS
 
- * License : GNU GPL v2
+ * License : [GNU GPL v2](https://www.gnu.org/licenses/old-licenses/lgpl-2.0.html)
  * Source & contribution : [GitHub Page](https://github.com/JcDenis/cinecturlink2)
  * Packages & details:  [Dotaddict Page](https://plugins.dotaddict.org/dc2/details/cinecturlink2)
  * Discuss and help : [Dotclear Forum](https://forum.dotclear.org/viewtopic.php?id=40893)
+
+## CONTRIBUTORS
+
+ * Jean-Christian Denis
+
+ You are welcome to contribute to this code.
