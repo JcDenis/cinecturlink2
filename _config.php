@@ -14,6 +14,9 @@ if (!defined('DC_CONTEXT_MODULE')) {
     return null;
 }
 
+# Check user perms
+dcPage::check('admin');
+
 $redir = empty($_REQUEST['redir']) ?
     $list->getURL() . '#plugins' : $_REQUEST['redir'];
 
