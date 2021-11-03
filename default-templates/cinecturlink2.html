@@ -41,7 +41,15 @@
     <tpl:Block name="main-content-header">
       <header id="content-info">
         <tpl:Block name="main-content-header-title">
-          <h2>{{tpl:c2PageTitle encode_html="1"}}</h2>
+          <h2>
+              <tpl:c2If operator="or" request_link="1" request_cat="1">
+                <a href="{{tpl:c2PageURL}}" title="{{tpl:lang view all links}}">{{tpl:c2PageTitle encode_html="1"}}</a> &rsaquo; <tpl:c2Categories><tpl:c2CategoryIf current="1">{{tpl:c2CategoryTitle}}
+                </tpl:c2CategoryIf>
+              </tpl:c2Categories>
+              {{tpl:else}}
+                {{tpl:c2PageTitle encode_html="1"}}
+              </tpl:c2If>
+          </h2>
         </tpl:Block>
         <tpl:Block name="main-content-header-feed">
           <tpl:c2CategoryIf has_entries="1">
@@ -68,9 +76,6 @@
               <div id="subcategories" class="content-info__sub-cat">
               <h3>{{tpl:lang Categories}}</h3>
               <ul>
-              <tpl:c2If operator="or" request_link="1" request_cat="1">
-                <li class="post-cat"><a href="{{tpl:c2PageURL}}" title="{{tpl:lang view all links}}">{{tpl:lang view all links}}</a></li>
-              </tpl:c2If>
             </tpl:c2CategoriesHeader>
             <tpl:c2CategoryIf current="1">
               <li class="post-cat">{{tpl:c2CategoryTitle}}</li>
