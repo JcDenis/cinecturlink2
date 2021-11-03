@@ -417,7 +417,7 @@ if ($part == 'updlinksnote') {
     } else {
         echo '<h4>' . __('Links') . '</h4><ul>';
         while ($links->fetch()) {
-            echo '<li><strong>' . $links->link_title . '</strong> ' . $links->link_note . '/20</li>';
+            echo '<li><strong>' . $links->link_title . '</strong> - ' . $links->link_note . '/20</li>';
         }
         echo '</ul>';
 
@@ -452,7 +452,7 @@ if ($part == 'updlinkscat') {
     } else {
         echo '<h4>' . __('Links') . '</h4><ul>';
         while ($links->fetch()) {
-            echo '<li><strong>' . $links->link_title . '</strong> ' . $links->link_note . '/20</li>';
+            echo '<li><strong>' . $links->link_title . '</strong> - ' . ($links->cat_title ?? __('no categories')) . '</li>';
         }
         echo '</ul>';
 
@@ -480,16 +480,11 @@ if ($part == 'links') {
     $links_redir = $core->adminurl->get('admin.plugin.cinecturlink2', $c2link_filter->values());
 
     echo
-    '<p>' .
-    '<a class="button" href="' .
-        $core->adminurl->get('admin.plugin.cinecturlink2', ['part' => 'cats', 'redir' => $links_redir]) .
-    '">' . __('Edit categories') . ' </a>' .
-    '</p>' .
     '<p class="top-add"><a class="button add" href="' .
         $core->adminurl->get('admin.plugin.cinecturlink2', ['part' => 'link', 'redir' => $links_redir]) .
     '">' . __('New Link') . '</a> <a class="button add" href="' .
-        $core->adminurl->get('admin.plugin.cinecturlink2', ['part' => 'cat', 'redir' => $links_redir]) .
-    '">' . __('New Category') . ' </a></p>';
+        $core->adminurl->get('admin.plugin.cinecturlink2', ['part' => 'cats', 'redir' => $links_redir]) .
+    '">' . __('Edit categories') . ' </a></p>';
 
     if ($links->isEmpty() && !$c2link_filter->show()) {
         echo '<p>' . __('There is no link') . '</p>';
