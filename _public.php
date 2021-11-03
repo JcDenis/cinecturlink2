@@ -195,7 +195,7 @@ class tplCinecturlink2
 
     public static function c2PageFeedID($a)
     {
-        return 'urn:md5:<?php echo md5($core->blog->blog_id."cinecturlink2"); ?>';
+        return 'urn:md5:<?php echo md5($core->blog->id."cinecturlink2"); ?>';
     }
 
     public static function c2PageDescription($a)
@@ -304,7 +304,7 @@ class tplCinecturlink2
 
     public static function c2EntryFeedID($a)
     {
-        return 'urn:md5:<?php echo md5($_ctx->c2_entries->blog_id.$_ctx->c2_entries->link_id.$_ctx->c2_entries->link_dt); ?>';
+        return 'urn:md5:<?php echo md5($_ctx->c2_entries->blog_id.$_ctx->c2_entries->link_id.$_ctx->c2_entries->link_creadt); ?>';
     }
 
     public static function c2EntryID($a)
@@ -404,9 +404,9 @@ class tplCinecturlink2
         $format = !empty($a['format']) ? addslashes($a['format']) : '';
 
         if (!empty($a['rfc822'])) {
-            $p = 'dt::rfc822(strtotime($_ctx->c2_entries->link_creadt), $_ctx->posts->post_tz)';
+            $p = 'dt::rfc822(strtotime($_ctx->c2_entries->link_creadt), $core->blog->settings->system->blog_timezone)';
         } elseif (!empty($a['iso8601'])) {
-            $p = 'dt::iso8601(strtotime($_ctx->c2_entries->link_creadt), $_ctx->posts->post_tz)';
+            $p = 'dt::iso8601(strtotime($_ctx->c2_entries->link_creadt), $core->blog->settings->system->blog_timezone)';
         } elseif ($format) {
             $p = "dt::dt2str('" . $format . "', \$_ctx->c2_entries->link_creadt)";
         } else {
@@ -512,7 +512,7 @@ class tplCinecturlink2
 
     public static function c2CategoryFeedID($a)
     {
-        return 'urn:md5:<?php echo md5($core->blog->blog_id."cinecturlink2".$_ctx->c2_categories->cat_id); ?>';
+        return 'urn:md5:<?php echo md5($core->blog->id."cinecturlink2".$_ctx->c2_categories->cat_id); ?>';
     }
 
     public static function c2CategoryID($a)
