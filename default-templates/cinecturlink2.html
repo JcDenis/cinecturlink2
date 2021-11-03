@@ -1,30 +1,19 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{tpl:BlogLanguage}}" lang="{{tpl:BlogLanguage}}">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
- 
-  <title>{{tpl:c2PageTitle encode_html="1"}} - {{tpl:BlogName encode_html="1"}}</title>
-
-  <meta name="description" lang="{{tpl:BlogLanguage}}" content="{{tpl:BlogDescription cut_string="180" encode_html="1"}}" />
-  <meta name="copyright" content="{{tpl:BlogCopyrightNotice encode_html="1"}}" />
+{{tpl:extends parent="__layout.html"}}
+<tpl:Block name="head-title">
+  <title>{{tpl:c2PageTitle encode_html="1"}} - {{tpl:BlogName encode_html="1"}}
+  </title>
+</tpl:Block>
+<tpl:Block name="meta-robots">
+  <meta name="ROBOTS" content="{{tpl:BlogMetaRobots robots="NOINDEX"}}" />
+</tpl:Block>
+<tpl:Block name="meta-entry">
+  <meta name="description" lang="{{tpl:BlogLanguage}}" content="{{tpl:BlogDescription encode_html="1" cut_string="180" remove_html="1"}}" />
   <meta name="author" content="{{tpl:BlogEditor encode_html="1"}}" />
-  <meta name="date" scheme="W3CDTF" content="{{tpl:BlogUpdateDate iso8601="1"}}" />
-  
-  <link rel="schema.dc" href="http://purl.org/dc/elements/1.1/" />
-  <meta name="dc.title" lang="{{tpl:BlogLanguage}}" content="{{tpl:BlogName encode_html="1"}} - {{tpl:c2PageTitle encode_html="1"}}" />
-  <meta name="dc.description" lang="{{tpl:BlogLanguage}}" content="{{tpl:BlogDescription encode_html="1"}}" />
-  <meta name="dc.language" content="{{tpl:BlogLanguage}}" />
-  <meta name="dc.publisher" content="{{tpl:BlogEditor encode_html="1"}}" />
-  <meta name="dc.rights" content="{{tpl:BlogCopyrightNotice encode_html="1"}}" />
-  <meta name="dc.date" scheme="W3CDTF" content="{{tpl:BlogUpdateDate iso8601="1"}}" />
-  <meta name="dc.type" content="text" />
-  <meta name="dc.format" content="text/html" />
-  
-  <link rel="contents" title="{{tpl:lang Cinecturlink}}" href="{{tpl:c2PageURL}}" />
-  
-  <tpl:c2Entries>
+  <meta name="date" content="{{tpl:BlogUpdateDate iso8601="1"}}" />
+</tpl:Block>
+<tpl:Block name="head-linkrel">
+  <link rel="contents" href="{{tpl:c2PageURL}}" title="{{tpl:lang Cinecturlink}}" />
+  <tpl:c2Entries no_content="1">
     <tpl:c2EntriesHeader>
       <tpl:c2Pagination>
         <tpl:c2PaginationIf end="0">
@@ -36,98 +25,134 @@
         </tpl:c2PaginationIf>
       </tpl:c2Pagination>
     </tpl:c2EntriesHeader>
+    <link rel="chapter" href="{{tpl:c2EntryURL}}" title="{{tpl:c2EntryTitle encode_html="1"}}" />
   </tpl:c2Entries>
+  <link rel="alternate" type="application/atom+xml" title="Atom 1.0" href="{{tpl:c2PageFeedURL type="atom"}}" />
+</tpl:Block>
 
-  {{tpl:include src="_head.html"}}
-</head>
- 
-<body class="dc-post">
-<div id="page">
-{{tpl:include src="_top.html"}}
- 
-<div id="wrapper">
- 
-<div id="main">
-  <div id="content">
- 
-  <div id="content-info">
-    <h2>{{tpl:c2PageTitle encode_html="1"}}</h2>
-	<p>{{tpl:c2PageDescription}}</p>
-	<tpl:c2If operator="or" request_link="1" request_cat="1"><p><a href="{{tpl:c2PageURL}}" title="{{tpl:lang view all links}}">{{tpl:lang view all links}}</a></p></tpl:c2If>
-    <p>
-	 <a type="application/atom+xml" href="{{tpl:c2PageFeedURL type="atom"}}" title="{{tpl:lang These entries Atom feed}}" class="feed">{{tpl:lang Entries feed}}</a>
-	 <tpl:c2Categories>
-      <tpl:c2CategoryIf current="1"> - <a type="application/atom+xml" href="{{tpl:c2CategoryFeedURL type="atom"}}" title="{{tpl:lang This category's entries Atom feed}}" class="feed">{{tpl:lang Category's entries feed}}</a></p></tpl:c2CategoryIf>
-	 </tpl:c2Categories>
-    </p>
-  </div>
+<tpl:Block name="body-tag">
+  <body class="dc-post dc-cinecturlink">
+</tpl:Block>
 
-  <tpl:c2Categories>
-  <tpl:c2CategoriesHeader>
-  <div id="content-info cinecturlink-categories">
-    <h2>{{tpl:lang Categories}}</h2>
-     <ul>
-  </tpl:c2CategoriesHeader>
-     <tpl:c2CategoryIf current="1"><li>{{tpl:c2CategoryTitle}}</li></tpl:c2CategoryIf>
-     <tpl:c2CategoryIf current="0"><li><a href="{{tpl:c2CategoryURL}}" title="{{tpl:c2CategoryDescription remove_html="1"}}">{{tpl:c2CategoryTitle}}</a> </li></tpl:c2CategoryIf>
-  <tpl:c2CategoriesFooter>
-    </ul>
-  </div>
-  </tpl:c2CategoriesFooter>
-  </tpl:c2Categories>
- 	
-  <div class="content-inner cinecturlink-entries">
+<tpl:Block name="main-content">
+  <tpl:Block name="main-content-before"></tpl:Block>
+  <tpl:Block name="main-content-main">
 
-  <tpl:c2Entries order="link_creadt" sort="desc">
-   <div id="p{{tpl:c2EntryID}}" class="post {{tpl:c2EntryIfOdd}} {{tpl:c2EntryIfFirst}}" lang="{{tpl:c2EntryLang}}" xml:lang="{{tpl:c2EntryLang}}" style="clear:both;">
+    <tpl:Block name="main-content-header">
+      <header id="content-info">
+        <tpl:Block name="main-content-header-title">
+          <h2>{{tpl:c2PageTitle encode_html="1"}}</h2>
+        </tpl:Block>
+        <tpl:Block name="main-content-header-feed">
+          <tpl:c2CategoryIf has_entries="1">
+            <ul class="content-info__feed">
+              <li><a type="application/atom+xml" href="{{tpl:c2PageFeedURL type="atom"}}" 
+                title="{{tpl:lang This entries Atom feed}}" class="feed">{{tpl:lang Entries feed}}</a></li>
+              <tpl:c2Categories>
+                <tpl:c2CategoryIf current="1">
+                  <li><a type="application/atom+xml" href="{{tpl:c2CategoryFeedURL type="atom"}}" 
+                    title="{{tpl:lang This category's entries Atom feed}}" class="feed">{{tpl:lang Category's entries feed}}</a></li>
+                </tpl:c2CategoryIf>
+              </tpl:c2Categories>
+            </ul>
+          </tpl:c2CategoryIf>
+        </tpl:Block>
+        <tpl:Block name="main-content-header-desc">
+          <div class="content-info__cat-desc">
+            {{tpl:c2PageDescription}}
+          </div>
+        </tpl:Block>
+        <tpl:Block name="main-content-header-subcats">
+          <tpl:c2Categories>
+            <tpl:c2CategoriesHeader>
+              <div id="subcategories" class="content-info__sub-cat">
+              <h3>{{tpl:lang Categories}}</h3>
+              <ul>
+              <tpl:c2If operator="or" request_link="1" request_cat="1">
+                <li class="post-cat"><a href="{{tpl:c2PageURL}}" title="{{tpl:lang view all links}}">{{tpl:lang view all links}}</a></li>
+              </tpl:c2If>
+            </tpl:c2CategoriesHeader>
+            <tpl:c2CategoryIf current="1">
+              <li class="post-cat">{{tpl:c2CategoryTitle}}</li>
+            </tpl:c2CategoryIf>
+            <tpl:c2CategoryIf current="0">
+              <li class="post-cat"><a href="{{tpl:c2CategoryURL}}" title="{{tpl:c2CategoryDescription remove_html="1"}}">{{tpl:c2CategoryTitle}}</a> </li>
+            </tpl:c2CategoryIf>
+            <tpl:c2CategoriesFooter>
+              </ul>
+              </div>
+            </tpl:c2CategoriesFooter>
+          </tpl:c2Categories>
+        </tpl:Block>
+      </header> <!-- # End #content-info -->
+    </tpl:Block>
 
-    <h2 class="post-title"><a href="{{tpl:c2EntryURL}}">{{tpl:c2EntryTitle encode_html="1"}}</a></h2>
+    <tpl:Block name="main-content-inner"></tpl:Block>
+      <div class="content-inner">
+        <tpl:c2Entries order="link_creadt" sort="desc">
 
-    <p class="post-info">{{tpl:lang By}} {{tpl:c2EntryFromAuthor}} - <a href="{{tpl:c2EntryURL}}" title="{{tpl:lang link}}">{{tpl:lang link}}</a>
-	 ({{tpl:lang on}} {{tpl:c2EntryDate}}, {{tpl:c2EntryTime}} {{tpl:lang by}} {{tpl:c2EntryAuthorLink}} <tpl:c2EntryIf has_category="1"> - <a href="{{tpl:c2EntryCategoryURL}}" title="{{tpl:lang category}}">{{tpl:c2EntryCategory encode_html="1"}}</a></tpl:c2EntryIf>)</p>
+<tpl:Block name="_entry-full-before"></tpl:Block>
+<tpl:Block name="_entry-full-main">
+  <article id="p{{tpl:c2EntryID}}" class="post {{tpl:c2EntryIfOdd}} {{tpl:c2EntryIfFirst}} full" lang="{{tpl:c2EntryLang}}" role="article">
+    <tpl:Block name="_entry-full-header">
+      <header>
+        <tpl:Block name="_entry-full-header-date"></tpl:Block>
+        <tpl:Block name="_entry-full-header-title">
+          <h2 class="post-title"><a href="{{tpl:c2EntryURL}}">{{tpl:c2EntryTitle encode_html="1"}}</a></h2>
+        </tpl:Block>
+      </header>
+    </tpl:Block>
+    <tpl:Block name="_entry-full-behavior-before-content">
+      <!-- # --BEHAVIOR-- publicEntryBeforeContent -->
+      {{tpl:SysBehavior behavior="publicEntryBeforeContent"}}
+    </tpl:Block>
+    <tpl:Block name="_entry-full-content">
+      <tpl:Block name="_entry-full-content-excerpt">
+          {{tpl:c2EntryImg style="float:left; margin: 0 1em 1em 0;"}}
+      </tpl:Block>
+      <tpl:Block name="_entry-full-content-main">
+        <div class="post-content">{{tpl:c2EntryDescription remove_html="1"}}</div>
+      </tpl:Block>
+    </tpl:Block>
+    <tpl:Block name="_entry-full-behavior-after-content">
+      <!-- # --BEHAVIOR-- publicEntryAfterContent -->
+      {{tpl:SysBehavior behavior="publicEntryAfterContent"}}
+    </tpl:Block>
+    <tpl:Block name="_entry-full-footer">
+      <footer class="post-meta">
+        <tpl:Block name="_entry-full-footer-info">
+          <tpl:Block name="_entry-full-footer-post-info">
+            <p class="post-info">
+              <span class="post-author">{{tpl:lang By}} {{tpl:c2EntryFromAuthor}} (<a href="{{tpl:c2EntryURL}}" title="{{tpl:lang link}}">{{tpl:lang link}}</a>), </span>
+              <span class="post-author">{{tpl:lang By}} {{tpl:c2EntryFromAuthor}}, </span>
+              <span class="post-date"><time datetime="{tpl:c2EntryDate}}, {{tpl:c2EntryTime}}">{{tpl:c2EntryDate}}</time>.</span>
+              <tpl:c2EntryIf has_category="1">
+                <span class="post-cat"><a href="{{tpl:c2EntryCategoryURL}}">{{tpl:c2EntryCategory encode_html="1"}}</a></span>
+              </tpl:c2EntryIf>
+            </p>
+          </tpl:Block>
+          <tpl:Block name="_entry-full-footer-post-tags"></tpl:Block>
+        </tpl:Block>
+        <tpl:Block name="_entry-full-footer-counters"></tpl:Block>
+      </footer>
+    </tpl:Block>
+  </article>
+</tpl:Block>
+<tpl:Block name="_entry-full-after"></tpl:Block>
 
-    <!-- # --BEHAVIOR-- publicC2EntryBeforeContent -->
-    {{tpl:SysBehavior behavior="publicC2EntryBeforeContent"}}
+          <tpl:c2EntriesFooter>
+            <tpl:c2Pagination>
+              <p class="pagination"><tpl:c2PaginationIf end="0"><a href="{{tpl:c2PaginationURL offset="+1"}}" class="prev">&#171;
+              {{tpl:lang previous links}}</a> - </tpl:c2PaginationIf>
+              {{tpl:lang page}} {{tpl:c2PaginationCurrent}} {{tpl:lang of}} {{tpl:c2PaginationCounter}}
+              <tpl:c2PaginationIf start="0"> - <a href="{{tpl:c2PaginationURL offset="-1"}}" class="next">{{tpl:lang next links}}
+              &#187;</a></tpl:c2PaginationIf></p>
+            </tpl:c2Pagination>
+          </tpl:c2EntriesFooter>
+        </tpl:c2Entries>
+      </div> <!-- # End #content-inner -->
+    </tpl:Block>
 
-	<div class="post-content">
-	 <p>
-	  {{tpl:c2EntryImg style="float:left; margin: 0 1em 1em 0;"}}
-	  {{tpl:c2EntryDescription remove_html="1"}}
-	 </p>
-	 </div>
-
-    <!-- # --BEHAVIOR-- publicC2EntryAfterContent -->
-    {{tpl:SysBehavior behavior="publicC2EntryAfterContent"}}
-
-   </div>
-    <tpl:c2EntriesFooter>
-      <tpl:c2Pagination>
-        <p class="pagination"><tpl:c2PaginationIf end="0"><a href="{{tpl:c2PaginationURL offset="+1"}}" class="prev">&#171;
-        {{tpl:lang previous links}}</a> - </tpl:c2PaginationIf>
-        {{tpl:lang page}} {{tpl:c2PaginationCurrent}} {{tpl:lang of}} {{tpl:c2PaginationCounter}}
-        <tpl:c2PaginationIf start="0"> - <a href="{{tpl:c2PaginationURL offset="-1"}}" class="next">{{tpl:lang next links}}
-        &#187;</a></tpl:c2PaginationIf></p>
-      </tpl:c2Pagination>
-    </tpl:c2EntriesFooter>
-  </tpl:c2Entries>
-  </div>
- 
-  </div>
-</div> <!-- End #main -->
- 
-<div id="sidebar">
-  <div id="blognav">
-    {{tpl:Widgets type="nav"}}
-  </div> <!-- End #blognav -->
- 
-  <div id="blogextra">
-    {{tpl:Widgets type="extra"}}
-  </div> <!-- End #blogextra -->
-</div>
- 
-</div> <!-- End #wrapper -->
- 
-{{tpl:include src="_footer.html"}}
-</div> <!-- End #page -->
-</body>
-</html>
+  </tpl:Block>
+  <tpl:Block name="main-content-after"></tpl:Block>
+</tpl:Block>
