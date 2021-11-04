@@ -144,6 +144,7 @@ if ($part == 'links') {
     $c2link_filter = new adminGenericFilter($core, 'c2link');
     $c2link_filter->add('part', 'links');
     $c2link_filter->add(dcAdminFilters::getPageFilter());
+    $c2link_filter->add(dcAdminFilters::getSearchFilter());
     $c2link_filter->add(dcAdminFilters::getSelectFilter(
         'catid',
         __('Category:'),
@@ -507,7 +508,7 @@ if ($part == 'links') {
             '<p class="col right"><label for="action" class="classic">' . __('Selected links action:') . '</label> ' .
             form::combo('part', $action_combo) .
             '<input id="do-action" type="submit" value="' . __('ok') . '" disabled /></p>' .
-            $core->adminurl->getHiddenFormFields('admin.plugin.cinecturlink2', array_diff_key($c2link_filter->values(true), ['part' => ''])) .
+            $core->adminurl->getHiddenFormFields('admin.plugin.cinecturlink2', array_diff_key($c2link_filter->values(), ['part' => ''])) .
             form::hidden(['redir'], $links_redir) .
             $core->formNonce() .
             '</div>' .

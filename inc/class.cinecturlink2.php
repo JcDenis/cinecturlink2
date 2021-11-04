@@ -121,6 +121,15 @@ class cinecturlink2
             $strReq .= "AND L.link_lang = '" . $this->con->escape($params['link_lang']) . "' ";
         }
 
+        if (!empty($params['q'])) {
+            $q = $this->con->escape(str_replace('*', '%', strtolower($params['q'])));
+            $strReq .= "AND LOWER(L.link_title) LIKE '%" . $q . "%' ";
+        }
+
+        if (!empty($params['where'])) {
+            $strReq .= $params['where'] . ' ';
+        }
+
         if (!empty($params['sql'])) {
             $strReq .= $params['sql'] . ' ';
         }
