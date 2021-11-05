@@ -94,13 +94,13 @@ class adminlistCinecturlink2
             $enclose_blocks = explode('%s', $enclose_block);
             $blocks         = explode('%s', $html_block);
 
-            echo $enclose_blocks[0] . $pager->getLinks() . $blocks[0];
+            echo $pager->getLinks() . $enclose_blocks[0] . $blocks[0];
 
             while ($this->rs->fetch()) {
                 echo $this->linkLine(isset($links[$this->rs->link_id]));
             }
 
-            echo $blocks[1] . $blocks[2] . $pager->getLinks() . $enclose_blocks[1];
+            echo $blocks[1] . $blocks[2] . $enclose_blocks[1] . $pager->getLinks();
         }
     }
 
