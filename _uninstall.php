@@ -15,111 +15,111 @@ if (!defined('DC_CONTEXT_ADMIN')) {
 }
 
 $this->addUserAction(
-    /* type */    
+    /* type */
     'settings',
-    /* action */    
+    /* action */
     'delete_all',
-    /* ns */        
+    /* ns */
     'cinecturlink2',
-    /* desc */    
+    /* desc */
     __('delete all settings')
 );
 
 $this->addUserAction(
-    /* type */    
+    /* type */
     'tables',
-    /* action */    
+    /* action */
     'delete',
-    /* ns */        
+    /* ns */
     'cinecturlink2',
-    /* desc */    
+    /* desc */
     sprintf(__('delete %s table'), 'cinecturlink2')
 );
 
 $this->addUserAction(
-    /* type */    
+    /* type */
     'tables',
-    /* action */    
+    /* action */
     'delete',
-    /* ns */        
+    /* ns */
     'cinecturlink2_cat',
-    /* desc */    
+    /* desc */
     sprintf(__('delete %s table'), 'cinecturlink2_cat')
 );
 
 $this->addUserAction(
-    /* type */    
+    /* type */
     'versions',
-    /* action */    
+    /* action */
     'delete',
-    /* ns */        
+    /* ns */
     'cinecturlink2',
-    /* desc */    
+    /* desc */
     __('delete the version number')
 );
 
 $this->addUserAction(
-    /* type */    
+    /* type */
     'plugins',
-    /* action */    
+    /* action */
     'delete',
-    /* ns */        
+    /* ns */
     'cinecturlink2',
-    /* desc */    
+    /* desc */
     __('delete plugin files')
 );
 
 $this->addDirectAction(
-    /* type */    
+    /* type */
     'settings',
-    /* action */    
+    /* action */
     'delete_all',
-    /* ns */        
+    /* ns */
     'cinecturlink2',
-    /* desc */    
+    /* desc */
     sprintf(__('delete all %s settings'), 'cinecturlink2')
 );
 
 $this->addDirectAction(
-    /* type */    
+    /* type */
     'tables',
-    /* action */    
+    /* action */
     'delete',
-    /* ns */        
+    /* ns */
     'cinecturlink2',
-    /* desc */    
+    /* desc */
     sprintf(__('delete %s table'), 'cinecturlink2')
 );
 
 $this->addDirectAction(
-    /* type */    
+    /* type */
     'tables',
-    /* action */    
+    /* action */
     'delete',
-    /* ns */        
+    /* ns */
     'cinecturlink2_cat',
-    /* desc */    
+    /* desc */
     sprintf(__('delete %s table'), 'cinecturlink2_cat')
 );
 
 $this->addDirectAction(
-    /* type */    
+    /* type */
     'versions',
-    /* action */    
+    /* action */
     'delete',
-    /* ns */        
+    /* ns */
     'cinecturlink2',
-    /* desc */    
+    /* desc */
     sprintf(__('delete %s version number'), 'cinecturlink2')
 );
 
 $this->addDirectAction(
-    /* type */        
+    /* type */
     'plugins',
-    /* action */        
+    /* action */
     'delete',
-    /* ns */            
+    /* ns */
     'cinecturlink2',
-    /* description */    
+    /* description */
     sprintf(__('delete %s plugin files'), 'cinecturlink2')
 );
