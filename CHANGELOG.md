@@ -1,8 +1,17 @@
-0.8.1 - dev
-- [ ] update public templates
-- fix javascript
+dev
+- [ ] enhance public template
+
+1.0.0 - 2021.11.06
+- fix javascript (and externalize them)
 - fix modal
-- add user pref on sort filters (dc 2.20)
+- fix page title
+- fix permissions (dc2.20)
+- fix various bugs and typo
+- update translations (and remove .lang.php file)
+- update readme (shields.io, links, ...)
+- update public templates (using dotty and berlin)
+- update ui (follow dc graphic design)
+- add user pref on filters options (dc 2.20)
 
 0.9 - 2021.09.11
 - add user pref on table columns

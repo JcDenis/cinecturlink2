@@ -24,9 +24,9 @@ $this->registerModule(
     'Cinecturlink 2',
     'Widgets and pages about books, musics, films, blogs you are interested in',
     'Jean-Christian Denis and Contributors',
-    '0.9.1',
+    '1.0.0',
     [
-        'requires'    => [['core', '2.19']],
+        'requires'    => [['core', '2.20']],
         'permissions' => 'contentadmin',
         'type'        => 'plugin',
         'support'     => 'https://github.com/JcDenis/cinecturlink2',
