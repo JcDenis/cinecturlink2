@@ -21,8 +21,6 @@ if (!defined('DC_RC_PATH')) {
  */
 class cinecturlink2
 {
-    /** @var dcCore dcCore instance */
-    public $core;
     /** @var dbLayer dbLayer instance */
     public $con;
     /** @var string Cinecturlink table name */
@@ -32,17 +30,14 @@ class cinecturlink2
 
     /**
      * Contructor
-     *
-     * @param dcCore $core dcCore instance
      */
-    public function __construct(dcCore $core)
+    public function __construct()
     {
-        $core->blog->settings->addNamespace('cinecturlink2');
+        dcCore::app()->blog->settings->addNamespace('cinecturlink2');
 
-        $this->core  = $core;
-        $this->con   = $core->con;
-        $this->table = $core->prefix . 'cinecturlink2';
-        $this->blog  = $core->con->escape($core->blog->id);
+        $this->con   = dcCore::app()->con;
+        $this->table = dcCore::app()->prefix . 'cinecturlink2';
+        $this->blog  = dcCore::app()->con->escape(dcCore::app()->blog->id);
     }
 
     /**
@@ -73,7 +68,7 @@ class cinecturlink2
         }
 
         $strReq .= 'FROM ' . $this->table . ' L ' .
-        'INNER JOIN ' . $this->core->prefix . 'user U ON U.user_id = L.user_id ' .
+        'INNER JOIN ' . dcCore::app()->prefix . 'user U ON U.user_id = L.user_id ' .
         'LEFT OUTER JOIN ' . $this->table . '_cat C ON L.cat_id = C.cat_id ';
 
         if (!empty($params['from'])) {
@@ -103,7 +98,9 @@ class cinecturlink2
 
         if (!empty($params['cat_id'])) {
             if (is_array($params['cat_id'])) {
-                array_walk($params['cat_id'], function (&$v, $k) { if ($v !== null) { $v = (int) $v;}});
+                array_walk($params['cat_id'], function (&$v, $k) { if ($v !== null) {
+                    $v = (int) $v;
+                }});
             } else {
                 $params['cat_id'] = [(int) $params['cat_id']];
             }
@@ -174,7 +171,7 @@ class cinecturlink2
 
             $cur->link_id     = $this->getNextLinkId();
             $cur->blog_id     = $this->blog;
-            $cur->user_id     = $this->core->auth->userID();
+            $cur->user_id     = dcCore::app()->auth->userID();
             $cur->link_creadt = date('Y-m-d H:i:s');
             $cur->link_upddt  = date('Y-m-d H:i:s');
             $cur->link_pos    = 0;
@@ -189,7 +186,7 @@ class cinecturlink2
         $this->trigger();
 
         # --BEHAVIOR-- cinecturlink2AfterAddLink
-        $this->core->callBehavior('cinecturlink2AfterAddLink', $cur);
+        dcCore::app()->callBehavior('cinecturlink2AfterAddLink', $cur);
 
         return $cur->link_id;
     }
@@ -216,7 +213,7 @@ class cinecturlink2
 
         if ($behavior) {
             # --BEHAVIOR-- cinecturlink2AfterUpdLink
-            $this->core->callBehavior('cinecturlink2AfterUpdLink', $cur, $id);
+            dcCore::app()->callBehavior('cinecturlink2AfterUpdLink', $cur, $id);
         }
     }
 
@@ -234,7 +231,7 @@ class cinecturlink2
         }
 
         # --BEHAVIOR-- cinecturlink2BeforeDelLink
-        $this->core->callBehavior('cinecturlink2BeforeDelLink', $id);
+        dcCore::app()->callBehavior('cinecturlink2BeforeDelLink', $id);
 
         $this->con->execute(
             'DELETE FROM ' . $this->table . ' ' .
@@ -289,7 +286,9 @@ class cinecturlink2
 
         if (!empty($params['cat_id'])) {
             if (is_array($params['cat_id'])) {
-                array_walk($params['cat_id'], function (&$v, $k) { if ($v !== null) { $v = (int) $v; }});
+                array_walk($params['cat_id'], function (&$v, $k) { if ($v !== null) {
+                    $v = (int) $v;
+                }});
             } else {
                 $params['cat_id'] = [(int) $params['cat_id']];
             }
@@ -298,7 +297,9 @@ class cinecturlink2
 
         if (isset($params['exclude_cat_id']) && $params['exclude_cat_id'] !== '') {
             if (is_array($params['exclude_cat_id'])) {
-                array_walk($params['exclude_cat_id'], function (&$v, $k) { if ($v !== null) {$v = (int) $v;}});
+                array_walk($params['exclude_cat_id'], function (&$v, $k) { if ($v !== null) {
+                    $v = (int) $v;
+                }});
             } else {
                 $params['exclude_cat_id'] = [(int) $params['exclude_cat_id']];
             }
@@ -441,7 +442,7 @@ class cinecturlink2
      */
     private function trigger()
     {
-        $this->core->blog->triggerBlog();
+        dcCore::app()->blog->triggerBlog();
     }
 
     /**
@@ -470,15 +471,14 @@ class cinecturlink2
     /**
      * Get list of public directories
      *
-     * @param  dcCore  $core    Core instance
      * @return array            Directories
      */
-    public static function getPublicDirs($core)
+    public static function getPublicDirs()
     {
         $dirs = [];
-        $all  = files::getDirList($core->blog->public_path);
+        $all  = files::getDirList(dcCore::app()->blog->public_path);
         foreach ($all['dirs'] as $dir) {
-            $dir        = substr($dir, strlen($core->blog->public_path) + 1);
+            $dir        = substr($dir, strlen(dcCore::app()->blog->public_path) + 1);
             $dirs[$dir] = $dir;
         }
 

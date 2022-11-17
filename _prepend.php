@@ -14,30 +14,28 @@ if (!defined('DC_RC_PATH')) {
     return null;
 }
 
-$d = dirname(__FILE__) . '/inc/';
+Clearbricks::lib()->autoload(['cinecturlink2' => __DIR__ . '/inc/class.cinecturlink2.php']);
+Clearbricks::lib()->autoload(['cinecturlink2Context' => __DIR__ . '/inc/lib.cinecturlink2.context.php']);
+Clearbricks::lib()->autoload(['adminlistCinecturlink2' => __DIR__ . '/inc/lib.cinecturlink2.list.php']);
+Clearbricks::lib()->autoload(['sitemapsCinecturlink2' => __DIR__ . '/inc/lib.sitemaps.cinecturlink2.php']);
+Clearbricks::lib()->autoload(['cinecturlink2ActivityReportBehaviors' => __DIR__ . '/inc/lib.cinecturlink2.activityreport.php']);
 
-$__autoload['cinecturlink2']                        = $d . 'class.cinecturlink2.php';
-$__autoload['cinecturlink2Context']                 = $d . 'lib.cinecturlink2.context.php';
-$__autoload['adminlistCinecturlink2']               = $d . 'lib.cinecturlink2.list.php';
-$__autoload['sitemapsCinecturlink2']                = $d . 'lib.sitemaps.cinecturlink2.php';
-$__autoload['cinecturlink2ActivityReportBehaviors'] = $d . 'lib.cinecturlink2.activityreport.php';
-
-$core->url->register(
+dcCore::app()->url->register(
     'cinecturlink2',
     'cinecturlink',
     '^cinecturlink(?:/(.+))?$',
     ['urlCinecturlink2', 'c2Page']
 );
 
-$core->addBehavior(
+dcCore::app()->addBehavior(
     'sitemapsDefineParts',
     ['sitemapsCinecturlink2', 'sitemapsDefineParts']
 );
-$core->addBehavior(
+dcCore::app()->addBehavior(
     'sitemapsURLsCollect',
     ['sitemapsCinecturlink2', 'sitemapsURLsCollect']
 );
 
 if (defined('ACTIVITY_REPORT')) {
-    cinecturlink2ActivityReportBehaviors::add($core);
+    cinecturlink2ActivityReportBehaviors::add();
 }

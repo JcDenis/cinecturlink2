@@ -18,15 +18,13 @@ class adminlistCinecturlink2
 {
     public $redir = '';
 
-    protected $core;
     protected $rs;
     protected $rs_count;
     protected $html_prev;
     protected $html_next;
 
-    public function __construct(dcCore $core, $rs, $rs_count)
+    public function __construct($rs, $rs_count)
     {
-        $this->core      = &$core;
         $this->rs        = &$rs;
         $this->rs_count  = $rs_count;
         $this->html_prev = __('&#171; prev.');
@@ -35,7 +33,7 @@ class adminlistCinecturlink2
 
     public function userColumns($type, $cols)
     {
-        $cols_user = @$this->core->auth->user_prefs->interface->cols;
+        $cols_user = @dcCore::app()->auth->user_prefs->interface->cols;
         if (is_array($cols_user) || $cols_user instanceof ArrayObject) {
             if (isset($cols_user[$type])) {
                 foreach ($cols_user[$type] as $cn => $cd) {
@@ -72,7 +70,7 @@ class adminlistCinecturlink2
                 'link'   => '<th scope="col">' . __('Links') . '</th>',
                 'cat'    => '<th scope="col">' . __('Category') . '</th>',
                 'note'   => '<th scope="col">' . __('Rating') . '</th>',
-                'date'   => '<th scope="col">' . __('Date') . '</th>'
+                'date'   => '<th scope="col">' . __('Date') . '</th>',
             ];
             $cols = new ArrayObject($cols);
             $this->userColumns('c2link', $cols);
@@ -111,7 +109,7 @@ class adminlistCinecturlink2
                 form::checkbox(['entries[]'], $this->rs->link_id, ['checked' => $checked]) .
                 '</td>',
             'title' => '<td class="nowrap" scope="row">' .
-                '<a href="' . $this->core->adminurl->get(
+                '<a href="' . dcCore::app()->adminurl->get(
                     'admin.plugin.cinecturlink2',
                     ['part' => 'link', 'linkid' => $this->rs->link_id, 'redir' => $this->redir]
                 ) . '" title="' . __('Edit') . '">' .
@@ -132,7 +130,7 @@ class adminlistCinecturlink2
                 '">' . __('image') . '</a> ' .
                 '</td>',
             'cat' => '<td class="nowrap minimal">' .
-                '<a href="' . $this->core->adminurl->get(
+                '<a href="' . dcCore::app()->adminurl->get(
                     'admin.plugin.cinecturlink2',
                     ['part' => 'cat', 'catid' => $this->rs->cat_id, 'redir' => $this->redir]
                 ) . '" title="' . __('Edit') . '">' .
@@ -144,11 +142,11 @@ class adminlistCinecturlink2
                 '</td>',
             'date' => '<td class="nowrap count minimal">' .
                 dt::dt2str(
-                    $this->core->blog->settings->system->date_format . ', ' . $this->core->blog->settings->system->time_format,
+                    dcCore::app()->blog->settings->system->date_format . ', ' . dcCore::app()->blog->settings->system->time_format,
                     $this->rs->link_upddt,
-                    $this->core->auth->getInfo('user_tz')
+                    dcCore::app()->auth->getInfo('user_tz')
                 ) .
-                '</td>'
+                '</td>',
         ];
 
         $cols = new ArrayObject($cols);

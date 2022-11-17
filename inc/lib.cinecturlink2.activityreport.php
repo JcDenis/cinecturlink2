@@ -16,12 +16,12 @@ if (!defined('DC_RC_PATH')) {
 
 class cinecturlink2ActivityReportBehaviors
 {
-    public static function add($core)
+    public static function add()
     {
-        $core->activityReport->addGroup('cinecturlink2', __('Plugin cinecturlink2'));
+        dcCore::app()->activityReport->addGroup('cinecturlink2', __('Plugin cinecturlink2'));
 
         // from BEHAVIOR cinecturlink2AfterAddLink in cinecturlink2/inc/class.cinecturlink2.php
-        $core->activityReport->addAction(
+        dcCore::app()->activityReport->addAction(
             'cinecturlink2',
             'create',
             __('link creation'),
@@ -30,7 +30,7 @@ class cinecturlink2ActivityReportBehaviors
             ['cinecturlink2ActivityReportBehaviors', 'addLink']
         );
         // from BEHAVIOR cinecturlink2AfterUpdLink in cinecturlink2/inc/class.cinecturlink2.php
-        $core->activityReport->addAction(
+        dcCore::app()->activityReport->addAction(
             'cinecturlink2',
             'update',
             __('updating link'),
@@ -39,7 +39,7 @@ class cinecturlink2ActivityReportBehaviors
             ['cinecturlink2ActivityReportBehaviors', 'updLink']
         );
         // from BEHAVIOR cinecturlink2BeforeDelLink in cinecturlink2/inc/class.cinecturlink2.php
-        $core->activityReport->addAction(
+        dcCore::app()->activityReport->addAction(
             'cinecturlink2',
             'delete',
             __('link deletion'),
@@ -51,38 +51,34 @@ class cinecturlink2ActivityReportBehaviors
 
     public static function addLink($cur)
     {
-        global $core;
-
         $logs = [
             $cur->link_title,
-            $core->auth->getInfo('user_cn')
+            dcCore::app()->auth->getInfo('user_cn'),
         ];
-        $core->activityReport->addLog('cinecturlink2', 'create', $logs);
+        dcCore::app()->activityReport->addLog('cinecturlink2', 'create', $logs);
     }
 
     public static function updLink($cur, $id)
     {
-        global $core;
-        $C2 = new cinecturlink2($core);
+        $C2 = new cinecturlink2();
         $rs = $C2->getLinks(['link_id' => $id]);
 
         $logs = [
             $rs->link_title,
-            $core->auth->getInfo('user_cn')
+            dcCore::app()->auth->getInfo('user_cn'),
         ];
-        $core->activityReport->addLog('cinecturlink2', 'update', $logs);
+        dcCore::app()->activityReport->addLog('cinecturlink2', 'update', $logs);
     }
 
     public static function delLink($id)
     {
-        global $core;
-        $C2 = new cinecturlink2($core);
+        $C2 = new cinecturlink2();
         $rs = $C2->getLinks(['link_id' => $id]);
 
         $logs = [
             $rs->link_title,
-            $core->auth->getInfo('user_cn')
+            dcCore::app()->auth->getInfo('user_cn'),
         ];
-        $core->activityReport->addLog('cinecturlink2', 'delete', $logs);
+        dcCore::app()->activityReport->addLog('cinecturlink2', 'delete', $logs);
     }
 }

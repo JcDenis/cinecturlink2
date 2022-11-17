@@ -14,11 +14,11 @@ if (!defined('DC_RC_PATH')) {
     return null;
 }
 
-$core->addBehavior(
+dcCore::app()->addBehavior(
     'initWidgets',
     ['cinecturlink2Widget', 'adminLinks']
 );
-$core->addBehavior(
+dcCore::app()->addBehavior(
     'initWidgets',
     ['cinecturlink2Widget', 'adminCats']
 );
@@ -27,9 +27,7 @@ class cinecturlink2Widget
 {
     public static function adminLinks($w)
     {
-        global $core;
-
-        $C2 = new cinecturlink2($core);
+        $C2 = new cinecturlink2();
 
         $categories_combo = ['' => '', __('Uncategorized') => 'null'];
         $categories       = $C2->getCategories();
@@ -43,11 +41,11 @@ class cinecturlink2Widget
             __('My rating')       => 'link_note',
             __('Title')           => 'link_title',
             __('Random')          => 'RANDOM',
-            __('Number of views') => 'COUNTER'
+            __('Number of views') => 'COUNTER',
         ];
         $order_combo = [
             __('Ascending')  => 'asc',
-            __('Descending') => 'desc'
+            __('Descending') => 'desc',
         ];
 
         $w
@@ -157,18 +155,16 @@ class cinecturlink2Widget
 
     public static function publicLinks($w)
     {
-        global $core;
+        dcCore::app()->blog->settings->addNamespace('cinecturlink2');
 
-        $core->blog->settings->addNamespace('cinecturlink2');
-
-        if (!$core->blog->settings->cinecturlink2->cinecturlink2_active
-            || $w->homeonly == 1 && !$core->url->isHome($core->url->type)
-            || $w->homeonly == 2 && $core->url->isHome($core->url->type)
+        if (!dcCore::app()->blog->settings->cinecturlink2->cinecturlink2_active
+            || $w->homeonly == 1 && !dcCore::app()->url->isHome(dcCore::app()->url->type)
+            || $w->homeonly == 2 && dcCore::app()->url->isHome(dcCore::app()->url->type)
         ) {
             return null;
         }
 
-        $C2 = new cinecturlink2($core);
+        $C2 = new cinecturlink2();
 
         if ($w->category) {
             if ($w->category == 'null') {
@@ -214,7 +210,7 @@ class cinecturlink2Widget
             return null;
         }
 
-        $widthmax = (int) $core->blog->settings->cinecturlink2->cinecturlink2_widthmax;
+        $widthmax = (int) dcCore::app()->blog->settings->cinecturlink2->cinecturlink2_widthmax;
         $style    = $widthmax ? ' style="width:' . $widthmax . 'px;"' : '';
 
         $entries = [];
@@ -230,7 +226,7 @@ class cinecturlink2Widget
             $count  = abs((int) $rs->link_count);
 
             # --BEHAVIOR-- cinecturlink2WidgetLinks
-            $bhv = $core->callBehavior('cinecturlink2WidgetLinks', $rs->link_id);
+            $bhv = dcCore::app()->callBehavior('cinecturlink2WidgetLinks', $rs->link_id);
 
             $entries[] = '<p style="text-align:center;">' .
             ($w->withlink && !empty($url) ? '<a href="' . $url . '"' . $lang . ' title="' . $cat . '">' : '') .
@@ -242,19 +238,19 @@ class cinecturlink2Widget
             '</p>' . $bhv;
 
             try {
-                $cur             = $core->con->openCursor($C2->table);
+                $cur             = dcCore::app()->con->openCursor($C2->table);
                 $cur->link_count = ($count + 1);
                 $C2->updLink($rs->link_id, $cur, false);
             } catch (Exception $e) {
             }
         }
         # Tirage aléatoire
-        if ($w->sortby == 'RANDOM'
+        if ($w->sortby    == 'RANDOM'
             || $w->sortby == 'COUNTER'
         ) {
             shuffle($entries);
-            if ($core->blog->settings->cinecturlink2->cinecturlink2_triggeronrandom) {
-                $core->blog->triggerBlog();
+            if (dcCore::app()->blog->settings->cinecturlink2->cinecturlink2_triggeronrandom) {
+                dcCore::app()->blog->triggerBlog();
             }
         }
 
@@ -264,27 +260,25 @@ class cinecturlink2Widget
             '',
             ($w->title ? $w->renderTitle(html::escapeHTML($w->title)) : '') . implode(' ', $entries) .
             (
-                $w->showpagelink && $core->blog->settings->cinecturlink2->cinecturlink2_public_active ?
-                '<p><a href="' . $core->blog->url . $core->url->getBase('cinecturlink2') . '" title="' . __('view all links') . '">' . __('More links') . '</a></p>' : ''
+                $w->showpagelink && dcCore::app()->blog->settings->cinecturlink2->cinecturlink2_public_active ?
+                '<p><a href="' . dcCore::app()->blog->url . dcCore::app()->url->getBase('cinecturlink2') . '" title="' . __('view all links') . '">' . __('More links') . '</a></p>' : ''
             )
         );
     }
 
     public static function publicCats($w)
     {
-        global $core;
+        dcCore::app()->blog->settings->addNamespace('cinecturlink2');
 
-        $core->blog->settings->addNamespace('cinecturlink2');
-
-        if (!$core->blog->settings->cinecturlink2->cinecturlink2_active
-            || !$core->blog->settings->cinecturlink2->cinecturlink2_public_active
-            || $w->homeonly == 1 && !$core->url->isHome($core->url->type)
-            || $w->homeonly == 2 && $core->url->isHome($core->url->type)
+        if (!dcCore::app()->blog->settings->cinecturlink2->cinecturlink2_active
+            || !dcCore::app()->blog->settings->cinecturlink2->cinecturlink2_public_active
+            || $w->homeonly == 1 && !dcCore::app()->url->isHome(dcCore::app()->url->type)
+            || $w->homeonly == 2 && dcCore::app()->url->isHome(dcCore::app()->url->type)
         ) {
             return null;
         }
 
-        $C2 = new cinecturlink2($core);
+        $C2 = new cinecturlink2();
         $rs = $C2->getCategories([]);
         if ($rs->isEmpty()) {
             return null;
@@ -292,15 +286,15 @@ class cinecturlink2Widget
 
         $res   = [];
         $res[] = '<li><a href="' .
-            $core->blog->url . $core->url->getBase('cinecturlink2') .
+            dcCore::app()->blog->url . dcCore::app()->url->getBase('cinecturlink2') .
             '" title="' . __('view all links') . '">' . __('all links') .
             '</a>' . ($w->shownumlink ? ' (' . ($C2->getLinks([], true)->f(0)) . ')' : '') .
             '</li>';
 
         while ($rs->fetch()) {
             $res[] = '<li><a href="' .
-                $core->blog->url . $core->url->getBase('cinecturlink2') . '/' .
-                $core->blog->settings->cinecturlink2->cinecturlink2_public_caturl . '/' .
+                dcCore::app()->blog->url . dcCore::app()->url->getBase('cinecturlink2') . '/' .
+                dcCore::app()->blog->settings->cinecturlink2->cinecturlink2_public_caturl . '/' .
                 urlencode($rs->cat_title) .
                 '" title="' . __('view links of this category') . '">' .
                 html::escapeHTML($rs->cat_title) .

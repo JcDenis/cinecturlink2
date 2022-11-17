@@ -14,13 +14,11 @@ class cinecturlink2Context
 {
     public static function PaginationNbPages()
     {
-        global $_ctx;
-
-        if ($_ctx->c2_pagination === null) {
+        if (dcCore::app()->ctx->c2_pagination === null) {
             return false;
         }
-        $nb_posts    = $_ctx->c2_pagination->f(0);
-        $nb_per_page = $_ctx->c2_params['limit'][1];
+        $nb_posts    = dcCore::app()->ctx->c2_pagination->f(0);
+        $nb_per_page = dcCore::app()->ctx->c2_params['limit'][1];
         $nb_pages    = ceil($nb_posts / $nb_per_page);
 
         return $nb_pages;
@@ -68,7 +66,7 @@ class cinecturlink2Context
 
         $args = preg_replace('#(^|/)c2page/([0-9]+)$#', '', $args);
 
-        $url = $GLOBALS['core']->blog->url . $args;
+        $url = dcCore::app()->blog->url . $args;
 
         if ($n > 1) {
             $url = preg_replace('#/$#', '', $url);
@@ -85,20 +83,18 @@ class cinecturlink2Context
 
     public static function categoryCurrent()
     {
-        global $_ctx;
-
-        if (!isset($_ctx->c2_page_params['cat_id'])
-            && !isset($_ctx->c2_page_params['cat_title'])
+        if (!isset(dcCore::app()->ctx->c2_page_params['cat_id'])
+            && !isset(dcCore::app()->ctx->c2_page_params['cat_title'])
         ) {
             return false;
         }
-        if (isset($_ctx->c2_page_params['cat_id'])
-            && $_ctx->c2_page_params['cat_id'] == $_ctx->c2_categories->cat_id
+        if (isset(dcCore::app()->ctx->c2_page_params['cat_id'])
+            && dcCore::app()->ctx->c2_page_params['cat_id'] == dcCore::app()->ctx->c2_categories->cat_id
         ) {
             return true;
         }
-        if (isset($_ctx->c2_page_params['cat_title'])
-            && $_ctx->c2_page_params['cat_title'] == $_ctx->c2_categories->cat_title
+        if (isset(dcCore::app()->ctx->c2_page_params['cat_title'])
+            && dcCore::app()->ctx->c2_page_params['cat_title'] == dcCore::app()->ctx->c2_categories->cat_title
         ) {
             return true;
         }

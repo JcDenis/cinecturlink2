@@ -14,30 +14,30 @@ if (!defined('DC_CONTEXT_ADMIN')) {
     return null;
 }
 
-require_once dirname(__FILE__) . '/_widgets.php';
+require_once __DIR__ . '/_widgets.php';
 
-$_menu['Plugins']->addItem(
+dcCore::app()->menu[dcAdmin::MENU_PLUGINS]->addItem(
     __('My cinecturlink'),
-    $core->adminurl->get('admin.plugin.cinecturlink2'),
+    dcCore::app()->adminurl->get('admin.plugin.cinecturlink2'),
     dcPage::getPF('cinecturlink2/icon.png'),
     preg_match(
-        '/' . preg_quote($core->adminurl->get('admin.plugin.cinecturlink2')) . '(&.*)?$/',
+        '/' . preg_quote(dcCore::app()->adminurl->get('admin.plugin.cinecturlink2')) . '(&.*)?$/',
         $_SERVER['REQUEST_URI']
     ),
-    $core->auth->check('contentadmin', $core->blog->id)
+    dcCore::app()->auth->check(dcAuth::PERMISSION_CONTENT_ADMIN, dcCore::app()->blog->id)
 );
 
-$core->addBehavior(
-    'adminColumnsLists',
+dcCore::app()->addBehavior(
+    'adminColumnsListsV2',
     ['cinecturlink2AdminBehaviors', 'adminColumnsLists']
 );
 
-$core->addBehavior(
-    'adminFiltersLists',
+dcCore::app()->addBehavior(
+    'adminFiltersListsV2',
     ['cinecturlink2AdminBehaviors', 'adminFiltersLists']
 );
-$core->addBehavior(
-    'adminDashboardFavorites',
+dcCore::app()->addBehavior(
+    'adminDashboardFavoritesV2',
     ['cinecturlink2AdminBehaviors', 'adminDashboardFavorites']
 );
 
@@ -52,11 +52,11 @@ class cinecturlink2AdminBehaviors
             __('Author')      => 'link_author',
             __('Description') => 'link_desc',
             __('Link')        => 'link_url',
-            __('Rating')      => 'link_note'
+            __('Rating')      => 'link_note',
         ];
     }
 
-    public static function adminColumnsLists($core, $cols)
+    public static function adminColumnsLists($cols)
     {
         $cols['c2link'] = [
             __('Cinecturlink'),
@@ -67,30 +67,30 @@ class cinecturlink2AdminBehaviors
                 'desc'   => [false, __('Description')],
                 'link'   => [true, __('Liens')],
                 'note'   => [true, __('Rating')],
-            ]
+            ],
         ];
     }
 
-    public static function adminFiltersLists($core, $sorts)
+    public static function adminFiltersLists($sorts)
     {
         $sorts['c2link'] = [
             __('Cinecturlink'),
             self::adminSortbyCombo(),
             'link_upddt',
             'desc',
-            [__('Links per page'), 30]
+            [__('Links per page'), 30],
         ];
     }
 
-    public static function adminDashboardFavorites($core, $favs)
+    public static function adminDashboardFavorites($favs)
     {
         $favs->register('cinecturlink2', [
             'title'       => __('My cinecturlink'),
-            'url'         => $core->adminurl->get('admin.plugin.cinecturlink2') . '#links',
+            'url'         => dcCore::app()->adminurl->get('admin.plugin.cinecturlink2') . '#links',
             'small-icon'  => dcPage::getPF('cinecturlink2/icon.png'),
             'large-icon'  => dcPage::getPF('cinecturlink2/icon-big.png'),
-            'permissions' => $core->auth->check('contentadmin', $core->blog->id),
-            'active_cb'   => ['cinecturlink2AdminBehaviors', 'adminDashboardFavoritesActive']
+            'permissions' => dcCore::app()->auth->check('contentadmin', dcCore::app()->blog->id),
+            'active_cb'   => ['cinecturlink2AdminBehaviors', 'adminDashboardFavoritesActive'],
         ]);
     }
 

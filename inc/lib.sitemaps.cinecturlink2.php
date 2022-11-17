@@ -19,23 +19,22 @@ class sitemapsCinecturlink2
 
     public static function sitemapsURLsCollect($sitemaps)
     {
-        global $core;
-        $core->blog->settings->addNamespace('sitemaps');
+        dcCore::app()->blog->settings->addNamespace('sitemaps');
 
-        if ($core->plugins->moduleExists('cinecturlink2')
-            && $core->blog->settings->sitemaps->sitemaps_cinecturlink2_url
+        if (dcCore::app()->plugins->moduleExists('cinecturlink2')
+            && dcCore::app()->blog->settings->sitemaps->sitemaps_cinecturlink2_url
         ) {
-            $freq = $sitemaps->getFrequency($core->blog->settings->sitemaps->sitemaps_cinecturlink2_fq);
-            $prio = $sitemaps->getPriority($core->blog->settings->sitemaps->sitemaps_cinecturlink2_pr);
-            $base = $core->blog->url . $core->url->getBase('cinecturlink2');
+            $freq = $sitemaps->getFrequency(dcCore::app()->blog->settings->sitemaps->sitemaps_cinecturlink2_fq);
+            $prio = $sitemaps->getPriority(dcCore::app()->blog->settings->sitemaps->sitemaps_cinecturlink2_pr);
+            $base = dcCore::app()->blog->url . dcCore::app()->url->getBase('cinecturlink2');
 
             $sitemaps->addEntry($base, $prio, $freq);
 
-            $core->blog->settings->addNamespace('cinecturlink2');
-            $C2   = new cinecturlink2($core);
+            dcCore::app()->blog->settings->addNamespace('cinecturlink2');
+            $C2   = new cinecturlink2();
             $cats = $C2->getCategories();
             while ($cats->fetch()) {
-                $sitemaps->addEntry($base . '/' . $core->blog->settings->cinecturlink2->cinecturlink2_public_caturl . '/' . urlencode($cats->cat_title), $prio, $freq);
+                $sitemaps->addEntry($base . '/' . dcCore::app()->blog->settings->cinecturlink2->cinecturlink2_public_caturl . '/' . urlencode($cats->cat_title), $prio, $freq);
             }
         }
     }

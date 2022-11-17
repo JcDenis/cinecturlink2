@@ -14,7 +14,7 @@ if (!defined('DC_CONTEXT_ADMIN')) {
     return null;
 }
 
-dcPage::check('contentadmin');
+dcPage::check(dcAuth::PERMISSION_CONTENT_ADMIN);
 
 $linkid     = $_REQUEST['linkid']  ?? '';
 $linktitle  = $_POST['linktitle']  ?? '';
@@ -22,7 +22,7 @@ $linkdesc   = $_POST['linkdesc']   ?? '';
 $linkauthor = $_POST['linkauthor'] ?? '';
 $linkurl    = $_POST['linkurl']    ?? '';
 $linkcat    = $_POST['linkcat']    ?? null;
-$linklang   = $_POST['linklang']   ?? $core->auth->getInfo('user_lang');
+$linklang   = $_POST['linklang']   ?? dcCore::app()->auth->getInfo('user_lang');
 $linkimage  = $_POST['linkimage']  ?? '';
 $linknote   = $_POST['linknote']   ?? '';
 $catid      = $_REQUEST['catid']   ?? '';
@@ -34,7 +34,7 @@ $entries    = $_POST['entries']    ?? [];
 $headers    = '';
 $breadcrumb = [
     __('Plugins')         => '',
-    __('My cinecturlink') => $core->adminurl->get('admin.plugin.cinecturlink2', ['part' => 'links'])
+    __('My cinecturlink') => dcCore::app()->adminurl->get('admin.plugin.cinecturlink2', ['part' => 'links']),
 ];
 if (!in_array($part, ['links', 'link', 'cats', 'cat', 'dellinks', 'updlinksnote', 'updlinkscat'])) {
     $part = 'links';
@@ -44,7 +44,7 @@ if (!is_array($entries)) {
 }
 
 try {
-    $C2               = new cinecturlink2($core);
+    $C2               = new cinecturlink2();
     $categories       = $C2->getCategories();
     $categories_combo = ['-' => ''];
     while ($categories->fetch()) {
@@ -52,7 +52,7 @@ try {
         $categories_combo[$cat_title] = $categories->cat_id;
     }
 } catch (Exception $e) {
-    $core->error->add($e->getMessage());
+    dcCore::app()->error->add($e->getMessage());
 }
 
 if ($part == 'dellinks') {
@@ -62,13 +62,13 @@ if ($part == 'dellinks') {
             foreach ($entries as $id) {
                 $C2->delLink($id);
             }
-            dcPage::addSuccessNotice(
+            dcAdminNotices::addSuccessNotice(
                 __('Links successfully deleted.')
             );
-            $core->adminurl->redirect('admin.plugin.cinecturlink2', ['part' => 'links']);
+            dcCore::app()->adminurl->redirect('admin.plugin.cinecturlink2', ['part' => 'links']);
         }
     } catch (Exception $e) {
-        $core->error->add($e->getMessage());
+        dcCore::app()->error->add($e->getMessage());
     }
     $breadcrumb[__('Delete links')] = '';
 }
@@ -78,7 +78,7 @@ if (in_array($part, ['updlinksnote', 'updlinkscat'])) {
     try {
         $links = $C2->getLinks(['link_id' => $entries]);
     } catch (Exception $e) {
-        $core->error->add($e->getMessage());
+        dcCore::app()->error->add($e->getMessage());
     }
 }
 
@@ -88,22 +88,22 @@ if ($part == 'updlinksnote') {
         if (!empty($entries) && isset($_POST['newlinknote'])) {
             while ($links->fetch()) {
                 if (in_array($links->link_id, $entries)) {
-                    $cur            = $core->con->openCursor($C2->table);
+                    $cur            = dcCore::app()->con->openCursor($C2->table);
                     $cur->link_note = (int) $_POST['newlinknote'];
                     $C2->updLink($links->link_id, $cur);
                 }
             }
-            dcPage::addSuccessNotice(
+            dcAdminNotices::addSuccessNotice(
                 __('Links successfully updated.')
             );
             if (!empty($_POST['redir'])) {
                 http::redirect($redir);
             } else {
-                $core->adminurl->redirect('admin.plugin.cinecturlink2', ['part' => 'links']);
+                dcCore::app()->adminurl->redirect('admin.plugin.cinecturlink2', ['part' => 'links']);
             }
         }
     } catch (Exception $e) {
-        $core->error->add($e->getMessage());
+        dcCore::app()->error->add($e->getMessage());
     }
     $breadcrumb[__('Update links rating')] = '';
 }
@@ -114,22 +114,22 @@ if ($part == 'updlinkscat') {
         if (!empty($entries) && !empty($_POST['newcatid'])) {
             while ($links->fetch()) {
                 if (in_array($links->link_id, $entries)) {
-                    $cur         = $core->con->openCursor($C2->table);
+                    $cur         = dcCore::app()->con->openCursor($C2->table);
                     $cur->cat_id = (int) $_POST['newcatid'];
                     $C2->updLink($links->link_id, $cur);
                 }
             }
-            dcPage::addSuccessNotice(
+            dcAdminNotices::addSuccessNotice(
                 __('Links successfully updated.')
             );
             if (!empty($_POST['redir'])) {
                 http::redirect($redir);
             } else {
-                $core->adminurl->redirect('admin.plugin.cinecturlink2', ['part' => 'links']);
+                dcCore::app()->adminurl->redirect('admin.plugin.cinecturlink2', ['part' => 'links']);
             }
         }
     } catch (Exception $e) {
-        $core->error->add($e->getMessage());
+        dcCore::app()->error->add($e->getMessage());
     }
     $breadcrumb[__('Update links category')] = '';
 }
@@ -138,10 +138,10 @@ if ($part == 'links') {
     $action_combo = [
         __('Delete')          => 'dellinks',
         __('Change category') => 'updlinkscat',
-        __('Change rating')   => 'updlinksnote'
+        __('Change rating')   => 'updlinksnote',
     ];
 
-    $c2link_filter = new adminGenericFilter($core, 'c2link');
+    $c2link_filter = new adminGenericFilterV2('c2link');
     $c2link_filter->add('part', 'links');
     $c2link_filter->add(dcAdminFilters::getPageFilter());
     $c2link_filter->add(dcAdminFilters::getSearchFilter());
@@ -161,13 +161,13 @@ if ($part == 'links') {
     try {
         $links         = $C2->getLinks($params);
         $links_counter = $C2->getLinks($params, true)->f(0);
-        $links_list    = new adminlistCinecturlink2($core, $links, $links_counter);
+        $links_list    = new adminlistCinecturlink2($links, $links_counter);
     } catch (Exception $e) {
-        $core->error->add($e->getMessage());
+        dcCore::app()->error->add($e->getMessage());
     }
 
     $breadcrumb[__('My cinecturlink')] = '';
-    $headers .= dcPage::jsVars(['dotclear.filter_reset_url' => $core->adminurl->get('admin.plugin.cinecturlink2', ['part' => 'links'])]) .
+    $headers .= dcPage::jsVars(['dotclear.filter_reset_url' => dcCore::app()->adminurl->get('admin.plugin.cinecturlink2', ['part' => 'links'])]) .
         dcPage::jsFilterControl($c2link_filter->show()) .
         dcPage::jsLoad(dcPage::getPF('cinecturlink2/js/c2links.js'));
 }
@@ -178,11 +178,11 @@ if ($part == 'link') {
     $media_combo = $tmp_media_combo = $dir = null;
 
     try {
-        $allowed_media = ['png', 'jpg', 'gif', 'bmp', 'jpeg'];
-        $core->media   = new dcMedia($core);
-        $core->media->chdir($core->blog->settings->cinecturlink2->cinecturlink2_folder);
-        $core->media->getDir();
-        $dir = & $core->media->dir;
+        $allowed_media       = ['png', 'jpg', 'gif', 'bmp', 'jpeg'];
+        dcCore::app()->media = new dcMedia();
+        dcCore::app()->media->chdir(dcCore::app()->blog->settings->cinecturlink2->cinecturlink2_folder);
+        dcCore::app()->media->getDir();
+        $dir = & dcCore::app()->media->dir;
 
         foreach ($dir['files'] as $file) {
             if (!in_array(files::getExtension($file->relname), $allowed_media)) {
@@ -194,14 +194,14 @@ if ($part == 'link') {
             $media_combo = array_merge(['-' => ''], $tmp_media_combo);
         }
     } catch (Exception $e) {
-        //$core->error->add($e->getMessage());
+        //dcCore::app()->error->add($e->getMessage());
     }
 
     if (!empty($_POST['save'])) {
         try {
             cinecturlink2::makePublicDir(
-                DC_ROOT . '/' . $core->blog->settings->system->public_path,
-                $core->blog->settings->cinecturlink2->cinecturlink2_folder
+                DC_ROOT . '/' . dcCore::app()->blog->settings->system->public_path,
+                dcCore::app()->blog->settings->cinecturlink2->cinecturlink2_folder
             );
             if (empty($linktitle)) {
                 throw new Exception(__('You must provide a title.'));
@@ -213,7 +213,7 @@ if ($part == 'link') {
                 throw new Exception(__('You must provide a link to an image.'));
             }
 
-            $cur              = $core->con->openCursor($C2->table);
+            $cur              = dcCore::app()->con->openCursor($C2->table);
             $cur->link_title  = $linktitle;
             $cur->link_desc   = $linkdesc;
             $cur->link_author = $linkauthor;
@@ -231,7 +231,7 @@ if ($part == 'link') {
                 }
                 $linkid = $C2->addLink($cur);
 
-                dcPage::addSuccessNotice(
+                dcAdminNotices::addSuccessNotice(
                     __('Link successfully created.')
                 );
             // update a link
@@ -242,20 +242,20 @@ if ($part == 'link') {
                 }
                 $C2->updLink($linkid, $cur);
 
-                dcPage::addSuccessNotice(
+                dcAdminNotices::addSuccessNotice(
                     __('Link successfully updated.')
                 );
             }
-            $core->adminurl->redirect(
+            dcCore::app()->adminurl->redirect(
                 'admin.plugin.cinecturlink2',
                 [
                     'part'   => 'link',
                     'linkid' => $linkid,
-                    'redir'  => $redir
+                    'redir'  => $redir,
                 ]
             );
         } catch (Exception $e) {
-            $core->error->add($e->getMessage());
+            dcCore::app()->error->add($e->getMessage());
         }
     }
 
@@ -263,16 +263,16 @@ if ($part == 'link') {
         try {
             $C2->delLink($linkid);
 
-            dcPage::addSuccessNotice(
+            dcAdminNotices::addSuccessNotice(
                 __('Link successfully deleted.')
             );
             if (!empty($_POST['redir'])) {
                 http::redirect($redir);
             } else {
-                $core->adminurl->redirect('admin.plugin.cinecturlink2', ['part' => 'links']);
+                dcCore::app()->adminurl->redirect('admin.plugin.cinecturlink2', ['part' => 'links']);
             }
         } catch (Exception $e) {
-            $core->error->add($e->getMessage());
+            dcCore::app()->error->add($e->getMessage());
         }
     }
 
@@ -290,7 +290,7 @@ if ($part == 'link') {
         }
     }
     $breadcrumb[(empty($linkid) ? __('New link') : __('Edit link'))] = '';
-    $headers .= dcPage::jsVars(['dotclear.c2_lang' => $core->auth->getInfo('user_lang')]) .
+    $headers .= dcPage::jsVars(['dotclear.c2_lang' => dcCore::app()->auth->getInfo('user_lang')]) .
         dcPage::jsLoad(dcPage::getPF('cinecturlink2/js/c2link.js'));
 }
 
@@ -313,33 +313,33 @@ if ($part == 'cats') {
             $i = 0;
             foreach ($catorder as $id) {
                 $i++;
-                $cur          = $core->con->openCursor($C2->table . '_cat');
+                $cur          = dcCore::app()->con->openCursor($C2->table . '_cat');
                 $cur->cat_pos = $i;
                 $C2->updCategory($id, $cur);
             }
-            dcPage::addSuccessNotice(
+            dcAdminNotices::addSuccessNotice(
                 __('Categories successfully reordered.')
             );
-            $core->adminurl->redirect('admin.plugin.cinecturlink2', ['part' => 'cats']);
+            dcCore::app()->adminurl->redirect('admin.plugin.cinecturlink2', ['part' => 'cats']);
         }
         // delete categories
         if (!empty($_POST['delete']) && !empty($_POST['items_selected'])) {
             foreach ($_POST['items_selected'] as $id) {
                 $C2->delCategory($id);
             }
-            dcPage::addSuccessNotice(
+            dcAdminNotices::addSuccessNotice(
                 __('Categories successfully deleted.')
             );
-            $core->adminurl->redirect('admin.plugin.cinecturlink2', ['part' => 'cats']);
+            dcCore::app()->adminurl->redirect('admin.plugin.cinecturlink2', ['part' => 'cats']);
         }
     } catch (Exception $e) {
-        $core->error->add($e->getMessage());
+        dcCore::app()->error->add($e->getMessage());
     }
 
     $breadcrumb[__('Categories')] = '';
 
-    $core->auth->user_prefs->addWorkspace('accessibility');
-    if (!$core->auth->user_prefs->accessibility->nodragdrop) {
+    dcCore::app()->auth->user_prefs->addWorkspace('accessibility');
+    if (!dcCore::app()->auth->user_prefs->accessibility->nodragdrop) {
         $headers .= dcPage::jsLoad('js/jquery/jquery-ui.custom.js') .
             dcPage::jsLoad('js/jquery/jquery.ui.touch-punch.js') .
             dcPage::jsLoad(dcPage::getPF('cinecturlink2/js/c2cats.js'));
@@ -354,16 +354,16 @@ if ($part == 'cat') {
             if ($exists) {
                 throw new Exception(__('Category with same name already exists.'));
             }
-            $cur            = $core->con->openCursor($C2->table . '_cat');
+            $cur            = dcCore::app()->con->openCursor($C2->table . '_cat');
             $cur->cat_title = $cattitle;
             $cur->cat_desc  = $catdesc;
 
             $catid = $C2->addCategory($cur);
 
-            dcPage::addSuccessNotice(
+            dcAdminNotices::addSuccessNotice(
                 __('Category successfully created.')
             );
-            $core->adminurl->redirect('admin.plugin.cinecturlink2', ['part' => 'cats']);
+            dcCore::app()->adminurl->redirect('admin.plugin.cinecturlink2', ['part' => 'cats']);
         }
         // update category
         if (!empty($_POST['save']) && !empty($catid) && !empty($cattitle) && !empty($catdesc)) {
@@ -371,30 +371,30 @@ if ($part == 'cat') {
             if ($exists) {
                 throw new Exception(__('Category with same name already exists.'));
             }
-            $cur            = $core->con->openCursor($C2->table . '_cat');
+            $cur            = dcCore::app()->con->openCursor($C2->table . '_cat');
             $cur->cat_title = $cattitle;
             $cur->cat_desc  = $catdesc;
 
             $C2->updCategory($catid, $cur);
 
-            dcPage::addSuccessNotice(
+            dcAdminNotices::addSuccessNotice(
                 __('Category successfully updated.')
             );
-            $core->adminurl->redirect('admin.plugin.cinecturlink2', ['part' => 'cats']);
+            dcCore::app()->adminurl->redirect('admin.plugin.cinecturlink2', ['part' => 'cats']);
         }
         // delete category
         if (!empty($_POST['delete']) && !empty($catid)) {
             $C2->delCategory($catid);
 
-            dcPage::addSuccessNotice(
+            dcAdminNotices::addSuccessNotice(
                 __('Category successfully deleted.')
             );
-            $core->adminurl->redirect('admin.plugin.cinecturlink2', ['part' => 'cats']);
+            dcCore::app()->adminurl->redirect('admin.plugin.cinecturlink2', ['part' => 'cats']);
         }
     } catch (Exception $e) {
-        $core->error->add($e->getMessage());
+        dcCore::app()->error->add($e->getMessage());
     }
-    $breadcrumb[__('Categories')]                                           = $core->adminurl->get('admin.plugin.cinecturlink2', ['part' => 'cats']);
+    $breadcrumb[__('Categories')]                                           = dcCore::app()->adminurl->get('admin.plugin.cinecturlink2', ['part' => 'cats']);
     $breadcrumb[(empty($catid) ? __('New category') : __('Edit category'))] = '';
 }
 
@@ -423,18 +423,18 @@ if ($part == 'updlinksnote') {
         echo '</ul>';
 
         echo '<h4>' . __('Rating') . '</h4>
-        <form method="post" action="' . $core->adminurl->get('admin.plugin.cinecturlink2') . '">' .
+        <form method="post" action="' . dcCore::app()->adminurl->get('admin.plugin.cinecturlink2') . '">' .
         '<p><label for="newlinknote" class="ib">' . __('New rating:') . '</label> ' .
             form::number('newlinknote', [
                 'min'     => 0,
                 'max'     => 20,
-                'default' => 10
+                'default' => 10,
             ]) . '/20' . '</p>' .
         '<p>' .
         '<input type="submit" value="' . __('Save') . ' (s)" accesskey="s" name="save" /> ' .
         '<a id="post-cancel" href="' . (
             $redir ? $redir :
-            $core->adminurl->get('admin.plugin.cinecturlink2', ['part' => 'links'])
+            dcCore::app()->adminurl->get('admin.plugin.cinecturlink2', ['part' => 'links'])
         ) . '" class="button" accesskey="c">' . __('Cancel') . ' (c)</a> ';
         foreach ($entries as $id) {
             echo form::hidden(['entries[]'], $id);
@@ -442,7 +442,7 @@ if ($part == 'updlinksnote') {
         echo
         form::hidden('part', 'updlinksnote') .
         form::hidden('redir', $redir) .
-        $core->formNonce() . '</p>' .
+        dcCore::app()->formNonce() . '</p>' .
         '</form>';
     }
 }
@@ -458,13 +458,13 @@ if ($part == 'updlinkscat') {
         echo '</ul>';
 
         echo '<h4>' . __('Category') . '</h4>
-        <form method="post" action="' . $core->adminurl->get('admin.plugin.cinecturlink2') . '">' .
+        <form method="post" action="' . dcCore::app()->adminurl->get('admin.plugin.cinecturlink2') . '">' .
         '<p><label for="newcatid" class="ib">' . __('New category:') . '</label> ' .
         form::combo('newcatid', $categories_combo, $catid) . '</p>' .
         '<input type="submit" value="' . __('Save') . ' (s)" accesskey="s" name="save" /> ' .
         '<a id="post-cancel" href="' . (
             $redir ? $redir :
-            $core->adminurl->get('admin.plugin.cinecturlink2', ['part' => 'links'])
+            dcCore::app()->adminurl->get('admin.plugin.cinecturlink2', ['part' => 'links'])
         ) . '" class="button" accesskey="c">' . __('Cancel') . ' (c)</a> ';
         foreach ($entries as $id) {
             echo form::hidden(['entries[]'], $id);
@@ -472,19 +472,19 @@ if ($part == 'updlinkscat') {
         echo
         form::hidden('part', 'updlinkscat') .
         form::hidden('redir', $redir) .
-        $core->formNonce() . '</p>' .
+        dcCore::app()->formNonce() . '</p>' .
         '</form>';
     }
 }
 
 if ($part == 'links') {
-    $links_redir = $core->adminurl->get('admin.plugin.cinecturlink2', $c2link_filter->values());
+    $links_redir = dcCore::app()->adminurl->get('admin.plugin.cinecturlink2', $c2link_filter->values());
 
     echo
     '<p class="top-add"><a class="button add" href="' .
-        $core->adminurl->get('admin.plugin.cinecturlink2', ['part' => 'link', 'redir' => $links_redir]) .
+        dcCore::app()->adminurl->get('admin.plugin.cinecturlink2', ['part' => 'link', 'redir' => $links_redir]) .
     '">' . __('New Link') . '</a> <a class="button add" href="' .
-        $core->adminurl->get('admin.plugin.cinecturlink2', ['part' => 'cats', 'redir' => $links_redir]) .
+        dcCore::app()->adminurl->get('admin.plugin.cinecturlink2', ['part' => 'cats', 'redir' => $links_redir]) .
     '">' . __('Edit categories') . ' </a></p>';
 
     if ($links->isEmpty() && !$c2link_filter->show()) {
@@ -498,7 +498,7 @@ if ($part == 'links') {
         $links_list->display(
             $c2link_filter->page,
             $c2link_filter->nb,
-            '<form action="' . $core->adminurl->get('admin.plugin.cinecturlink2') . '" method="post" id="form-entries">' .
+            '<form action="' . dcCore::app()->adminurl->get('admin.plugin.cinecturlink2') . '" method="post" id="form-entries">' .
 
             '%s' .
 
@@ -508,9 +508,9 @@ if ($part == 'links') {
             '<p class="col right"><label for="action" class="classic">' . __('Selected links action:') . '</label> ' .
             form::combo('part', $action_combo) .
             '<input id="do-action" type="submit" value="' . __('ok') . '" disabled /></p>' .
-            $core->adminurl->getHiddenFormFields('admin.plugin.cinecturlink2', array_diff_key($c2link_filter->values(), ['part' => ''])) .
+            dcCore::app()->adminurl->getHiddenFormFields('admin.plugin.cinecturlink2', array_diff_key($c2link_filter->values(), ['part' => ''])) .
             form::hidden(['redir'], $links_redir) .
-            $core->formNonce() .
+            dcCore::app()->formNonce() .
             '</div>' .
             '</form>',
             $c2link_filter->show(),
@@ -521,7 +521,7 @@ if ($part == 'links') {
 
 if ($part == 'link') {
     echo '
-    <form id="newlinkform" method="post" action="' . $core->adminurl->get('admin.plugin.cinecturlink2') . '">
+    <form id="newlinkform" method="post" action="' . dcCore::app()->adminurl->get('admin.plugin.cinecturlink2') . '">
 
     <div class="two-cols clearfix">
     <div class="col70">
@@ -554,7 +554,7 @@ if ($part == 'link') {
         form::combo('newimageselect', $media_combo, '', 'maximal') .
         '</label></p>' .
         '<p class="form-note"><a href="' .
-            $core->adminurl->get('admin.media', ['d' => (string) $core->blog->settings->cinecturlink2->cinecturlink2_folder]) . '">' .
+            dcCore::app()->adminurl->get('admin.media', ['d' => (string) dcCore::app()->blog->settings->cinecturlink2->cinecturlink2_folder]) . '">' .
             __('Go to media manager to add image to cinecturlink path.') .
         '<a></p>';
     }
@@ -572,20 +572,20 @@ if ($part == 'link') {
         form::number('linknote', [
             'min'     => 0,
             'max'     => 20,
-            'default' => $linknote
+            'default' => $linknote,
         ]) . '/20' . '</p>
     </div></div>
 
     <p class="border-top">' .
     '<input type="submit" value="' . __('Save') . ' (s)" accesskey="s" name="save" /> ' .
     '<a id="post-cancel" href="' .
-        $core->adminurl->get('admin.plugin.cinecturlink2', ['part' => 'links']) .
+        dcCore::app()->adminurl->get('admin.plugin.cinecturlink2', ['part' => 'links']) .
     '" class="button" accesskey="c">' . __('Cancel') . ' (c)</a> ' .
     '<input type="submit" class="delete" value="' . __('Delete') . '" name="delete" />' .
     form::hidden('linkid', $linkid) .
     form::hidden('part', 'link') .
     form::hidden('redir', $redir) .
-    $core->formNonce() . '
+    dcCore::app()->formNonce() . '
     </p>
     </form>';
 }
@@ -593,17 +593,17 @@ if ($part == 'link') {
 if ($part == 'cats') {
     echo
     '<p class="top-add"><a class="button add" href="' .
-        $core->adminurl->get(
+        dcCore::app()->adminurl->get(
             'admin.plugin.cinecturlink2',
             [
                 'part'  => 'cat',
-                'redir' => $core->adminurl->get(
+                'redir' => dcCore::app()->adminurl->get(
                     'admin.plugin.cinecturlink2',
                     [
                         'part'  => 'cats',
                         'redir' => $redir,
                     ]
-                )
+                ),
             ]
         ) .
     '">' . __('New Category') . ' </a></p>';
@@ -612,7 +612,7 @@ if ($part == 'cats') {
         echo '<p>' . __('There is no category') . '</p>';
     } else {
         echo '
-        <form id="c2items" method="post" action="' . $core->adminurl->get('admin.plugin.cinecturlink2') . '">
+        <form id="c2items" method="post" action="' . dcCore::app()->adminurl->get('admin.plugin.cinecturlink2') . '">
         <div class="table-outer">
         <table class="dragable">
         <caption>' . __('Categories list') . '</caption>
@@ -634,23 +634,23 @@ if ($part == 'cats') {
                 'max'        => $categories->count(),
                 'default'    => $i + 1,
                 'class'      => 'position',
-                'extra_html' => 'title="' . sprintf(__('position of %s'), html::escapeHTML($categories->cat_title)) . '"'
+                'extra_html' => 'title="' . sprintf(__('position of %s'), html::escapeHTML($categories->cat_title)) . '"',
             ]) .
             form::hidden(['dynorder[]', 'dynorder-' . $i], $id) . '</td>
             <td class="minimal">' . form::checkbox(['items_selected[]', 'ims-' . $i], $id) . '</td>
             <td class="nowrap"><a title="' . __('Edit') . '" href="' .
-                $core->adminurl->get(
+                dcCore::app()->adminurl->get(
                     'admin.plugin.cinecturlink2',
                     [
                         'part'  => 'cat',
                         'catid' => $id,
-                        'redir' => $core->adminurl->get(
+                        'redir' => dcCore::app()->adminurl->get(
                             'admin.plugin.cinecturlink2',
                             [
                                 'part'  => 'cats',
-                                'redir' => $redir
+                                'redir' => $redir,
                             ]
-                        )
+                        ),
                     ]
                 ) .
             '">' . html::escapeHTML($categories->cat_title) . '</a></td>
@@ -667,12 +667,12 @@ if ($part == 'cats') {
         <p class="border-top">' .
         '<input type="submit" value="' . __('Save order') . ' (s)" accesskey="s" name="save" /> ' .
         '<a id="post-cancel" href="' .
-            $core->adminurl->get('admin.plugin.cinecturlink2', ['part' => 'cats']) .
+            dcCore::app()->adminurl->get('admin.plugin.cinecturlink2', ['part' => 'cats']) .
         '" class="button" accesskey="c">' . __('Cancel') . ' (c)</a> ' .
         '<input type="submit" class="delete" value="' . __('Delete selection') . '" name="delete" />' .
         form::hidden('im_order', '') .
         form::hidden('part', 'cats') .
-        $core->formNonce() . '</p>' .
+        dcCore::app()->formNonce() . '</p>' .
         '</form>';
     }
 }
@@ -695,7 +695,7 @@ if ($part == 'cat') {
         ) . '</p>';
     }
     echo '
-    <form method="post" action="' . $core->adminurl->get('admin.plugin.cinecturlink2') . '">
+    <form method="post" action="' . dcCore::app()->adminurl->get('admin.plugin.cinecturlink2') . '">
     <p><label for="cattitle">' . __('Title:') . ' ' .
     form::field('cattitle', 60, 64, $cattitle, 'maximal') .
     '</label></p>
@@ -705,12 +705,12 @@ if ($part == 'cat') {
     <p class="border-top">' .
     '<input type="submit" value="' . __('Save') . ' (s)" accesskey="s" name="save" /> ' .
     '<a id="post-cancel" href="' .
-        $core->adminurl->get('admin.plugin.cinecturlink2', ['part' => 'cats']) .
+        dcCore::app()->adminurl->get('admin.plugin.cinecturlink2', ['part' => 'cats']) .
     '" class="button" accesskey="c">' . __('Cancel') . ' (c)</a> ' .
     (!empty($catid) ? ' <input type="submit" class="delete" value="' . __('Delete') . '" name="delete" />' : '') .
     form::hidden('catid', $catid) .
     form::hidden('part', 'cat') .
-    $core->formNonce() . '</p>' .
+    dcCore::app()->formNonce() . '</p>' .
     '</form>';
 }
 

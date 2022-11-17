@@ -15,13 +15,13 @@ if (!defined('DC_CONTEXT_MODULE')) {
 }
 
 # Check user perms
-dcPage::check('admin');
+dcPage::check(dcAuth::PERMISSION_ADMIN);
 
 $redir = empty($_REQUEST['redir']) ?
-    $list->getURL() . '#plugins' : $_REQUEST['redir'];
+    dcCore::app()->admin->list->getURL() . '#plugins' : $_REQUEST['redir'];
 
-$core->blog->settings->addNamespace('cinecturlink2');
-$s                                = $core->blog->settings->cinecturlink2;
+dcCore::app()->blog->settings->addNamespace('cinecturlink2');
+$s                                = dcCore::app()->blog->settings->cinecturlink2;
 $cinecturlink2_active             = (bool) $s->cinecturlink2_active;
 $cinecturlink2_widthmax           = abs((int) $s->cinecturlink2_widthmax);
 $cinecturlink2_folder             = (string) $s->cinecturlink2_folder;
@@ -34,7 +34,7 @@ if ($cinecturlink2_public_nbrpp < 1) {
     $cinecturlink2_public_nbrpp = 10;
 }
 
-$combo_dirs = cinecturlink2::getPublicDirs($core);
+$combo_dirs = cinecturlink2::getPublicDirs();
 
 if (!empty($_POST['save'])) {
     try {
@@ -56,7 +56,7 @@ if (!empty($_POST['save'])) {
             throw new Exception(__('You must provide a specific folder for images.'));
         }
         cinecturlink2::makePublicDir(
-            DC_ROOT . '/' . $core->blog->settings->system->public_path,
+            DC_ROOT . '/' . dcCore::app()->blog->settings->system->public_path,
             $cinecturlink2_folder,
             true
         );
@@ -69,15 +69,15 @@ if (!empty($_POST['save'])) {
         $s->put('cinecturlink2_folder', $cinecturlink2_folder);
         $s->put('cinecturlink2_triggeronrandom', $cinecturlink2_triggeronrandom);
 
-        dcPage::addSuccessNotice(
+        dcAdminNotices::addSuccessNotice(
             __('Configuration successfully updated.')
         );
-        $core->adminurl->redirect(
+        dcCore::app()->adminurl->redirect(
             'admin.plugins',
-            ['module' => 'cinecturlink2', 'conf' => 1, 'redir' => $list->getRedir()]
+            ['module' => 'cinecturlink2', 'conf' => 1, 'redir' => dcCore::app()->admin->list->getRedir()]
         );
     } catch (Exception $e) {
-        $core->error->add($e->getMessage());
+        dcCore::app()->error->add($e->getMessage());
     }
 }
 
@@ -116,7 +116,7 @@ __('Update cache when use "Random" or "Number of view" order on widget (Need rel
 <p><label class="classic" for="cinecturlink2_public_active">' .
 form::checkbox('cinecturlink2_public_active', 1, $cinecturlink2_public_active) .
 __('Enable public page') . '</label></p>
-<p class="form-note">' . sprintf(__('Public page has url: %s'), '<a href="' . $core->blog->url . $core->url->getBase('cinecturlink2') . '" title="public page">' . $core->blog->url . $core->url->getBase('cinecturlink2') . '</a>') . '</p>
+<p class="form-note">' . sprintf(__('Public page has url: %s'), '<a href="' . dcCore::app()->blog->url . dcCore::app()->url->getBase('cinecturlink2') . '" title="public page">' . dcCore::app()->blog->url . dcCore::app()->url->getBase('cinecturlink2') . '</a>') . '</p>
 
 <p><label for="cinecturlink2_public_title">' . __('Title of the public page:') . '</label>' .
 form::field('cinecturlink2_public_title', 60, 255, $cinecturlink2_public_title, 'maximal') . '</p>

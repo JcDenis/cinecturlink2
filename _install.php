@@ -14,15 +14,15 @@ if (!defined('DC_CONTEXT_ADMIN')) {
     return null;
 }
 
-$new_version = $core->plugins->moduleInfo('cinecturlink2', 'version');
-$old_version = $core->getVersion('cinecturlink2');
+$new_version = dcCore::app()->plugins->moduleInfo('cinecturlink2', 'version');
+$old_version = dcCore::app()->getVersion('cinecturlink2');
 
 if (version_compare($old_version, $new_version, '>=')) {
     return;
 }
 
 try {
-    $s = new dbStruct($core->con, $core->prefix);
+    $s = new dbStruct(dcCore::app()->con, dcCore::app()->prefix);
     $s->cinecturlink2
         ->link_id('bigint', 0, false)
         ->blog_id('varchar', 32, false)
@@ -62,11 +62,11 @@ try {
         ->index('idx_cinecturlink2_cat_blog_id', 'btree', 'blog_id')
         ->unique('uk_cinecturlink2_cat_title', 'cat_title', 'blog_id');
 
-    $si      = new dbStruct($core->con, $core->prefix);
+    $si      = new dbStruct(dcCore::app()->con, dcCore::app()->prefix);
     $changes = $si->synchronize($s);
 
-    $core->blog->settings->addNamespace('cinecturlink2');
-    $s = $core->blog->settings->cinecturlink2;
+    dcCore::app()->blog->settings->addNamespace('cinecturlink2');
+    $s = dcCore::app()->blog->settings->cinecturlink2;
     $s->put('cinecturlink2_active', true, 'boolean', 'Enable cinecturlink2', false, true);
     $s->put('cinecturlink2_widthmax', 100, 'integer', 'Maximum width of picture', false, true);
     $s->put('cinecturlink2_folder', 'cinecturlink', 'string', 'Public folder of pictures', false, true);
@@ -77,14 +77,14 @@ try {
     $s->put('cinecturlink2_public_nbrpp', 20, 'integer', 'Number of entries per page on public page', false, true);
     $s->put('cinecturlink2_public_caturl', 'c2cat', 'string', 'Part of URL for a category list', false, true);
 
-    $core->setVersion(
+    dcCore::app()->setVersion(
         'cinecturlink2',
-        $core->plugins->moduleInfo('cinecturlink2', 'version')
+        dcCore::app()->plugins->moduleInfo('cinecturlink2', 'version')
     );
 
     return true;
 } catch (Exception $e) {
-    $core->error->add($e->getMessage());
+    dcCore::app()->error->add($e->getMessage());
 }
 
 return false;

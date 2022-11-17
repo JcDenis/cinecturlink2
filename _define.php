@@ -24,13 +24,13 @@ $this->registerModule(
     'Cinecturlink 2',
     'Widgets and pages about books, musics, films, blogs you are interested in',
     'Jean-Christian Denis and Contributors',
-    '1.0.0',
+    '1.1.0',
     [
-        'requires'    => [['core', '2.20']],
-        'permissions' => 'contentadmin',
+        'requires'    => [['core', '2.24']],
+        'permissions' => dcAuth::PERMISSION_CONTENT_ADMIN,
         'type'        => 'plugin',
         'support'     => 'https://github.com/JcDenis/cinecturlink2',
         'details'     => 'https://plugins.dotaddict.org/dc2/details/cinecturlink2',
-        'repository'  => 'https://raw.githubusercontent.com/JcDenis/cinecturlink2/master/dcstore.xml'
+        'repository'  => 'https://raw.githubusercontent.com/JcDenis/cinecturlink2/master/dcstore.xml',
     ]
 );
