@@ -36,6 +36,6 @@ dcCore::app()->addBehavior(
     ['sitemapsCinecturlink2', 'sitemapsURLsCollect']
 );
 
-if (defined('ACTIVITY_REPORT')) {
+if (defined('ACTIVITY_REPORT_V2')) {
     cinecturlink2ActivityReportBehaviors::add();
 }
