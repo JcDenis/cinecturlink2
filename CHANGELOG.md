@@ -1,6 +1,9 @@
 dev
 - [ ] enhance public template
 
+1.1.0 - 2022.11.20
+- fix compatibility with Dotclear 2.24 (required)
+
 1.0.0 - 2021.11.06
 - fix javascript (and externalize them)
 - fix modal

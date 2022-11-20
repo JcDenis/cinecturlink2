@@ -98,9 +98,11 @@ class cinecturlink2
 
         if (!empty($params['cat_id'])) {
             if (is_array($params['cat_id'])) {
-                array_walk($params['cat_id'], function (&$v, $k) { if ($v !== null) {
-                    $v = (int) $v;
-                }});
+                array_walk($params['cat_id'], function (&$v, $k) {
+                    if ($v !== null) {
+                        $v = (int) $v;
+                    }
+                });
             } else {
                 $params['cat_id'] = [(int) $params['cat_id']];
             }
@@ -286,9 +288,11 @@ class cinecturlink2
 
         if (!empty($params['cat_id'])) {
             if (is_array($params['cat_id'])) {
-                array_walk($params['cat_id'], function (&$v, $k) { if ($v !== null) {
-                    $v = (int) $v;
-                }});
+                array_walk($params['cat_id'], function (&$v, $k) {
+                    if ($v !== null) {
+                        $v = (int) $v;
+                    }
+                });
             } else {
                 $params['cat_id'] = [(int) $params['cat_id']];
             }
@@ -297,9 +301,11 @@ class cinecturlink2
 
         if (isset($params['exclude_cat_id']) && $params['exclude_cat_id'] !== '') {
             if (is_array($params['exclude_cat_id'])) {
-                array_walk($params['exclude_cat_id'], function (&$v, $k) { if ($v !== null) {
-                    $v = (int) $v;
-                }});
+                array_walk($params['exclude_cat_id'], function (&$v, $k) {
+                    if ($v !== null) {
+                        $v = (int) $v;
+                    }
+                });
             } else {
                 $params['exclude_cat_id'] = [(int) $params['exclude_cat_id']];
             }
