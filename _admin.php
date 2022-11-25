@@ -18,34 +18,30 @@ require_once __DIR__ . '/_widgets.php';
 
 dcCore::app()->menu[dcAdmin::MENU_PLUGINS]->addItem(
     __('My cinecturlink'),
-    dcCore::app()->adminurl->get('admin.plugin.cinecturlink2'),
-    dcPage::getPF('cinecturlink2/icon.png'),
-    preg_match(
-        '/' . preg_quote(dcCore::app()->adminurl->get('admin.plugin.cinecturlink2')) . '(&.*)?$/',
-        $_SERVER['REQUEST_URI']
-    ),
-    dcCore::app()->auth->check(dcAuth::PERMISSION_CONTENT_ADMIN, dcCore::app()->blog->id)
+    cinecturlink2AdminUrl(),
+    cinecturlink2AdminIcon(),
+    preg_match('/' . preg_quote(cinecturlink2AdminUrl()) . '(&.*)?$/', $_SERVER['REQUEST_URI']),
+     cinecturlink2AdmiPerm(),
 );
 
-dcCore::app()->addBehavior(
-    'adminColumnsListsV2',
-    ['cinecturlink2AdminBehaviors', 'adminColumnsLists']
-);
+dcCore::app()->addBehavior('adminColumnsListsV2', function (ArrayObject $cols) {
+    $cols['c2link'] = [
+        __('Cinecturlink'),
+        [
+            'date'   => [true, __('Date')],
+            'cat'    => [true, __('Category')],
+            'author' => [true, __('Author')],
+            'desc'   => [false, __('Description')],
+            'link'   => [true, __('Liens')],
+            'note'   => [true, __('Rating')],
+        ],
+    ];
+});
 
-dcCore::app()->addBehavior(
-    'adminFiltersListsV2',
-    ['cinecturlink2AdminBehaviors', 'adminFiltersLists']
-);
-dcCore::app()->addBehavior(
-    'adminDashboardFavoritesV2',
-    ['cinecturlink2AdminBehaviors', 'adminDashboardFavorites']
-);
-
-class cinecturlink2AdminBehaviors
-{
-    public static function adminSortbyCombo()
-    {
-        return [
+dcCore::app()->addBehavior('adminFiltersListsV2', function (ArrayObject $sorts) {
+    $sorts['c2link'] = [
+        __('Cinecturlink'),
+        [
             __('Date')        => 'link_upddt',
             __('Title')       => 'link_title',
             __('Category')    => 'cat_id',
@@ -53,51 +49,34 @@ class cinecturlink2AdminBehaviors
             __('Description') => 'link_desc',
             __('Link')        => 'link_url',
             __('Rating')      => 'link_note',
-        ];
-    }
+        ],
+        'link_upddt',
+        'desc',
+        [__('Links per page'), 30],
+    ];
+});
 
-    public static function adminColumnsLists($cols)
-    {
-        $cols['c2link'] = [
-            __('Cinecturlink'),
-            [
-                'date'   => [true, __('Date')],
-                'cat'    => [true, __('Category')],
-                'author' => [true, __('Author')],
-                'desc'   => [false, __('Description')],
-                'link'   => [true, __('Liens')],
-                'note'   => [true, __('Rating')],
-            ],
-        ];
-    }
+dcCore::app()->addBehavior('adminDashboardFavoritesV2', function (dcFavorites $favs) {
+    $favs->register('cinecturlink2', [
+        'title'       => __('My cinecturlink'),
+        'url'         => cinecturlink2AdminUrl() . '#links',
+        'small-icon'  => cinecturlink2AdminIcon(),
+        'large-icon'  => cinecturlink2AdminIcon(),
+        'permissions' =>  cinecturlink2AdmiPerm(),
+    ]);
+});
 
-    public static function adminFiltersLists($sorts)
-    {
-        $sorts['c2link'] = [
-            __('Cinecturlink'),
-            self::adminSortbyCombo(),
-            'link_upddt',
-            'desc',
-            [__('Links per page'), 30],
-        ];
-    }
+function cinecturlink2AdminUrl(): string
+{
+    return dcCore::app()->adminurl->get('admin.plugin.cinecturlink2');
+}
 
-    public static function adminDashboardFavorites($favs)
-    {
-        $favs->register('cinecturlink2', [
-            'title'       => __('My cinecturlink'),
-            'url'         => dcCore::app()->adminurl->get('admin.plugin.cinecturlink2') . '#links',
-            'small-icon'  => dcPage::getPF('cinecturlink2/icon.png'),
-            'large-icon'  => dcPage::getPF('cinecturlink2/icon-big.png'),
-            'permissions' => dcCore::app()->auth->check('contentadmin', dcCore::app()->blog->id),
-            'active_cb'   => ['cinecturlink2AdminBehaviors', 'adminDashboardFavoritesActive'],
-        ]);
-    }
+function cinecturlink2AdminIcon(): string
+{
+    return urldecode(dcPage::getPF('cinecturlink2/icon.svg'));
+}
 
-    public static function adminDashboardFavoritesActive($request, $params)
-    {
-        return $request == 'plugin.php'
-            && isset($params['p'])
-            && $params['p'] == 'cinecturlink2';
-    }
+function cinecturlink2AdmiPerm(): bool
+{
+    return dcCore::app()->auth->check(dcAuth::PERMISSION_CONTENT_ADMIN, dcCore::app()->blog->id);
 }
