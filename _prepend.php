@@ -14,11 +14,13 @@ if (!defined('DC_RC_PATH')) {
     return null;
 }
 
-Clearbricks::lib()->autoload(['cinecturlink2' => __DIR__ . '/inc/class.cinecturlink2.php']);
-Clearbricks::lib()->autoload(['cinecturlink2Context' => __DIR__ . '/inc/lib.cinecturlink2.context.php']);
-Clearbricks::lib()->autoload(['adminlistCinecturlink2' => __DIR__ . '/inc/lib.cinecturlink2.list.php']);
-Clearbricks::lib()->autoload(['sitemapsCinecturlink2' => __DIR__ . '/inc/lib.sitemaps.cinecturlink2.php']);
-Clearbricks::lib()->autoload(['cinecturlink2ActivityReportBehaviors' => __DIR__ . '/inc/lib.cinecturlink2.activityreport.php']);
+Clearbricks::lib()->autoload([
+    'cinecturlink2'                        => __DIR__ . '/inc/class.cinecturlink2.php',
+    'cinecturlink2Context'                 => __DIR__ . '/inc/lib.cinecturlink2.context.php',
+    'adminlistCinecturlink2'               => __DIR__ . '/inc/lib.cinecturlink2.list.php',
+    'sitemapsCinecturlink2'                => __DIR__ . '/inc/lib.sitemaps.cinecturlink2.php',
+    'cinecturlink2ActivityReportBehaviors' => __DIR__ . '/inc/lib.cinecturlink2.activityreport.php',
+]);
 
 dcCore::app()->url->register(
     'cinecturlink2',
