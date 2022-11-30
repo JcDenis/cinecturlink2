@@ -21,7 +21,7 @@ dcCore::app()->menu[dcAdmin::MENU_PLUGINS]->addItem(
     cinecturlink2AdminUrl(),
     cinecturlink2AdminIcon(),
     preg_match('/' . preg_quote(cinecturlink2AdminUrl()) . '(&.*)?$/', $_SERVER['REQUEST_URI']),
-     cinecturlink2AdmiPerm(),
+    dcCore::app()->auth->check(cinecturlink2AdminPerm(), dcCore::app()->blog->id)
 );
 
 dcCore::app()->addBehavior('adminColumnsListsV2', function (ArrayObject $cols) {
@@ -62,7 +62,7 @@ dcCore::app()->addBehavior('adminDashboardFavoritesV2', function (dcFavorites $f
         'url'         => cinecturlink2AdminUrl() . '#links',
         'small-icon'  => cinecturlink2AdminIcon(),
         'large-icon'  => cinecturlink2AdminIcon(),
-        'permissions' =>  cinecturlink2AdmiPerm(),
+        'permissions' => cinecturlink2AdminPerm(),
     ]);
 });
 
@@ -76,7 +76,7 @@ function cinecturlink2AdminIcon(): string
     return urldecode(dcPage::getPF('cinecturlink2/icon.svg'));
 }
 
-function cinecturlink2AdmiPerm(): bool
+function cinecturlink2AdminPerm(): bool
 {
-    return dcCore::app()->auth->check(dcAuth::PERMISSION_CONTENT_ADMIN, dcCore::app()->blog->id);
+    return dcCore::app()->auth->makePermissions([dcAuth::PERMISSION_CONTENT_ADMIN]);
 }

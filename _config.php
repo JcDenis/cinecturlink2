@@ -15,7 +15,7 @@ if (!defined('DC_CONTEXT_MODULE')) {
 }
 
 # Check user perms
-dcPage::check(dcAuth::PERMISSION_ADMIN);
+dcPage::check(dcCore::app()->auth->makePermissions([dcAuth::PERMISSION_ADMIN]));
 
 $redir = empty($_REQUEST['redir']) ?
     dcCore::app()->admin->list->getURL() . '#plugins' : $_REQUEST['redir'];
