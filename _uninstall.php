@@ -31,7 +31,7 @@ $this->addUserAction(
     /* action */
     'delete',
     /* ns */
-    'cinecturlink2',
+    initCinecturlink2::CINECTURLINK_TABLE_NAME,
     /* desc */
     sprintf(__('delete %s table'), 'cinecturlink2')
 );
@@ -42,7 +42,7 @@ $this->addUserAction(
     /* action */
     'delete',
     /* ns */
-    'cinecturlink2_cat',
+    initCinecturlink2::CATEGORY_TABLE_NAME,
     /* desc */
     sprintf(__('delete %s table'), 'cinecturlink2_cat')
 );
@@ -86,7 +86,7 @@ $this->addDirectAction(
     /* action */
     'delete',
     /* ns */
-    'cinecturlink2',
+    initCinecturlink2::CINECTURLINK_TABLE_NAME,
     /* desc */
     sprintf(__('delete %s table'), 'cinecturlink2')
 );
@@ -97,7 +97,7 @@ $this->addDirectAction(
     /* action */
     'delete',
     /* ns */
-    'cinecturlink2_cat',
+    initCinecturlink2::CATEGORY_TABLE_NAME,
     /* desc */
     sprintf(__('delete %s table'), 'cinecturlink2_cat')
 );

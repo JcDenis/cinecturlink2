@@ -23,7 +23,7 @@ if (version_compare($old_version, $new_version, '>=')) {
 
 try {
     $s = new dbStruct(dcCore::app()->con, dcCore::app()->prefix);
-    $s->cinecturlink2
+    $s->{initCinecturlink2::CINECTURLINK_TABLE_NAME}
         ->link_id('bigint', 0, false)
         ->blog_id('varchar', 32, false)
         ->cat_id('bigint', 0, true)
@@ -49,7 +49,7 @@ try {
         ->index('idx_cinecturlink2_user_id', 'btree', 'user_id')
         ->index('idx_cinecturlink2_type', 'btree', 'link_type');
 
-    $s->cinecturlink2_cat
+    $s->{initCinecturlink2::CATEGORY_TABLE_NAME}
         ->cat_id('bigint', 0, false)
         ->blog_id('varchar', 32, false)
         ->cat_title('varchar', 255, false)

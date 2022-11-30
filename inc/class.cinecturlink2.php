@@ -25,6 +25,8 @@ class cinecturlink2
     public $con;
     /** @var string Cinecturlink table name */
     public $table;
+    /** @var string Cinecturlink category table name */
+    public $cat_table;
     /** @var string Blog ID */
     public $blog;
 
@@ -36,7 +38,8 @@ class cinecturlink2
         dcCore::app()->blog->settings->addNamespace('cinecturlink2');
 
         $this->con   = dcCore::app()->con;
-        $this->table = dcCore::app()->prefix . 'cinecturlink2';
+        $this->table = dcCore::app()->prefix . initCinecturlink2::CINECTURLINK_TABLE_NAME;
+        $this->cat_table = dcCore::app()->prefix . initCinecturlink2::CATEGORY_TABLE_NAME;
         $this->blog  = dcCore::app()->con->escape(dcCore::app()->blog->id);
     }
 
@@ -68,8 +71,8 @@ class cinecturlink2
         }
 
         $strReq .= 'FROM ' . $this->table . ' L ' .
-        'INNER JOIN ' . dcCore::app()->prefix . 'user U ON U.user_id = L.user_id ' .
-        'LEFT OUTER JOIN ' . $this->table . '_cat C ON L.cat_id = C.cat_id ';
+        'INNER JOIN ' . dcCore::app()->prefix . dcAuth::USER_TABLE_NAME . ' U ON U.user_id = L.user_id ' .
+        'LEFT OUTER JOIN ' . $this->cat_table . ' C ON L.cat_id = C.cat_id ';
 
         if (!empty($params['from'])) {
             $strReq .= $params['from'] . ' ';
@@ -278,7 +281,7 @@ class cinecturlink2
             'C.cat_pos, C.cat_creadt, C.cat_upddt ';
         }
 
-        $strReq .= 'FROM ' . $this->table . '_cat C  ';
+        $strReq .= 'FROM ' . $this->cat_table . ' C  ';
 
         if (!empty($params['from'])) {
             $strReq .= $params['from'] . ' ';
@@ -343,7 +346,7 @@ class cinecturlink2
      */
     public function addCategory(cursor $cur)
     {
-        $this->con->writeLock($this->table . '_cat');
+        $this->con->writeLock($this->cat_table);
 
         try {
             if ($cur->cat_title == '') {
@@ -404,7 +407,7 @@ class cinecturlink2
         }
 
         $this->con->execute(
-            'DELETE FROM ' . $this->table . '_cat ' .
+            'DELETE FROM ' . $this->cat_table . ' ' .
             'WHERE cat_id = ' . $id . ' ' .
             "AND blog_id = '" . $this->blog . "' "
         );
@@ -426,7 +429,7 @@ class cinecturlink2
     private function getNextCatId()
     {
         return $this->con->select(
-            'SELECT MAX(cat_id) FROM ' . $this->table . '_cat '
+            'SELECT MAX(cat_id) FROM ' . $this->cat_table . ' '
         )->f(0) + 1;
     }
 
@@ -438,7 +441,7 @@ class cinecturlink2
     private function getNextCatPos()
     {
         return $this->con->select(
-            'SELECT MAX(cat_pos) FROM ' . $this->table . '_cat ' .
+            'SELECT MAX(cat_pos) FROM ' . $this->cat_table . ' ' .
             "WHERE blog_id = '" . $this->blog . "' "
         )->f(0) + 1;
     }

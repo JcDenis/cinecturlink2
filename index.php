@@ -315,7 +315,7 @@ if ($part == 'cats') {
             $i = 0;
             foreach ($catorder as $id) {
                 $i++;
-                $cur          = dcCore::app()->con->openCursor($C2->table . '_cat');
+                $cur          = dcCore::app()->con->openCursor($C2->cat_table);
                 $cur->cat_pos = $i;
                 $C2->updCategory($id, $cur);
             }
@@ -356,7 +356,7 @@ if ($part == 'cat') {
             if ($exists) {
                 throw new Exception(__('Category with same name already exists.'));
             }
-            $cur            = dcCore::app()->con->openCursor($C2->table . '_cat');
+            $cur            = dcCore::app()->con->openCursor($C2->cat_table);
             $cur->cat_title = $cattitle;
             $cur->cat_desc  = $catdesc;
 
@@ -373,7 +373,7 @@ if ($part == 'cat') {
             if ($exists) {
                 throw new Exception(__('Category with same name already exists.'));
             }
-            $cur            = dcCore::app()->con->openCursor($C2->table . '_cat');
+            $cur            = dcCore::app()->con->openCursor($C2->cat_table);
             $cur->cat_title = $cattitle;
             $cur->cat_desc  = $catdesc;
 
