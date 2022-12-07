@@ -169,7 +169,7 @@ if ($part == 'links') {
     }
 
     $breadcrumb[__('My cinecturlink')] = '';
-    $headers .= dcPage::jsVars(['dotclear.filter_reset_url' => dcCore::app()->adminurl->get('admin.plugin.cinecturlink2', ['part' => 'links'])]) .
+    $headers .= $c2link_filter->js(dcCore::app()->adminurl->get('admin.plugin.cinecturlink2', ['part' => 'links'])) .
         dcPage::jsFilterControl($c2link_filter->show()) .
         dcPage::jsLoad(dcPage::getPF('cinecturlink2/js/c2links.js'));
 }
