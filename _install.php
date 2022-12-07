@@ -14,14 +14,15 @@ if (!defined('DC_CONTEXT_ADMIN')) {
     return null;
 }
 
-$new_version = dcCore::app()->plugins->moduleInfo('cinecturlink2', 'version');
-$old_version = dcCore::app()->getVersion('cinecturlink2');
-
-if (version_compare($old_version, $new_version, '>=')) {
-    return;
-}
-
 try {
+    if (version_compare(
+        dcCore::app()->getVersion('cinecturlink2'), 
+        dcCore::app()->plugins->moduleInfo('cinecturlink2', 'version'), 
+        '>='
+    )) {
+        return null;
+    }
+
     $s = new dbStruct(dcCore::app()->con, dcCore::app()->prefix);
     $s->{initCinecturlink2::CINECTURLINK_TABLE_NAME}
         ->link_id('bigint', 0, false)
@@ -76,11 +77,6 @@ try {
     $s->put('cinecturlink2_public_description', '', 'string', 'Description of public page', false, true);
     $s->put('cinecturlink2_public_nbrpp', 20, 'integer', 'Number of entries per page on public page', false, true);
     $s->put('cinecturlink2_public_caturl', 'c2cat', 'string', 'Part of URL for a category list', false, true);
-
-    dcCore::app()->setVersion(
-        'cinecturlink2',
-        dcCore::app()->plugins->moduleInfo('cinecturlink2', 'version')
-    );
 
     return true;
 } catch (Exception $e) {
