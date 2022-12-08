@@ -158,8 +158,7 @@ class cinecturlink2Widget
         dcCore::app()->blog->settings->addNamespace('cinecturlink2');
 
         if (!dcCore::app()->blog->settings->cinecturlink2->cinecturlink2_active
-            || $w->homeonly == 1 && !dcCore::app()->url->isHome(dcCore::app()->url->type)
-            || $w->homeonly == 2 && dcCore::app()->url->isHome(dcCore::app()->url->type)
+            || !$w->checkHomeOnly(dcCore::app()->url->type)
         ) {
             return null;
         }
@@ -272,8 +271,7 @@ class cinecturlink2Widget
 
         if (!dcCore::app()->blog->settings->cinecturlink2->cinecturlink2_active
             || !dcCore::app()->blog->settings->cinecturlink2->cinecturlink2_public_active
-            || $w->homeonly == 1 && !dcCore::app()->url->isHome(dcCore::app()->url->type)
-            || $w->homeonly == 2 && dcCore::app()->url->isHome(dcCore::app()->url->type)
+            || !$w->checkHomeOnly(dcCore::app()->url->type)
         ) {
             return null;
         }
