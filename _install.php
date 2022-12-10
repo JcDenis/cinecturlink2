@@ -15,10 +15,9 @@ if (!defined('DC_CONTEXT_ADMIN')) {
 }
 
 try {
-    if (version_compare(
-        dcCore::app()->getVersion('cinecturlink2'), 
-        dcCore::app()->plugins->moduleInfo('cinecturlink2', 'version'), 
-        '>='
+    if (!dcCore::app()->newVersion(
+        basename(__DIR__), 
+        dcCore::app()->plugins->moduleInfo(basename(__DIR__), 'version')
     )) {
         return null;
     }
