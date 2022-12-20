@@ -17,5 +17,5 @@ if (!defined('DC_RC_PATH')) {
 class initCinecturlink2
 {
     public const CINECTURLINK_TABLE_NAME = 'cinecturlink2';
-    public const CATEGORY_TABLE_NAME = 'cinecturlink2_cat';
+    public const CATEGORY_TABLE_NAME     = 'cinecturlink2_cat';
 }

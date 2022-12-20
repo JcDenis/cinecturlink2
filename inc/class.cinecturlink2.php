@@ -37,10 +37,10 @@ class cinecturlink2
     {
         dcCore::app()->blog->settings->addNamespace('cinecturlink2');
 
-        $this->con   = dcCore::app()->con;
-        $this->table = dcCore::app()->prefix . initCinecturlink2::CINECTURLINK_TABLE_NAME;
+        $this->con       = dcCore::app()->con;
+        $this->table     = dcCore::app()->prefix . initCinecturlink2::CINECTURLINK_TABLE_NAME;
         $this->cat_table = dcCore::app()->prefix . initCinecturlink2::CATEGORY_TABLE_NAME;
-        $this->blog  = dcCore::app()->con->escape(dcCore::app()->blog->id);
+        $this->blog      = dcCore::app()->con->escape(dcCore::app()->blog->id);
     }
 
     /**

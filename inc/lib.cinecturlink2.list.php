@@ -105,10 +105,10 @@ class adminlistCinecturlink2
     private function linkLine($checked)
     {
         $cols = [
-            'check' => '<td class="nowrap minimal">' .
+            'check'  => '<td class="nowrap minimal">' .
                 form::checkbox(['entries[]'], $this->rs->link_id, ['checked' => $checked]) .
                 '</td>',
-            'title' => '<td class="nowrap" scope="row">' .
+            'title'  => '<td class="nowrap" scope="row">' .
                 '<a href="' . dcCore::app()->adminurl->get(
                     'admin.plugin.cinecturlink2',
                     ['part' => 'link', 'linkid' => $this->rs->link_id, 'redir' => $this->redir]
@@ -118,10 +118,10 @@ class adminlistCinecturlink2
             'author' => '<td class="nowrap">' .
                 html::escapeHTML($this->rs->link_author) .
                 '</td>',
-            'desc' => '<td class="maximal">' .
+            'desc'   => '<td class="maximal">' .
                 html::escapeHTML($this->rs->link_desc) .
                 '</td>',
-            'link' => '<td class="nowrap">' .
+            'link'   => '<td class="nowrap">' .
                 '<a href="' . $this->rs->link_url . '" title="' .
                     html::escapeHTML($this->rs->link_url) .
                 '">' . __('URL') . '</a> ' .
@@ -129,18 +129,18 @@ class adminlistCinecturlink2
                     html::escapeHTML($this->rs->link_img) .
                 '">' . __('image') . '</a> ' .
                 '</td>',
-            'cat' => '<td class="nowrap minimal">' .
+            'cat'    => '<td class="nowrap minimal">' .
                 '<a href="' . dcCore::app()->adminurl->get(
                     'admin.plugin.cinecturlink2',
                     ['part' => 'cat', 'catid' => $this->rs->cat_id, 'redir' => $this->redir]
                 ) . '" title="' . __('Edit') . '">' .
                 html::escapeHTML($this->rs->cat_title) . '</a>' .
                 '</td>',
-            'note' => '</td>' .
+            'note'   => '</td>' .
                 '<td class="nowrap count minimal">' .
                 html::escapeHTML($this->rs->link_note) . '/20' .
                 '</td>',
-            'date' => '<td class="nowrap count minimal">' .
+            'date'   => '<td class="nowrap count minimal">' .
                 dt::dt2str(
                     dcCore::app()->blog->settings->system->date_format . ', ' . dcCore::app()->blog->settings->system->time_format,
                     $this->rs->link_upddt,

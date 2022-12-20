@@ -163,7 +163,8 @@ class cinecturlink2Widget
             return null;
         }
 
-        $C2 = new cinecturlink2();
+        $C2     = new cinecturlink2();
+        $aprams = [];
 
         if ($w->category) {
             if ($w->category == 'null') {

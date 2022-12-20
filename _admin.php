@@ -76,7 +76,7 @@ function cinecturlink2AdminIcon(): string
     return urldecode(dcPage::getPF('cinecturlink2/icon.svg'));
 }
 
-function cinecturlink2AdminPerm(): bool
+function cinecturlink2AdminPerm(): string
 {
     return dcCore::app()->auth->makePermissions([dcAuth::PERMISSION_CONTENT_ADMIN]);
 }
