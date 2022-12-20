@@ -1,6 +1,14 @@
 dev
 - [ ] enhance public template
 
+1.1.1
+- use SVG icon
+- use dotclear methods for widget
+- fix permissions
+- fix autoload
+- fix tables names
+- fix install
+
 1.1.0 - 2022.11.20
 - fix compatibility with Dotclear 2.24 (required)
 
