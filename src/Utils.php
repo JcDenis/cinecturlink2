@@ -10,84 +10,132 @@
  * @copyright Jean-Christian Denis
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-if (!defined('DC_RC_PATH')) {
-    return null;
-}
+declare(strict_types=1);
+
+namespace Dotclear\Plugin\cinecturlink2;
+
+use dcCore;
+use dcAuth;
+use Dotclear\Database\{
+    AbstractHandler,
+    Cursor,
+    MetaRecord
+};
+use Dotclear\Database\Statement\{
+    DeleteStatement,
+    JoinStatement,
+    SelectStatement,
+    UpdateStatement
+};
+use Dotclear\Helper\File\Files;
+use Dotclear\Helper\Text;
+use Exception;
 
 /**
  * @ingroup DC_PLUGIN_CINECTURLINK2
  * @brief Share media you like - main methods.
  * @since 2.6
  */
-class cinecturlink2
+class Utils
 {
-    /** @var dbLayer dbLayer instance */
+    /** @var    AbstractHandler     AbstractHandler instance */
     public $con;
-    /** @var string Cinecturlink table name */
+    /** @var    string  Cinecturlink table name */
     public $table;
-    /** @var string Cinecturlink category table name */
+    /** @var    string  Cinecturlink category table name */
     public $cat_table;
-    /** @var string Blog ID */
+    /** @var    string  Blog ID */
     public $blog;
 
     /**
-     * Contructor
+     * Contructor.
      */
     public function __construct()
     {
-        dcCore::app()->blog->settings->addNamespace('cinecturlink2');
-
         $this->con       = dcCore::app()->con;
-        $this->table     = dcCore::app()->prefix . initCinecturlink2::CINECTURLINK_TABLE_NAME;
-        $this->cat_table = dcCore::app()->prefix . initCinecturlink2::CATEGORY_TABLE_NAME;
-        $this->blog      = dcCore::app()->con->escape(dcCore::app()->blog->id);
+        $this->table     = dcCore::app()->prefix . My::CINECTURLINK_TABLE_NAME;
+        $this->cat_table = dcCore::app()->prefix . My::CATEGORY_TABLE_NAME;
+        $this->blog      = (string) dcCore::app()->blog?->id;
     }
 
     /**
-     * Get links
+     * Get links.
      *
-     * @param  array   $params     Query params
-     * @param  boolean $count_only Count only result
-     * @return record              record instance
+     * @param   array   $params         Query params
+     * @param   bool    $count_only     Count only result
+     * @return  MetaRecord  MetaRecord instance
      */
-    public function getLinks($params = [], $count_only = false)
+    public function getLinks(array $params = [], bool $count_only = false): MetaRecord
     {
-        if ($count_only) {
-            $strReq = 'SELECT count(L.link_id) ';
-        } else {
-            $content_req = '';
-            if (!empty($params['columns']) && is_array($params['columns'])) {
-                $content_req .= implode(', ', $params['columns']) . ', ';
-            }
+        $sql = new SelectStatement();
 
-            $strReq = 'SELECT L.link_id, L.blog_id, L.cat_id, L.user_id, L.link_type, ' .
-            $content_req .
-            'L.link_creadt, L.link_upddt, L.link_note, L.link_count, ' .
-            'L.link_title, L.link_desc, L.link_author, ' .
-            'L.link_lang, L.link_url, L.link_img, ' .
-            'U.user_name, U.user_firstname, U.user_displayname, U.user_email, ' .
-            'U.user_url, ' .
-            'C.cat_title, C.cat_desc ';
+        if ($count_only) {
+            $sql->column($sql->count($sql->unique('L.link_id')));
+        } else {
+            if (!empty($params['columns']) && is_array($params['columns'])) {
+                $sql->columns($params['columns']);
+            }
+            $sql->columns([
+                'L.link_id',
+                'L.blog_id',
+                'L.cat_id',
+                'L.user_id',
+                'L.link_type',
+                'L.link_creadt',
+                'L.link_upddt',
+                'L.link_note',
+                'L.link_count',
+                'L.link_title',
+                'L.link_desc',
+                'L.link_author',
+                'L.link_lang',
+                'L.link_url',
+                'L.link_img',
+                'U.user_name',
+                'U.user_firstname',
+                'U.user_displayname',
+                'U.user_email',
+                'U.user_url',
+                'C.cat_title',
+                'C.cat_desc',
+            ]);
         }
 
-        $strReq .= 'FROM ' . $this->table . ' L ' .
-        'INNER JOIN ' . dcCore::app()->prefix . dcAuth::USER_TABLE_NAME . ' U ON U.user_id = L.user_id ' .
-        'LEFT OUTER JOIN ' . $this->cat_table . ' C ON L.cat_id = C.cat_id ';
+        $sql
+            ->from($sql->as($this->table, 'L'), false, true)
+            ->join(
+                (new JoinStatement())
+                    ->inner()
+                    ->from($sql->as(dcCore::app()->prefix . dcAuth::USER_TABLE_NAME, 'U'))
+                    ->on('U.user_id = L.user_id')
+                    ->statement()
+            )
+            ->join(
+                (new JoinStatement())
+                    ->left()
+                    ->from($sql->as($this->cat_table, 'C'))
+                    ->on('L.cat_id = C.cat_id')
+                    ->statement()
+            );
+
+        if (!empty($params['join'])) {
+            $sql->join($params['join']);
+        }
 
         if (!empty($params['from'])) {
-            $strReq .= $params['from'] . ' ';
+            $sql->from($params['from']);
         }
 
-        $strReq .= "WHERE L.blog_id = '" . $this->blog . "' ";
+        $sql->where('L.blog_id = ' . $sql->quote(dcCore::app()->blog->id));
 
         if (isset($params['link_type'])) {
             if (is_array($params['link_type']) && !empty($params['link_type'])) {
-                $strReq .= 'AND L.link_type ' . $this->con->in($params['link_type']);
+                $sql->and('L.link_type' . $sql->in($params['link_type']));
             } elseif ($params['link_type'] != '') {
-                $strReq .= "AND L.link_type = '" . $this->con->escape($params['link_type']) . "' ";
+                $sql->and('L.link_type = ' . $sql->quote($params['link_type']));
             }
         } else {
-            $strReq .= "AND L.link_type = 'cinecturlink' ";
+            $sql->and('L.link_type = ' . $sql->quote('cinecturlink'));
         }
 
         if (!empty($params['link_id'])) {
@@ -96,7 +144,7 @@ class cinecturlink2
             } else {
                 $params['link_id'] = [(int) $params['link_id']];
             }
-            $strReq .= 'AND L.link_id ' . $this->con->in($params['link_id']);
+            $sql->and('L.link_id' . $sql->in($params['link_id']));
         }
 
         if (!empty($params['cat_id'])) {
@@ -109,54 +157,57 @@ class cinecturlink2
             } else {
                 $params['cat_id'] = [(int) $params['cat_id']];
             }
-            $strReq .= 'AND L.cat_id ' . $this->con->in($params['cat_id']);
+            $sql->and('L.cat_id' . $sql->in($params['cat_id']));
         }
         if (!empty($params['cat_title'])) {
-            $strReq .= "AND C.cat_title = '" . $this->con->escape($params['cat_title']) . "' ";
+            $sql->and('C.cat_title = ' . $sql->quote($params['cat_title']));
         }
 
         if (!empty($params['link_title'])) {
-            $strReq .= "AND L.link_title = '" . $this->con->escape($params['link_title']) . "' ";
+            $sql->and('L.link_title = ' . $sql->quote($params['link_title']));
         }
 
         if (!empty($params['link_lang'])) {
-            $strReq .= "AND L.link_lang = '" . $this->con->escape($params['link_lang']) . "' ";
+            $sql->and('L.link_lang = ' . $sql->quote($params['link_lang']));
         }
 
-        if (!empty($params['q'])) {
-            $q = $this->con->escape(str_replace('*', '%', strtolower($params['q'])));
-            $strReq .= "AND LOWER(L.link_title) LIKE '%" . $q . "%' ";
-        }
+        if (!empty($params['q']) && is_string($params['q'])) {
+            $params['q'] = (string) str_replace('*', '%', strtolower($params['q']));
+            $words       = Text::splitWords($params['q']);
 
-        if (!empty($params['where'])) {
-            $strReq .= $params['where'] . ' ';
+            if (!empty($words)) {
+                foreach ($words as $i => $w) {
+                    $words[$i] = $sql->like('LOWER(L.link_title)', '%' . $sql->escape($w) . '%');
+                }
+                $sql->and($words);
+            }
         }
 
         if (!empty($params['sql'])) {
-            $strReq .= $params['sql'] . ' ';
+            $sql->sql($params['sql']);
         }
 
         if (!$count_only) {
             if (!empty($params['order'])) {
-                $strReq .= 'ORDER BY ' . $this->con->escape($params['order']) . ' ';
+                $sql->order($sql->escape($params['order']));
             } else {
-                $strReq .= 'ORDER BY L.link_upddt DESC ';
+                $sql->order('L.link_upddt DESC');
             }
         }
 
         if (!$count_only && !empty($params['limit'])) {
-            $strReq .= $this->con->limit($params['limit']);
+            $sql->limit($params['limit']);
         }
 
-        return $this->con->select($strReq);
+        return $sql->select() ?? MetaRecord::newFromArray([]);
     }
 
     /**
-     * Add link
+     * Add link.
      *
-     * @param cursor $cur cursor instance
+     * @param   Cursor  $cur    Cursor instance
      */
-    public function addLink(cursor $cur)
+    public function addLink(Cursor $cur): int
     {
         $this->con->writeLock($this->table);
 
@@ -193,28 +244,29 @@ class cinecturlink2
         # --BEHAVIOR-- cinecturlink2AfterAddLink
         dcCore::app()->callBehavior('cinecturlink2AfterAddLink', $cur);
 
-        return $cur->link_id;
+        return (int) $cur->link_id;
     }
 
     /**
-     * Update link
+     * Update link.
      *
-     * @param  integer $id       Link ID
-     * @param  cursor  $cur      cursor instance
-     * @param  boolean $behavior Call related behaviors
+     * @param   int     $id         Link ID
+     * @param   Cursor  $cur        Cursor instance
+     * @param   bool    $behavior   Call related behaviors
      */
-    public function updLink($id, cursor $cur, $behavior = true)
+    public function updLink(int $id, Cursor $cur, bool $behavior = true): void
     {
-        $id = (int) $id;
-
         if (empty($id)) {
             throw new Exception(__('No such link ID'));
         }
 
         $cur->link_upddt = date('Y-m-d H:i:s');
 
-        $cur->update('WHERE link_id = ' . $id . " AND blog_id = '" . $this->blog . "' ");
-        $this->trigger();
+        $sql = new UpdateStatement();
+        $sql
+            ->where('blog_id = ' . $sql->quote($this->blog))
+            ->and('link_id = ' . $id)
+            ->update($cur);
 
         if ($behavior) {
             # --BEHAVIOR-- cinecturlink2AfterUpdLink
@@ -223,14 +275,12 @@ class cinecturlink2
     }
 
     /**
-     * Delete link
+     * Delete link.
      *
-     * @param  integer $id Link ID
+     * @param   int     $id     Link ID
      */
-    public function delLink($id)
+    public function delLink(int $id): void
     {
-        $id = (int) $id;
-
         if (empty($id)) {
             throw new Exception(__('No such link ID'));
         }
@@ -238,56 +288,67 @@ class cinecturlink2
         # --BEHAVIOR-- cinecturlink2BeforeDelLink
         dcCore::app()->callBehavior('cinecturlink2BeforeDelLink', $id);
 
-        $this->con->execute(
-            'DELETE FROM ' . $this->table . ' ' .
-            'WHERE link_id = ' . $id . ' ' .
-            "AND blog_id = '" . $this->blog . "' "
-        );
+        $sql = new DeleteStatement();
+        $sql
+            ->from($this->table)
+            ->where('blog_id = ' . $sql->quote($this->blog))
+            ->and('link_id = ' . $id)
+            ->delete();
 
         $this->trigger();
     }
 
     /**
-     * Get next link ID
+     * Get next link ID.
      *
-     * @return integer Next link ID
+     * @return  int     Next link ID
      */
-    private function getNextLinkId()
+    private function getNextLinkId(): int
     {
-        return $this->con->select(
-            'SELECT MAX(link_id) FROM ' . $this->table . ' '
-        )->f(0) + 1;
+        $sql = new SelectStatement();
+
+        return $sql
+            ->column($sql->max('link_id'))
+            ->from($this->table)
+            ->select()
+            ->f(0) + 1;
     }
 
     /**
-     * Get categories
+     * Get categories.
      *
-     * @param  array   $params     Query params
-     * @param  boolean $count_only Count only result
-     * @return record              record instance
+     * @param   array       $params         Query params
+     * @param   bool        $count_only     Count only result
+     * @return  MetaRecord  Record instance
      */
-    public function getCategories($params = [], $count_only = false)
+    public function getCategories(array $params = [], bool $count_only = false): MetaRecord
     {
-        if ($count_only) {
-            $strReq = 'SELECT count(C.cat_id) ';
-        } else {
-            $content_req = '';
-            if (!empty($params['columns']) && is_array($params['columns'])) {
-                $content_req .= implode(', ', $params['columns']) . ', ';
-            }
+        $sql = new SelectStatement();
 
-            $strReq = 'SELECT C.cat_id, C.blog_id, C.cat_title, C.cat_desc, ' .
-            $content_req .
-            'C.cat_pos, C.cat_creadt, C.cat_upddt ';
+        if ($count_only) {
+            $sql->column($sql->count($sql->unique('C.cat_id')));
+        } else {
+            if (!empty($params['columns']) && is_array($params['columns'])) {
+                $sql->columns($params['columns']);
+            }
+            $sql->columns([
+                'C.cat_id',
+                'C.blog_id',
+                'C.cat_title',
+                'C.cat_desc',
+                'C.cat_pos',
+                'C.cat_creadt',
+                'C.cat_upddt',
+            ]);
         }
 
-        $strReq .= 'FROM ' . $this->cat_table . ' C  ';
+        $sql->from($sql->as($this->cat_table, 'C'));
 
         if (!empty($params['from'])) {
-            $strReq .= $params['from'] . ' ';
+            $sql->from($params['from']);
         }
 
-        $strReq .= "WHERE C.blog_id = '" . $this->blog . "' ";
+        $sql->where('C.blog_id = ' . $sql->quote(dcCore::app()->blog->id));
 
         if (!empty($params['cat_id'])) {
             if (is_array($params['cat_id'])) {
@@ -299,7 +360,7 @@ class cinecturlink2
             } else {
                 $params['cat_id'] = [(int) $params['cat_id']];
             }
-            $strReq .= 'AND C.cat_id ' . $this->con->in($params['cat_id']);
+            $sql->and('C.cat_id ' . $sql->in($params['cat_id']));
         }
 
         if (isset($params['exclude_cat_id']) && $params['exclude_cat_id'] !== '') {
@@ -312,39 +373,40 @@ class cinecturlink2
             } else {
                 $params['exclude_cat_id'] = [(int) $params['exclude_cat_id']];
             }
-            $strReq .= 'AND C.cat_id NOT ' . $this->con->in($params['exclude_cat_id']);
+            $sql->and('C.cat_id NOT ' . $sql->in($params['exclude_cat_id']));
         }
 
         if (!empty($params['cat_title'])) {
-            $strReq .= "AND C.cat_title = '" . $this->con->escape($params['cat_title']) . "' ";
+            $sql->and('C.cat_title = ' . $sql->quote($params['cat_title']));
         }
 
         if (!empty($params['sql'])) {
-            $strReq .= $params['sql'] . ' ';
+            $sql->sql($params['sql']);
         }
 
         if (!$count_only) {
             if (!empty($params['order'])) {
-                $strReq .= 'ORDER BY ' . $this->con->escape($params['order']) . ' ';
+                $sql->order($sql->escape($params['order']));
             } else {
-                $strReq .= 'ORDER BY cat_pos ASC ';
+                $sql->order('cat_pos ASC');
             }
         }
 
         if (!$count_only && !empty($params['limit'])) {
-            $strReq .= $this->con->limit($params['limit']);
+            $sql->limit($params['limit']);
         }
 
-        return $this->con->select($strReq);
+        return $sql->select() ?? MetaRecord::newFromArray([]);
     }
 
     /**
-     * Add category
+     * Add category.
      *
-     * @param  cursor  $cur cursor instance
-     * @return integer      New category ID
+     * @param   Cursor  $cur    Cursor instance
+     *
+     * @return  int     New category ID
      */
-    public function addCategory(cursor $cur)
+    public function addCategory(Cursor $cur): int
     {
         $this->con->writeLock($this->cat_table);
 
@@ -370,99 +432,115 @@ class cinecturlink2
         }
         $this->trigger();
 
-        return $cur->cat_id;
+        return (int) $cur->cat_id;
     }
 
     /**
-     * Update category
+     * Update category.
      *
-     * @param  integer $id  Category ID
-     * @param  cursor  $cur cursor instance
+     * @param   int     $id     Category ID
+     * @param   Cursor  $cur    Cursor instance
      */
-    public function updCategory($id, cursor $cur)
+    public function updCategory(int $id, Cursor $cur): void
     {
-        $id = (int) $id;
-
         if (empty($id)) {
             throw new Exception(__('No such category ID'));
         }
 
         $cur->cat_upddt = date('Y-m-d H:i:s');
 
-        $cur->update('WHERE cat_id = ' . $id . " AND blog_id = '" . $this->blog . "' ");
+        $sql = new UpdateStatement();
+        $sql
+            ->where('blog_id = ' . $sql->quote($this->blog))
+            ->and('cat_id = ' . $id)
+            ->update($cur);
+
         $this->trigger();
     }
 
     /**
-     * Delete category
+     * Delete category.
      *
-     * @param  integer $id Category ID
+     * @param   int     $id     Category ID
      */
-    public function delCategory($id)
+    public function delCategory(int $id): void
     {
-        $id = (int) $id;
-
         if (empty($id)) {
             throw new Exception(__('No such category ID'));
         }
 
-        $this->con->execute(
-            'DELETE FROM ' . $this->cat_table . ' ' .
-            'WHERE cat_id = ' . $id . ' ' .
-            "AND blog_id = '" . $this->blog . "' "
-        );
+        $sql = new DeleteStatement();
+        $sql
+            ->from($this->cat_table)
+            ->where('blog_id = ' . $sql->quote($this->blog))
+            ->and('cat_id = ' . $id)
+            ->delete();
 
         # Update link cat to NULL
-        $cur             = $this->con->openCursor($this->table);
-        $cur->cat_id     = null;
-        $cur->link_upddt = date('Y-m-d H:i:s');
-        $cur->update('WHERE cat_id = ' . $id . " AND blog_id = '" . $this->blog . "' ");
+        $cur = $this->con->openCursor($this->table);
+        $cur->setField('cat_id', null);
+        $cur->setField('link_upddt', date('Y-m-d H:i:s'));
+
+        $sql = new UpdateStatement();
+        $sql
+            ->where('blog_id = ' . $sql->quote($this->blog))
+            ->and('cat_id = ' . $id)
+            ->update($cur);
 
         $this->trigger();
     }
 
     /**
-     * Get next category ID
+     * Get next category ID.
      *
-     * @return integer Next category ID
+     * @return  int     Next category ID
      */
-    private function getNextCatId()
+    private function getNextCatId(): int
     {
-        return $this->con->select(
-            'SELECT MAX(cat_id) FROM ' . $this->cat_table . ' '
-        )->f(0) + 1;
+        $sql = new SelectStatement();
+
+        return $sql
+            ->column($sql->max('cat_id'))
+            ->from($this->cat_table)
+            ->select()
+            ->f(0) + 1;
     }
 
     /**
-     * Get next category position
+     * Get next category position.
      *
-     * @return integer Next category position
+     * @return  int     Next category position
      */
-    private function getNextCatPos()
+    private function getNextCatPos(): int
     {
-        return $this->con->select(
-            'SELECT MAX(cat_pos) FROM ' . $this->cat_table . ' ' .
-            "WHERE blog_id = '" . $this->blog . "' "
-        )->f(0) + 1;
+        $sql = new SelectStatement();
+
+        return $sql
+            ->column($sql->max('cat_pos'))
+            ->from($this->cat_table)
+            ->where('blog_id = ' . $sql->quote($this->blog))
+            ->select()
+            ->f(0) + 1;
     }
 
     /**
-     * Trigger event
+     * Trigger event.
      */
-    private function trigger()
+    private function trigger(): void
     {
         dcCore::app()->blog->triggerBlog();
     }
 
     /**
-     * Check if a directory exists and is writable
+     * Check if a directory exists and is writable.
      *
-     * @param  string  $root   Root
-     * @param  string  $folder Folder to create into root folder
-     * @param  boolean $throw  Throw exception or not
-     * @return boolean         True if exists and writable
+     * @param   string  $root   Root
+     * @param   string  $folder Folder to create into root folder
+     * @param   bool    $throw  Throw exception or not
+     *
+     * @return  bool    True if exists and writable
      */
-    public static function makePublicDir($root, $folder, $throw = false)
+    public static function makePublicDir(string $root, string $folder, bool $throw = false): bool
     {
         if (!is_dir($root . '/' . $folder)) {
             if (!is_dir($root) || !is_writable($root) || !mkdir($root . '/' . $folder)) {
@@ -478,14 +556,14 @@ class cinecturlink2
     }
 
     /**
-     * Get list of public directories
+     * Get list of public directories.
      *
-     * @return array            Directories
+     * @return  array<string,string>    Directories
      */
-    public static function getPublicDirs()
+    public static function getPublicDirs(): array
     {
         $dirs = [];
-        $all  = files::getDirList(dcCore::app()->blog->public_path);
+        $all  = Files::getDirList(dcCore::app()->blog->public_path);
         foreach ($all['dirs'] as $dir) {
             $dir        = substr($dir, strlen(dcCore::app()->blog->public_path) + 1);
             $dirs[$dir] = $dir;

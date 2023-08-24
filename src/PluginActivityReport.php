@@ -10,42 +10,45 @@
  * @copyright Jean-Christian Denis
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-if (!defined('DC_RC_PATH')) {
-    return null;
-}
+declare(strict_types=1);
 
-class cinecturlink2ActivityReportBehaviors
+namespace Dotclear\Plugin\cinecturlink2;
+
+use dcCore;
+use Dotclear\Plugin\activityReport\ActivityReport;
+
+class PluginActivityReport
 {
     public static function add()
     {
-        dcCore::app()->activityReport->addGroup('cinecturlink2', __('Plugin cinecturlink2'));
+        ActivityReport::instance()->addGroup('cinecturlink2', __('Plugin cinecturlink2'));
 
         // from BEHAVIOR cinecturlink2AfterAddLink in cinecturlink2/inc/class.cinecturlink2.php
-        dcCore::app()->activityReport->addAction(
+        ActivityReport::instance()->addAction(
             'cinecturlink2',
             'create',
             __('link creation'),
             __('A new cineturlink named "%s" was added by "%s"'),
             'cinecturlink2AfterAddLink',
-            ['cinecturlink2ActivityReportBehaviors', 'addLink']
+            [self::class, 'addLink']
         );
         // from BEHAVIOR cinecturlink2AfterUpdLink in cinecturlink2/inc/class.cinecturlink2.php
-        dcCore::app()->activityReport->addAction(
+        ActivityReport::instance()->addAction(
             'cinecturlink2',
             'update',
             __('updating link'),
             __('Cinecturlink named "%s" has been updated by "%s"'),
             'cinecturlink2AfterUpdLink',
-            ['cinecturlink2ActivityReportBehaviors', 'updLink']
+            [self::class, 'updLink']
         );
         // from BEHAVIOR cinecturlink2BeforeDelLink in cinecturlink2/inc/class.cinecturlink2.php
-        dcCore::app()->activityReport->addAction(
+        ActivityReport::instance()->addAction(
             'cinecturlink2',
             'delete',
             __('link deletion'),
             __('Cinecturlink named "%s" has been deleted by "%s"'),
             'cinecturlink2BeforeDelLink',
-            ['cinecturlink2ActivityReportBehaviors', 'delLink']
+            [self::class, 'delLink']
         );
     }
 
@@ -55,30 +58,30 @@ class cinecturlink2ActivityReportBehaviors
             $cur->link_title,
             dcCore::app()->auth->getInfo('user_cn'),
         ];
-        dcCore::app()->activityReport->addLog('cinecturlink2', 'create', $logs);
+        ActivityReport::instance()->addLog('cinecturlink2', 'create', $logs);
     }
 
     public static function updLink($cur, $id)
     {
-        $C2 = new cinecturlink2();
+        $C2 = new Utils();
         $rs = $C2->getLinks(['link_id' => $id]);
 
         $logs = [
             $rs->link_title,
             dcCore::app()->auth->getInfo('user_cn'),
         ];
-        dcCore::app()->activityReport->addLog('cinecturlink2', 'update', $logs);
+        ActivityReport::instance()->addLog('cinecturlink2', 'update', $logs);
     }
 
     public static function delLink($id)
     {
-        $C2 = new cinecturlink2();
+        $C2 = new Utils();
         $rs = $C2->getLinks(['link_id' => $id]);
 
         $logs = [
             $rs->link_title,
             dcCore::app()->auth->getInfo('user_cn'),
         ];
-        dcCore::app()->activityReport->addLog('cinecturlink2', 'delete', $logs);
+        ActivityReport::instance()->addLog('cinecturlink2', 'delete', $logs);
     }
 }

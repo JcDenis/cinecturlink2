@@ -10,34 +10,42 @@
  * @copyright Jean-Christian Denis
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-if (!defined('DC_RC_PATH')) {
-    return null;
-}
+declare(strict_types=1);
 
-Clearbricks::lib()->autoload([
-    'cinecturlink2'                        => __DIR__ . '/inc/class.cinecturlink2.php',
-    'cinecturlink2Context'                 => __DIR__ . '/inc/lib.cinecturlink2.context.php',
-    'adminlistCinecturlink2'               => __DIR__ . '/inc/lib.cinecturlink2.list.php',
-    'sitemapsCinecturlink2'                => __DIR__ . '/inc/lib.sitemaps.cinecturlink2.php',
-    'cinecturlink2ActivityReportBehaviors' => __DIR__ . '/inc/lib.cinecturlink2.activityreport.php',
-]);
+namespace Dotclear\Plugin\cinecturlink2;
 
-dcCore::app()->url->register(
-    'cinecturlink2',
-    'cinecturlink',
-    '^cinecturlink(?:/(.+))?$',
-    ['urlCinecturlink2', 'c2Page']
-);
+use dcCore;
+use Dotclear\Core\Process;
 
-dcCore::app()->addBehavior(
-    'sitemapsDefineParts',
-    ['sitemapsCinecturlink2', 'sitemapsDefineParts']
-);
-dcCore::app()->addBehavior(
-    'sitemapsURLsCollect',
-    ['sitemapsCinecturlink2', 'sitemapsURLsCollect']
-);
+class Prepend extends Process
+{
+    public static function init(): bool
+    {
+        return self::status(My::checkContext(My::PREPEND));
+    }
 
-if (defined('ACTIVITY_REPORT_V2')) {
-    cinecturlink2ActivityReportBehaviors::add();
+    public static function process(): bool
+    {
+        if (!self::status()) {
+            return false;
+        }
+
+        dcCore::app()->url->register(
+            My::id(),
+            'cinecturlink',
+            '^cinecturlink(?:/(.+))?$',
+            [FrontendUrl::class, 'c2Page']
+        );
+
+        dcCore::app()->addBehaviors([
+            'sitemapsDefineParts' => [PluginSitemaps::class, 'sitemapsDefineParts'],
+            'sitemapsURLsCollect' => [PluginSitemaps::class, 'sitemapsURLsCollect'],
+        ]);
+
+        if (defined('ACTIVITY_REPORT_V2')) {
+            PluginActivityReport::add();
+        }
+
+        return true;
+    }
 }

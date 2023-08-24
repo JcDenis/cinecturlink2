@@ -10,148 +10,166 @@
  * @copyright Jean-Christian Denis
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-if (!defined('DC_CONTEXT_ADMIN')) {
-    return null;
-}
+declare(strict_types=1);
 
-class adminlistCinecturlink2
+namespace Dotclear\Plugin\cinecturlink2;
+
+use ArrayObject;
+use dcCore;
+use Dotclear\Core\Backend\Filter\Filters;
+use Dotclear\Core\Backend\Listing\{
+    Listing,
+    Pager
+};
+use Dotclear\Helper\Date;
+use Dotclear\Helper\Html\Form\{
+    Checkbox,
+    Div,
+    Link,
+    Note,
+    Para,
+    Text,
+    Table, Tbody, Th, Tr, Td, Caption
+};
+use Dotclear\Helper\Html\Html;
+
+class BackendListingLinks extends Listing
 {
-    public $redir = '';
+    private string $redir;
 
-    protected $rs;
-    protected $rs_count;
-    protected $html_prev;
-    protected $html_next;
-
-    public function __construct($rs, $rs_count)
+    public function display(Filters $filter, string $enclose_block = '', string $redir = ''): void
     {
-        $this->rs        = &$rs;
-        $this->rs_count  = $rs_count;
-        $this->html_prev = __('&#171; prev.');
-        $this->html_next = __('next &#187;');
-    }
-
-    public function userColumns($type, $cols)
-    {
-        $cols_user = @dcCore::app()->auth->user_prefs->interface->cols;
-        if (is_array($cols_user) || $cols_user instanceof ArrayObject) {
-            if (isset($cols_user[$type])) {
-                foreach ($cols_user[$type] as $cn => $cd) {
-                    if (!$cd && isset($cols[$cn])) {
-                        unset($cols[$cn]);
-                    }
-                }
-            }
-        }
-    }
-
-    public function display($page, $nb_per_page, $enclose_block = '', $filter = false, $redir = '')
-    {
-        $this->redir = $redir;
         if ($this->rs->isEmpty()) {
-            if ($filter) {
-                echo '<p><strong>' . __('No link matches the filter') . '</strong></p>';
-            } else {
-                echo '<p><strong>' . __('No link') . '</strong></p>';
-            }
-        } else {
-            $pager = new dcPager($page, $this->rs_count, $nb_per_page, 10);
-            $links = [];
-            if (isset($_REQUEST['links'])) {
-                foreach ($_REQUEST['links'] as $v) {
-                    $links[(int) $v] = true;
-                }
-            }
+            echo (new Note())
+                ->class('info')
+                ->text($filter->show() ? __('No link matches the filter') : __('No link'))
+                ->render();
 
-            $cols = [
-                'title'  => '<th colspan="2" class="first">' . __('Title') . '</th>',
-                'author' => '<th scope="col">' . __('Author') . '</th>',
-                'desc'   => '<th scope="col">' . __('Description') . '</th>',
-                'link'   => '<th scope="col">' . __('Links') . '</th>',
-                'cat'    => '<th scope="col">' . __('Category') . '</th>',
-                'note'   => '<th scope="col">' . __('Rating') . '</th>',
-                'date'   => '<th scope="col">' . __('Date') . '</th>',
-            ];
-            $cols = new ArrayObject($cols);
-            $this->userColumns('c2link', $cols);
-
-            $html_block = '<div class="table-outer">' .
-            '<table>' .
-            '<caption>' . (
-                $filter ?
-                sprintf(__('List of %s links matching the filter.'), $this->rs_count) :
-                sprintf(__('List of links (%s)'), $this->rs_count)
-            ) . '</caption>' .
-            '<thead>' .
-            '<tr>' . implode(iterator_to_array($cols)) . '</tr>' .
-            '</thead>' .
-            '<tbody>%s</tbody>' .
-            '</table>' .
-            '%s</div>';
-
-            $enclose_blocks = explode('%s', $enclose_block);
-            $blocks         = explode('%s', $html_block);
-
-            echo $pager->getLinks() . $enclose_blocks[0] . $blocks[0];
-
-            while ($this->rs->fetch()) {
-                echo $this->linkLine(isset($links[$this->rs->link_id]));
-            }
-
-            echo $blocks[1] . $blocks[2] . $enclose_blocks[1] . $pager->getLinks();
+            return;
         }
+
+        $this->redir = $redir;
+        $links       = [];
+        if (isset($_REQUEST['entries'])) {
+            foreach ($_REQUEST['entries'] as $v) {
+                $links[(int) $v] = true;
+            }
+        }
+
+        $pager = new Pager((int) $filter->value('page'), $this->rs_count, (int) $filter->value('nb'), 10);
+
+        $cols = new ArrayObject([
+            'title' => (new Th())
+                ->text(__('Title'))
+                ->class('first')
+                ->colspan(2),
+            'author' => (new Th())
+                ->text(__('Author'))
+                ->scope('col'),
+            'desc' => (new Th())
+                ->text(__('Description'))
+                ->scope('col'),
+            'link' => (new Th())
+                ->text(__('Link'))
+                ->scope('col'),
+            'cat' => (new Th())
+                ->text(__('Category'))
+                ->scope('col'),
+            'note' => (new Th())
+                ->text(__('Rating'))
+                ->scope('col'),
+            'date' => (new Th())
+                ->text(__('Date'))
+                ->scope('col'),
+        ]);
+
+        $this->userColumns(My::id(), $cols);
+
+        $lines = [];
+        while ($this->rs->fetch()) {
+            $lines[] = $this->linkLine(isset($links[$this->rs->link_id]));
+        }
+
+        echo
+        $pager->getLinks() .
+        sprintf(
+            $enclose_block,
+            (new Div())
+                ->class('table-outer')
+                ->items([
+                    (new Table())
+                        ->items([
+                            (new Caption(
+                                $filter->show() ?
+                                sprintf(__('List of %s links matching the filter.'), $this->rs_count) :
+                                sprintf(__('List of links. (%s)'), $this->rs_count)
+                            )),
+                            (new Tr())
+                                ->items(iterator_to_array($cols)),
+                            (new Tbody())
+                                ->items($lines),
+                        ]),
+                ])
+                ->render()
+        ) .
+        $pager->getLinks();
     }
 
-    private function linkLine($checked)
+    private function linkLine(bool $checked): Para
     {
-        $cols = [
-            'check'  => '<td class="nowrap minimal">' .
-                form::checkbox(['entries[]'], $this->rs->link_id, ['checked' => $checked]) .
-                '</td>',
-            'title'  => '<td class="nowrap" scope="row">' .
-                '<a href="' . dcCore::app()->adminurl->get(
-                    'admin.plugin.cinecturlink2',
-                    ['part' => 'link', 'linkid' => $this->rs->link_id, 'redir' => $this->redir]
-                ) . '" title="' . __('Edit') . '">' .
-                html::escapeHTML($this->rs->link_title) . '</a>' .
-                '</td>',
-            'author' => '<td class="nowrap">' .
-                html::escapeHTML($this->rs->link_author) .
-                '</td>',
-            'desc'   => '<td class="maximal">' .
-                html::escapeHTML($this->rs->link_desc) .
-                '</td>',
-            'link'   => '<td class="nowrap">' .
-                '<a href="' . $this->rs->link_url . '" title="' .
-                    html::escapeHTML($this->rs->link_url) .
-                '">' . __('URL') . '</a> ' .
-                '<a href="' . $this->rs->link_img . '" title="' .
-                    html::escapeHTML($this->rs->link_img) .
-                '">' . __('image') . '</a> ' .
-                '</td>',
-            'cat'    => '<td class="nowrap minimal">' .
-                '<a href="' . dcCore::app()->adminurl->get(
-                    'admin.plugin.cinecturlink2',
-                    ['part' => 'cat', 'catid' => $this->rs->cat_id, 'redir' => $this->redir]
-                ) . '" title="' . __('Edit') . '">' .
-                html::escapeHTML($this->rs->cat_title) . '</a>' .
-                '</td>',
-            'note'   => '</td>' .
-                '<td class="nowrap count minimal">' .
-                html::escapeHTML($this->rs->link_note) . '/20' .
-                '</td>',
-            'date'   => '<td class="nowrap count minimal">' .
-                dt::dt2str(
-                    dcCore::app()->blog->settings->system->date_format . ', ' . dcCore::app()->blog->settings->system->time_format,
-                    $this->rs->link_upddt,
-                    dcCore::app()->auth->getInfo('user_tz')
-                ) .
-                '</td>',
-        ];
+        $cols = new ArrayObject([
+            'check' => (new Td())
+                ->class('nowrap minimal')
+                ->items([
+                    (new Checkbox(['entries[]'], $checked))
+                        ->value($this->rs->link_id),
+                ]),
+            'title' => (new Td())
+                ->class('maximal')
+                ->items([
+                    (new Link())
+                        ->href(My::manageUrl(['part' => 'link', 'linkid' => $this->rs->link_id, 'redir' => $this->redir]))
+                        ->title(__('Edit'))
+                        ->text(Html::escapeHTML($this->rs->link_title)),
+                ]),
+            'author' => (new Td())
+                ->text(Html::escapeHTML($this->rs->link_author))
+                ->class('nowrap'),
+            'desc' => (new Td())
+                ->text(Html::escapeHTML($this->rs->link_desc))
+                ->class('nowrap'),
+            'link' => (new Text('td'))
+                ->separator(' ')
+                ->items([
+                    (new Link())
+                        ->href($this->rs->link_url)
+                        ->title(__('URL'))
+                        ->text(Html::escapeHTML($this->rs->link_title)),
+                    (new Link())
+                        ->href($this->rs->link_img)
+                        ->title(__('image'))
+                        ->text(Html::escapeHTML($this->rs->link_title)),
+                ]),
+            'cat' => (new Td())
+                ->items([
+                    (new Link())
+                        ->href(My::manageUrl(['part' => 'cat', 'catid' => $this->rs->cat_id, 'redir' => $this->redir]))
+                        ->title(__('Edit'))
+                        ->text(Html::escapeHTML($this->rs->cat_title)),
+                ]),
+            'note' => (new Td())
+                ->text(Html::escapeHTML($this->rs->link_note))
+                ->class('number'),
+            'date' => (new Td())
+                ->text(Html::escapeHTML(Date::dt2str(__('%Y-%m-%d %H:%M'), $this->rs->link_upddt, (string) dcCore::app()->auth->getInfo('user_tz'))))
+                ->class('nowrap'),
+        ]);
 
-        $cols = new ArrayObject($cols);
-        $this->userColumns('c2link', $cols);
+        $this->userColumns(My::id(), $cols);
 
-        return '<tr class="line">' . implode(iterator_to_array($cols)) . '</tr>' . "\n";
+        return
+        (new Para('p' . $this->rs->kut_id, 'tr'))
+            ->class('line')
+            ->items(iterator_to_array($cols));
     }
 }

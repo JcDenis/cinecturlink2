@@ -10,17 +10,21 @@
  * @copyright Jean-Christian Denis
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-class sitemapsCinecturlink2
+declare(strict_types=1);
+
+namespace Dotclear\Plugin\cinecturlink2;
+
+use dcCore;
+
+class PluginSitemaps
 {
     public static function sitemapsDefineParts($map_parts)
     {
-        $map_parts->offsetSet(__('Cinecturlink'), 'cinecturlink2');
+        $map_parts->offsetSet(My::name(), My::id());
     }
 
     public static function sitemapsURLsCollect($sitemaps)
     {
-        dcCore::app()->blog->settings->addNamespace('sitemaps');
-
         if (dcCore::app()->plugins->moduleExists('cinecturlink2')
             && dcCore::app()->blog->settings->sitemaps->sitemaps_cinecturlink2_url
         ) {
@@ -30,11 +34,10 @@ class sitemapsCinecturlink2
 
             $sitemaps->addEntry($base, $prio, $freq);
 
-            dcCore::app()->blog->settings->addNamespace('cinecturlink2');
-            $C2   = new cinecturlink2();
+            $C2   = new Utils();
             $cats = $C2->getCategories();
             while ($cats->fetch()) {
-                $sitemaps->addEntry($base . '/' . dcCore::app()->blog->settings->cinecturlink2->cinecturlink2_public_caturl . '/' . urlencode($cats->cat_title), $prio, $freq);
+                $sitemaps->addEntry($base . '/' . dcCore::app()->blog->settings->cinecturlink2->public_caturl . '/' . urlencode($cats->cat_title), $prio, $freq);
             }
         }
     }

@@ -10,116 +10,71 @@
  * @copyright Jean-Christian Denis
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-if (!defined('DC_CONTEXT_ADMIN')) {
-    return null;
+declare(strict_types=1);
+
+namespace Dotclear\Plugin\cinecturlink2;
+
+use dcCore;
+use Dotclear\Core\Process;
+use Dotclear\Plugin\Uninstaller\Uninstaller;
+
+class Uninstall extends Process
+{
+    public static function init(): bool
+    {
+        return self::status(My::checkContext(My::UNINSTALL));
+    }
+
+    public static function process(): bool
+    {
+        if (!self::status() || !dcCore::app()->plugins->moduleExists('Uninstaller')) {
+            return false;
+        }
+
+        Uninstaller::instance()
+            ->addUserAction(
+                'settings',
+                'delete_all',
+                My::id()
+            )
+            ->addUserAction(
+                My::id() . 'DeletePostsMeta',
+                'delete_all',
+                My::id()
+            )
+            ->addUserAction(
+                'tables',
+                'delete',
+                My::CINECTURLINK_TABLE_NAME,
+            )
+            ->addUserAction(
+                'tables',
+                'delete',
+                My::CATEGORY_TABLE_NAME,
+            )
+            ->addUserAction(
+                'plugins',
+                'delete',
+                My::id()
+            )
+            ->addUserAction(
+                'versions',
+                'delete',
+                My::id()
+            )
+
+            ->addDirectAction(
+                'plugins',
+                'delete',
+                My::id()
+            )
+            ->addDirectAction(
+                'versions',
+                'delete',
+                My::id()
+            )
+        ;
+
+        return false;
+    }
 }
-
-$this->addUserAction(
-    /* type */
-    'settings',
-    /* action */
-    'delete_all',
-    /* ns */
-    'cinecturlink2',
-    /* desc */
-    __('delete all settings')
-);
-
-$this->addUserAction(
-    /* type */
-    'tables',
-    /* action */
-    'delete',
-    /* ns */
-    initCinecturlink2::CINECTURLINK_TABLE_NAME,
-    /* desc */
-    sprintf(__('delete %s table'), 'cinecturlink2')
-);
-
-$this->addUserAction(
-    /* type */
-    'tables',
-    /* action */
-    'delete',
-    /* ns */
-    initCinecturlink2::CATEGORY_TABLE_NAME,
-    /* desc */
-    sprintf(__('delete %s table'), 'cinecturlink2_cat')
-);
-
-$this->addUserAction(
-    /* type */
-    'versions',
-    /* action */
-    'delete',
-    /* ns */
-    'cinecturlink2',
-    /* desc */
-    __('delete the version number')
-);
-
-$this->addUserAction(
-    /* type */
-    'plugins',
-    /* action */
-    'delete',
-    /* ns */
-    'cinecturlink2',
-    /* desc */
-    __('delete plugin files')
-);
-
-$this->addDirectAction(
-    /* type */
-    'settings',
-    /* action */
-    'delete_all',
-    /* ns */
-    'cinecturlink2',
-    /* desc */
-    sprintf(__('delete all %s settings'), 'cinecturlink2')
-);
-
-$this->addDirectAction(
-    /* type */
-    'tables',
-    /* action */
-    'delete',
-    /* ns */
-    initCinecturlink2::CINECTURLINK_TABLE_NAME,
-    /* desc */
-    sprintf(__('delete %s table'), 'cinecturlink2')
-);
-
-$this->addDirectAction(
-    /* type */
-    'tables',
-    /* action */
-    'delete',
-    /* ns */
-    initCinecturlink2::CATEGORY_TABLE_NAME,
-    /* desc */
-    sprintf(__('delete %s table'), 'cinecturlink2_cat')
-);
-
-$this->addDirectAction(
-    /* type */
-    'versions',
-    /* action */
-    'delete',
-    /* ns */
-    'cinecturlink2',
-    /* desc */
-    sprintf(__('delete %s version number'), 'cinecturlink2')
-);
-
-$this->addDirectAction(
-    /* type */
-    'plugins',
-    /* action */
-    'delete',
-    /* ns */
-    'cinecturlink2',
-    /* description */
-    sprintf(__('delete %s plugin files'), 'cinecturlink2')
-);
