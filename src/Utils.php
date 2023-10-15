@@ -1,21 +1,10 @@
 <?php
-/**
- * @brief cinecturlink2, a plugin for Dotclear 2
- *
- * @package Dotclear
- * @subpackage Plugin
- *
- * @author Jean-Christian Denis and Contributors
- *
- * @copyright Jean-Christian Denis
- * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
- */
+
 declare(strict_types=1);
 
 namespace Dotclear\Plugin\cinecturlink2;
 
-use dcCore;
-use dcAuth;
+use Dotclear\App;
 use Dotclear\Database\{
     AbstractHandler,
     Cursor,
@@ -27,24 +16,46 @@ use Dotclear\Database\Statement\{
     SelectStatement,
     UpdateStatement
 };
+use Dotclear\Interface\Core\ConnectionInterface;
 use Dotclear\Helper\File\Files;
 use Dotclear\Helper\Text;
 use Exception;
 
 /**
- * @ingroup DC_PLUGIN_CINECTURLINK2
- * @brief Share media you like - main methods.
- * @since 2.6
+ * @brief       cinecturlink2 utils class.
+ * @ingroup     cinecturlink2
+ *
+ * @author      Jean-Christian Denis (author)
+ * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
 class Utils
 {
-    /** @var    AbstractHandler     AbstractHandler instance */
+    /**
+     * Connection instance.
+     *
+     * @var     ConnectionInterface     $con
+     */
     public $con;
-    /** @var    string  Cinecturlink table name */
+
+    /**
+     * Cinecturlink table name (with prefix).
+     *
+     * @var     string  $table
+     */
     public $table;
-    /** @var    string  Cinecturlink category table name */
+
+    /**
+     * Cinecturlink category table name (with prefix)
+     *
+     * @var     string  $cat_table
+     */
     public $cat_table;
-    /** @var    string  Blog ID */
+
+    /**
+     * Current blog ID.
+     *
+     * @var     string  $blog
+     */
     public $blog;
 
     /**
@@ -52,10 +63,10 @@ class Utils
      */
     public function __construct()
     {
-        $this->con       = dcCore::app()->con;
-        $this->table     = dcCore::app()->prefix . My::CINECTURLINK_TABLE_NAME;
-        $this->cat_table = dcCore::app()->prefix . My::CATEGORY_TABLE_NAME;
-        $this->blog      = (string) dcCore::app()->blog?->id;
+        $this->con       = App::con();
+        $this->table     = App::con()->prefix() . My::CINECTURLINK_TABLE_NAME;
+        $this->cat_table = App::con()->prefix() . My::CATEGORY_TABLE_NAME;
+        $this->blog      = App::blog()->id();
     }
 
     /**
@@ -106,7 +117,7 @@ class Utils
             ->join(
                 (new JoinStatement())
                     ->inner()
-                    ->from($sql->as(dcCore::app()->prefix . dcAuth::USER_TABLE_NAME, 'U'))
+                    ->from($sql->as(App::con()->prefix() . App::auth()::USER_TABLE_NAME, 'U'))
                     ->on('U.user_id = L.user_id')
                     ->statement()
             )
@@ -126,7 +137,7 @@ class Utils
             $sql->from($params['from']);
         }
 
-        $sql->where('L.blog_id = ' . $sql->quote(dcCore::app()->blog->id));
+        $sql->where('L.blog_id = ' . $sql->quote($this->blog));
 
         if (isset($params['link_type'])) {
             if (is_array($params['link_type']) && !empty($params['link_type'])) {
@@ -227,7 +238,7 @@ class Utils
 
             $cur->link_id     = $this->getNextLinkId();
             $cur->blog_id     = $this->blog;
-            $cur->user_id     = dcCore::app()->auth->userID();
+            $cur->user_id     = App::auth()->userID();
             $cur->link_creadt = date('Y-m-d H:i:s');
             $cur->link_upddt  = date('Y-m-d H:i:s');
             $cur->link_pos    = 0;
@@ -242,7 +253,7 @@ class Utils
         $this->trigger();
 
         # --BEHAVIOR-- cinecturlink2AfterAddLink
-        dcCore::app()->callBehavior('cinecturlink2AfterAddLink', $cur);
+        App::behavior()->callBehavior('cinecturlink2AfterAddLink', $cur);
 
         return (int) $cur->link_id;
     }
@@ -270,7 +281,7 @@ class Utils
 
         if ($behavior) {
             # --BEHAVIOR-- cinecturlink2AfterUpdLink
-            dcCore::app()->callBehavior('cinecturlink2AfterUpdLink', $cur, $id);
+            App::behavior()->callBehavior('cinecturlink2AfterUpdLink', $cur, $id);
         }
     }
 
@@ -286,7 +297,7 @@ class Utils
         }
 
         # --BEHAVIOR-- cinecturlink2BeforeDelLink
-        dcCore::app()->callBehavior('cinecturlink2BeforeDelLink', $id);
+        App::behavior()->callBehavior('cinecturlink2BeforeDelLink', $id);
 
         $sql = new DeleteStatement();
         $sql
@@ -348,7 +359,7 @@ class Utils
             $sql->from($params['from']);
         }
 
-        $sql->where('C.blog_id = ' . $sql->quote(dcCore::app()->blog->id));
+        $sql->where('C.blog_id = ' . $sql->quote($this->blog));
 
         if (!empty($params['cat_id'])) {
             if (is_array($params['cat_id'])) {
@@ -528,7 +539,7 @@ class Utils
      */
     private function trigger(): void
     {
-        dcCore::app()->blog->triggerBlog();
+        App::blog()->triggerBlog();
     }
 
     /**
@@ -563,9 +574,9 @@ class Utils
     public static function getPublicDirs(): array
     {
         $dirs = [];
-        $all  = Files::getDirList(dcCore::app()->blog->public_path);
+        $all  = Files::getDirList(App::blog()->publicPath());
         foreach ($all['dirs'] as $dir) {
-            $dir        = substr($dir, strlen(dcCore::app()->blog->public_path) + 1);
+            $dir        = substr($dir, strlen(App::blog()->publicPath()) + 1);
             $dirs[$dir] = $dir;
         }
 

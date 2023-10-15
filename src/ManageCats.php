@@ -1,20 +1,10 @@
 <?php
-/**
- * @brief cinecturlink2, a plugin for Dotclear 2
- *
- * @package Dotclear
- * @subpackage Plugin
- *
- * @author Jean-Christian Denis and Contributors
- *
- * @copyright Jean-Christian Denis
- * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
- */
+
 declare(strict_types=1);
 
 namespace Dotclear\Plugin\cinecturlink2;
 
-use dcCore;
+use Dotclear\App;
 use Dotclear\Core\Backend\{
     Notices,
     Page
@@ -36,6 +26,13 @@ use Dotclear\Helper\Html\Form\{
 use Dotclear\Helper\Html\Html;
 use Exception;
 
+/**
+ * @brief       cinecturlink2 manage categories class.
+ * @ingroup     cinecturlink2
+ *
+ * @author      Jean-Christian Denis (author)
+ * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
 class ManageCats extends Process
 {
     private static string $module_redir = '';
@@ -73,7 +70,7 @@ class ManageCats extends Process
                 $i = 0;
                 foreach ($catorder as $id) {
                     $i++;
-                    $cur = dcCore::app()->con->openCursor($utils->cat_table);
+                    $cur = App::con()->openCursor($utils->cat_table);
                     $cur->setField('cat_pos', $i);
                     $utils->updCategory((int) $id, $cur);
                 }
@@ -93,7 +90,7 @@ class ManageCats extends Process
                 My::redirect(['part' => 'cats']);
             }
         } catch (Exception $e) {
-            dcCore::app()->error->add($e->getMessage());
+            App::error()->add($e->getMessage());
         }
 
         return true;
@@ -157,7 +154,7 @@ class ManageCats extends Process
 
         Page::openModule(
             My::name(),
-            (!dcCore::app()->auth->user_prefs?->get('accessibility')->get('nodragdrop') ?
+            (!App::auth()->prefs()->get('accessibility')->get('nodragdrop') ?
                 Page::jsLoad('js/jquery/jquery-ui.custom.js') .
                 Page::jsLoad('js/jquery/jquery.ui.touch-punch.js') .
                 My::jsLoad('c2cats')

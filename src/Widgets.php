@@ -1,27 +1,24 @@
 <?php
-/**
- * @brief cinecturlink2, a plugin for Dotclear 2
- *
- * @package Dotclear
- * @subpackage Plugin
- *
- * @author Jean-Christian Denis and Contributors
- *
- * @copyright Jean-Christian Denis
- * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
- */
+
 declare(strict_types=1);
 
 namespace Dotclear\Plugin\cinecturlink2;
 
-use dcCore;
+use Dotclear\App;
 use Dotclear\Helper\Html\Html;
 use Dotclear\Plugin\widgets\WidgetsStack;
 use Dotclear\Plugin\widgets\WidgetsElement;
 
+/**
+ * @brief       cinecturlink2 widgets class.
+ * @ingroup     cinecturlink2
+ *
+ * @author      Jean-Christian Denis (author)
+ * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
 class Widgets
 {
-    public static function initLinks(WidgetsStack $w): void
+    public static function init(WidgetsStack $w): void
     {
         $categories_combo = array_merge(
             Combo::categoriesCombo(),
@@ -44,7 +41,7 @@ class Widgets
             ->create(
                 'cinecturlink2links',
                 __('My cinecturlink'),
-                [self::class, 'parseLinks'],
+                self::parseLinks(...),
                 null,
                 __('Show selection of cinecturlinks')
             )
@@ -112,15 +109,12 @@ class Widgets
             ->addContentOnly()
             ->addClass()
             ->addOffline();
-    }
 
-    public static function initCats(WidgetsStack $w): void
-    {
         $w
             ->create(
                 'cinecturlink2cats',
                 __('List of categories of cinecturlink'),
-                [self::class, 'parseCats'],
+                self::parseCats(...),
                 null,
                 __('List of categories of cinecturlink')
             )
@@ -148,7 +142,7 @@ class Widgets
     public static function parseLinks(WidgetsElement $w): string
     {
         if (!My::settings()->avtive
-            || !$w->checkHomeOnly(dcCore::app()->url->type)
+            || !$w->checkHomeOnly(App::url()->type)
         ) {
             return '';
         }
@@ -216,7 +210,7 @@ class Widgets
             $count  = abs((int) $rs->link_count);
 
             # --BEHAVIOR-- cinecturlink2WidgetLinks
-            $bhv = dcCore::app()->callBehavior('cinecturlink2WidgetLinks', $rs->link_id);
+            $bhv = App::behavior()->callBehavior('cinecturlink2WidgetLinks', $rs->link_id);
 
             $entries[] = '<p style="text-align:center;">' .
             ($w->withlink && !empty($url) ? '<a href="' . $url . '"' . $lang . ' title="' . $cat . '">' : '') .
@@ -228,7 +222,7 @@ class Widgets
             '</p>' . $bhv;
 
             try {
-                $cur             = dcCore::app()->con->openCursor($C2->table);
+                $cur             = App::con()->openCursor($C2->table);
                 $cur->link_count = ($count + 1);
                 $C2->updLink((int) $rs->link_id, $cur, false);
             } catch (Exception $e) {
@@ -240,7 +234,7 @@ class Widgets
         ) {
             shuffle($entries);
             if (My::settings()->triggeronrandom) {
-                dcCore::app()->blog->triggerBlog();
+                App::blog()->triggerBlog();
             }
         }
 
@@ -251,7 +245,7 @@ class Widgets
             ($w->title ? $w->renderTitle(Html::escapeHTML($w->title)) : '') . implode(' ', $entries) .
             (
                 $w->showpagelink && My::settings()->public_active ?
-                '<p><a href="' . dcCore::app()->blog->url . dcCore::app()->url->getBase(My::id()) . '" title="' . __('view all links') . '">' . __('More links') . '</a></p>' : ''
+                '<p><a href="' . App::blog()->url() . App::url()->getBase(My::id()) . '" title="' . __('view all links') . '">' . __('More links') . '</a></p>' : ''
             )
         );
     }
@@ -260,7 +254,7 @@ class Widgets
     {
         if (!My::settings()->avtive
             || !My::settings()->public_active
-            || !$w->checkHomeOnly(dcCore::app()->url->type)
+            || !$w->checkHomeOnly(App::url()->type)
         ) {
             return '';
         }
@@ -273,14 +267,14 @@ class Widgets
 
         $res   = [];
         $res[] = '<li><a href="' .
-            dcCore::app()->blog->url . dcCore::app()->url->getBase(My::id()) .
+            App::blog()->url() . App::url()->getBase(My::id()) .
             '" title="' . __('view all links') . '">' . __('all links') .
             '</a>' . ($w->shownumlink ? ' (' . ($C2->getLinks([], true)->f(0)) . ')' : '') .
             '</li>';
 
         while ($rs->fetch()) {
             $res[] = '<li><a href="' .
-                dcCore::app()->blog->url . dcCore::app()->url->getBase('cinecturlink2') . '/' .
+                App::blog()->url() . App::url()->getBase('cinecturlink2') . '/' .
                 My::settings()->public_caturl . '/' .
                 urlencode($rs->cat_title) .
                 '" title="' . __('view links of this category') . '">' .

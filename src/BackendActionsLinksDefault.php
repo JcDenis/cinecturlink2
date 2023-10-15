@@ -1,21 +1,11 @@
 <?php
-/**
- * @brief cinecturlink2, a plugin for Dotclear 2
- *
- * @package Dotclear
- * @subpackage Plugin
- *
- * @author Jean-Christian Denis and Contributors
- *
- * @copyright Jean-Christian Denis
- * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
- */
+
 declare(strict_types=1);
 
 namespace Dotclear\Plugin\cinecturlink2;
 
 use ArrayObject;
-use dcCore;
+use Dotclear\App;
 use Dotclear\Core\Backend\{
     Notices,
     Page
@@ -31,21 +21,28 @@ use Dotclear\Helper\Html\Form\{
 };
 use Exception;
 
+/**
+ * @brief       cinecturlink2 links default action class.
+ * @ingroup     cinecturlink2
+ *
+ * @author      Jean-Christian Denis (author)
+ * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
 class BackendActionsLinksDefault
 {
     public static function addDefaultLinksActions(BackendActionsLinks $ap): void
     {
         $ap->addAction(
             [__('Delete') => 'dellinks'],
-            [self::class, 'doDeleteLinks']
+            self::doDeleteLinks(...)
         );
         $ap->addAction(
             [__('Change rating') => 'updlinksnote'],
-            [self::class, 'doChangeNote']
+            self::doChangeNote(...)
         );
         $ap->addAction(
             [__('Change category') => 'updlinkscat'],
-            [self::class, 'doChangeCategory']
+            self::doChangeCategory(...)
         );
     }
 
@@ -87,7 +84,7 @@ class BackendActionsLinksDefault
 
             $cat_id = is_numeric($post['upd_cat_id']) ? abs((int) $post['upd_cat_id']) : null;
 
-            $cur = dcCore::app()->con->openCursor($ap->utils->table);
+            $cur = App::con()->openCursor($ap->utils->table);
             foreach ($ids as $id) {
                 $cur->clean();
                 $cur->setField('cat_id', $cat_id == 0 ? null : $cat_id);
@@ -125,7 +122,7 @@ class BackendActionsLinksDefault
                                 (new Submit('do-action'))
                                     ->value(__('Save')),
                                 (new Hidden(['action'], 'updlinkscat')),
-                                dcCore::app()->formNonce(false),
+                                App::nonce()->formNonce(),
                             ]
                         )),
 
@@ -152,7 +149,7 @@ class BackendActionsLinksDefault
                 $link_note = 10;
             }
 
-            $cur = dcCore::app()->con->openCursor($ap->utils->table);
+            $cur = App::con()->openCursor($ap->utils->table);
             foreach ($ids as $id) {
                 $cur->clean();
                 $cur->setField('link_note', $link_note);
@@ -190,7 +187,7 @@ class BackendActionsLinksDefault
                                 (new Submit('do-action'))
                                     ->value(__('Save')),
                                 (new Hidden(['action'], 'updlinksnote')),
-                                dcCore::app()->formNonce(false),
+                                App::nonce()->formNonce(),
                             ]
                         )),
 

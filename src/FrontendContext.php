@@ -1,30 +1,27 @@
 <?php
-/**
- * @brief cinecturlink2, a plugin for Dotclear 2
- *
- * @package Dotclear
- * @subpackage Plugin
- *
- * @author Jean-Christian Denis and Contributors
- *
- * @copyright Jean-Christian Denis
- * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
- */
+
 declare(strict_types=1);
 
 namespace Dotclear\Plugin\cinecturlink2;
 
-use dcCore;
+use Dotclear\App;
 
+/**
+ * @brief       cinecturlink2 frontend contxt class.
+ * @ingroup     cinecturlink2
+ *
+ * @author      Jean-Christian Denis (author)
+ * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
 class FrontendContext
 {
     public static function PaginationNbPages()
     {
-        if (dcCore::app()->ctx->c2_pagination === null) {
+        if (App::frontend()->context()->c2_pagination === null) {
             return false;
         }
-        $nb_posts    = dcCore::app()->ctx->c2_pagination->f(0);
-        $nb_per_page = dcCore::app()->ctx->c2_params['limit'][1];
+        $nb_posts    = App::frontend()->context()->c2_pagination->f(0);
+        $nb_per_page = App::frontend()->context()->c2_params['limit'][1];
         $nb_pages    = ceil($nb_posts / $nb_per_page);
 
         return $nb_pages;
@@ -72,7 +69,7 @@ class FrontendContext
 
         $args = preg_replace('#(^|/)c2page/([0-9]+)$#', '', $args);
 
-        $url = dcCore::app()->blog->url . $args;
+        $url = App::blog()->url() . $args;
 
         if ($n > 1) {
             $url = preg_replace('#/$#', '', $url);
@@ -89,18 +86,18 @@ class FrontendContext
 
     public static function categoryCurrent()
     {
-        if (!isset(dcCore::app()->ctx->c2_page_params['cat_id'])
-            && !isset(dcCore::app()->ctx->c2_page_params['cat_title'])
+        if (!isset(App::frontend()->context()->c2_page_params['cat_id'])
+            && !isset(App::frontend()->context()->c2_page_params['cat_title'])
         ) {
             return false;
         }
-        if (isset(dcCore::app()->ctx->c2_page_params['cat_id'])
-            && dcCore::app()->ctx->c2_page_params['cat_id'] == dcCore::app()->ctx->c2_categories->cat_id
+        if (isset(App::frontend()->context()->c2_page_params['cat_id'])
+            && App::frontend()->context()->c2_page_params['cat_id'] == App::frontend()->context()->c2_categories->cat_id
         ) {
             return true;
         }
-        if (isset(dcCore::app()->ctx->c2_page_params['cat_title'])
-            && dcCore::app()->ctx->c2_page_params['cat_title'] == dcCore::app()->ctx->c2_categories->cat_title
+        if (isset(App::frontend()->context()->c2_page_params['cat_title'])
+            && App::frontend()->context()->c2_page_params['cat_title'] == App::frontend()->context()->c2_categories->cat_title
         ) {
             return true;
         }

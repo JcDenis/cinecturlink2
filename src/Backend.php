@@ -1,22 +1,12 @@
 <?php
-/**
- * @brief cinecturlink2, a plugin for Dotclear 2
- *
- * @package Dotclear
- * @subpackage Plugin
- *
- * @author Jean-Christian Denis and Contributors
- *
- * @copyright Jean-Christian Denis
- * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
- */
+
 declare(strict_types=1);
 
 namespace Dotclear\Plugin\cinecturlink2;
 
 use ArrayObject;
-use dcCore;
-use dcSettings;
+use Dotclear\App;
+use Dotclear\Core\BlogSettings;
 use Dotclear\Core\Backend\Favorites;
 use Dotclear\Core\Process;
 use Dotclear\Helper\Html\Form\{
@@ -32,6 +22,13 @@ use Dotclear\Helper\Html\Form\{
 };
 use Dotclear\Helper\File\Files;
 
+/**
+ * @brief       cinecturlink2 backend class.
+ * @ingroup     cinecturlink2
+ *
+ * @author      Jean-Christian Denis (author)
+ * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
 class Backend extends Process
 {
     public static function init(): bool
@@ -47,10 +44,8 @@ class Backend extends Process
 
         My::addBackendMenuItem();
 
-        dcCore::app()->addBehavior('initWidgets', [Widgets::class, 'initLinks']);
-        dcCore::app()->addBehavior('initWidgets', [Widgets::class, 'initCats']);
-
-        dcCore::app()->addBehaviors([
+        App::behavior()->addBehaviors([
+            'initWidgets'         => Widgets::init(...),
             'adminColumnsListsV2' => function (ArrayObject $cols) {
                 $cols[My::id()] = [
                     My::name(),
@@ -89,13 +84,13 @@ class Backend extends Process
                     'url'         => My::manageUrl() . '#links',
                     'small-icon'  => My::icons(),
                     'large-icon'  => My::icons(),
-                    'permissions' => dcCore::app()->auth->makePermissions([dcCore::app()->auth::PERMISSION_CONTENT_ADMIN]),
+                    'permissions' => App::auth()->makePermissions([App::auth()::PERMISSION_CONTENT_ADMIN]),
                 ]);
             },
 
-            'adminBlogPreferencesFormV2' => function (dcSettings $blog_settings): void {
+            'adminBlogPreferencesFormV2' => function (BlogSettings $blog_settings): void {
                 $s            = $blog_settings->get(My::id());
-                $url          = (string) dcCore::app()->blog?->url . dcCore::app()->url->getBase(My::id());
+                $url          = App::blog()->url() . App::url()->getBase(My::id());
                 $public_nbrpp = (int) $s->get('public_nbrpp');
                 if ($public_nbrpp < 1) {
                     $public_nbrpp = 10;
@@ -202,7 +197,7 @@ class Backend extends Process
                     ->render();
             },
 
-            'adminBeforeBlogSettingsUpdate' => function (dcSettings $blog_settings): void {
+            'adminBeforeBlogSettingsUpdate' => function (BlogSettings $blog_settings): void {
                 $s                  = $blog_settings->get(My::id());
                 $active             = !empty($_POST[My::id() . 'active']);
                 $widthmax           = abs((int) $_POST[My::id() . 'widthmax']);
@@ -218,12 +213,12 @@ class Backend extends Process
                     $public_nbrpp = 10;
                 }
                 if (empty($folder)) {
-                    dcCore::app()->error->add(__('You must provide a specific folder for images.'));
+                    App::error()->add(__('You must provide a specific folder for images.'));
 
                     return;
                 }
                 Utils::makePublicDir(
-                    DC_ROOT . '/' . dcCore::app()->blog?->settings->get('system')->get('public_path'),
+                    App::config()->dotclearRoot() . '/' . App::blog()->settings()->get('system')->get('public_path'),
                     $folder,
                     true
                 );

@@ -1,20 +1,10 @@
 <?php
-/**
- * @brief cinecturlink2, a plugin for Dotclear 2
- *
- * @package Dotclear
- * @subpackage Plugin
- *
- * @author Jean-Christian Denis and Contributors
- *
- * @copyright Jean-Christian Denis
- * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
- */
+
 declare(strict_types=1);
 
 namespace Dotclear\Plugin\cinecturlink2;
 
-use dcCore;
+use Dotclear\App;
 use Dotclear\Core\Backend\Action\Actions;
 use Dotclear\Core\Backend\Filter\{
     Filters,
@@ -39,6 +29,13 @@ use Dotclear\Helper\Html\Form\{
 };
 use Exception;
 
+/**
+ * @brief       cinecturlink2 manage links class.
+ * @ingroup     cinecturlink2
+ *
+ * @author      Jean-Christian Denis (author)
+ * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
 class ManageLinks extends Process
 {
     private static Actions $module_action;
@@ -86,7 +83,7 @@ class ManageLinks extends Process
             self::$module_counter = (int) $utils->getLinks($params, true)->f(0);
             self::$module_listing = new BackendListingLinks($links, self::$module_counter);
         } catch (Exception $e) {
-            dcCore::app()->error->add($e->getMessage());
+            App::error()->add($e->getMessage());
         }
 
         return true;

@@ -1,26 +1,21 @@
 <?php
-/**
- * @brief cinecturlink2, a plugin for Dotclear 2
- *
- * @package Dotclear
- * @subpackage Plugin
- *
- * @author Jean-Christian Denis and Contributors
- *
- * @copyright Jean-Christian Denis
- * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
- */
+
 declare(strict_types=1);
 
 namespace Dotclear\Plugin\cinecturlink2;
 
-use dcCore;
-use dcUrlHandlers;
-use context;
-use Dotclear\Core\Frontend\Utility;
+use Dotclear\App;
+use Dotclear\Core\Frontend\Url;
 use Dotclear\Helper\File\Path;
 
-class FrontendUrl extends dcUrlHandlers
+/**
+ * @brief       cinecturlink2 frontend URLclass.
+ * @ingroup     cinecturlink2
+ *
+ * @author      Jean-Christian Denis (author)
+ * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
+class FrontendUrl extends Url
 {
     public static function c2Page(?string $args)
     {
@@ -31,9 +26,9 @@ class FrontendUrl extends dcUrlHandlers
             self::p404();
         }
 
-        $tplset = dcCore::app()->themes->getDefine(dcCore::app()->blog->settings->system->theme)->get('tplset');
-        $tpldir = Path::real(dcCore::app()->plugins->getDefine(My::id())->get('root')) . DIRECTORY_SEPARATOR . Utility::TPL_ROOT . DIRECTORY_SEPARATOR;
-        dcCore::app()->tpl->setPath(dcCore::app()->tpl->getPath(), $tpldir . (!empty($tplset) && is_dir($tpldir . $tplset) ? $tplset : DC_DEFAULT_TPLSET));
+        $tplset = App::themes()->getDefine(App::blog()->settings()->get('system')->get('theme'))->get('tplset');
+        $tpldir = Path::real(App::plugins()->getDefine(My::id())->get('root')) . DIRECTORY_SEPARATOR . App::frontend()::TPL_ROOT . DIRECTORY_SEPARATOR;
+        App::frontend()->template()->setPath(App::frontend()->template()->getPath(), $tpldir . (!empty($tplset) && is_dir($tpldir . $tplset) ? $tplset : App::config()->defaultTplset()));
 
         $params = [];
 
@@ -60,12 +55,12 @@ class FrontendUrl extends dcUrlHandlers
         if (!empty($f) && in_array($f, ['atom', 'rss2'])) {
             $mime = $f == 'atom' ? 'application/atom+xml' : 'application/xml';
 
-            //dcCore::app()->ctx->short_feed_items = dcCore::app()->blog->settings->system->short_feed_items;
+            //App::frontend()->context()->short_feed_items = App::blog()->settings()->system->short_feed_items;
 
-            $params['limit']                   = dcCore::app()->blog->settings->system->nb_post_per_feed;
-            dcCore::app()->ctx->c2_page_params = $params;
+            $params['limit']                           = App::blog()->settings()->get('system')->get('nb_post_per_feed');
+            App::frontend()->context()->c2_page_params = $params;
 
-            header('X-Robots-Tag: ' . context::robotsPolicy(dcCore::app()->blog->settings->system->robots_policy, ''));
+            header('X-Robots-Tag: ' . App::frontend()->context()::robotsPolicy(App::blog()->settings()->get('system')->get('robots_policy'), ''));
             self::serveDocument('cinecturlink2-' . $f . '.xml', $mime);
         } else {
             $d = self::getPageArgs($args, 'c2detail');
@@ -77,8 +72,8 @@ class FrontendUrl extends dcUrlHandlers
                 }
             }
 
-            $params['limit']                   = (int) My::settings()->public_nbrpp;
-            dcCore::app()->ctx->c2_page_params = $params;
+            $params['limit']                           = (int) My::settings()->public_nbrpp;
+            App::frontend()->context()->c2_page_params = $params;
 
             self::serveDocument('cinecturlink2.html', 'text/html');
         }

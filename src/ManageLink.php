@@ -1,20 +1,10 @@
 <?php
-/**
- * @brief cinecturlink2, a plugin for Dotclear 2
- *
- * @package Dotclear
- * @subpackage Plugin
- *
- * @author Jean-Christian Denis and Contributors
- *
- * @copyright Jean-Christian Denis
- * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
- */
+
 declare(strict_types=1);
 
 namespace Dotclear\Plugin\cinecturlink2;
 
-use dcCore;
+use Dotclear\App;
 use Dotclear\Core\Backend\{
     Notices,
     Page
@@ -36,6 +26,13 @@ use Dotclear\Helper\Html\Html;
 use Dotclear\Helper\Network\Http;
 use Exception;
 
+/**
+ * @brief       cinecturlink2 manage link class.
+ * @ingroup     cinecturlink2
+ *
+ * @author      Jean-Christian Denis (author)
+ * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
 class ManageLink extends Process
 {
     private static string $module_redir = '';
@@ -69,14 +66,14 @@ class ManageLink extends Process
         self::$linkauthor   = $_POST['linkauthor'] ?? '';
         self::$linkurl      = $_POST['linkurl']    ?? '';
         self::$linkcat      = $_POST['linkcat']    ?? null;
-        self::$linklang     = $_POST['linklang']   ?? dcCore::app()->auth->getInfo('user_lang');
+        self::$linklang     = $_POST['linklang']   ?? App::auth()->getInfo('user_lang');
         self::$linkimage    = $_POST['linkimage']  ?? '';
         self::$linknote     = $_POST['linknote']   ?? '';
 
         if (!empty($_POST['save'])) {
             try {
                 Utils::makePublicDir(
-                    DC_ROOT . '/' . dcCore::app()->blog->settings->system->get('public_path'),
+                    App::config()->dotclearRoot() . '/' . App::blog()->settings()->system->get('public_path'),
                     My::settings()->folder
                 );
                 if (empty(self::$linktitle)) {
@@ -89,7 +86,7 @@ class ManageLink extends Process
                     //throw new Exception(__('You must provide a link to an image.'));
                 }
 
-                $cur = dcCore::app()->con->openCursor($utils->table);
+                $cur = App::con()->openCursor($utils->table);
                 $cur->setField('link_title', self::$linktitle);
                 $cur->setField('link_desc', self::$linkdesc);
                 $cur->setField('link_author', self::$linkauthor);
@@ -130,7 +127,7 @@ class ManageLink extends Process
                     ]
                 );
             } catch (Exception $e) {
-                dcCore::app()->error->add($e->getMessage());
+                App::error()->add($e->getMessage());
             }
         }
 
@@ -147,7 +144,7 @@ class ManageLink extends Process
                     My::redirect(['part' => 'links']);
                 }
             } catch (Exception $e) {
-                dcCore::app()->error->add($e->getMessage());
+                App::error()->add($e->getMessage());
             }
         }
 
@@ -178,7 +175,7 @@ class ManageLink extends Process
 
         Page::openModule(
             My::name(),
-            Page::jsVars(['dotclear.c2_lang' => dcCore::app()->auth->getInfo('user_lang')]) .
+            Page::jsVars(['dotclear.c2_lang' => App::auth()->getInfo('user_lang')]) .
             My::jsLoad('c2link')
         );
 
@@ -286,7 +283,7 @@ class ManageLink extends Process
                                                     ->items([
                                                         (new Link())
                                                             ->class('modal hidden-if-no-js')
-                                                            ->href(dcCore::app()->adminurl->get('admin.media', ['d' => (string) My::settings()->folder]))
+                                                            ->href(App::backend()->url()->get('admin.media', ['d' => (string) My::settings()->folder]))
                                                             ->title(__('Media manager'))
                                                             ->text(__('Go to media manager to add image to cinecturlink path.')),
                                                     ]),

@@ -1,24 +1,21 @@
 <?php
-/**
- * @brief cinecturlink2, a plugin for Dotclear 2
- *
- * @package Dotclear
- * @subpackage Plugin
- *
- * @author Jean-Christian Denis and Contributors
- *
- * @copyright Jean-Christian Denis
- * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
- */
+
 declare(strict_types=1);
 
 namespace Dotclear\Plugin\cinecturlink2;
 
 use ArrayObject;
-use dcCore;
-use dcTemplate;
+use Dotclear\App;
+use Dotclear\Core\Frontend\Tpl;
 use Dotclear\Helper\Html\Html;
 
+/**
+ * @brief       cinecturlink2 frontend template class.
+ * @ingroup     cinecturlink2
+ *
+ * @author      Jean-Christian Denis (author)
+ * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
 class FrontendTemplate
 {
     public static function disable(ArrayObject $a, ?string $c = null): string
@@ -28,43 +25,43 @@ class FrontendTemplate
 
     public static function c2PageURL(ArrayObject $a): string
     {
-        return '<?php echo ' . sprintf(dcCore::app()->tpl->getFilters($a), 'dcCore::app()->blog->url.dcCore::app()->url->getBase(\'cinecturlink2\')') . '; ?>';
+        return '<?php echo ' . sprintf(App::frontend()->template()->getFilters($a), 'App::blog()->url().App::url()->getBase(\'cinecturlink2\')') . '; ?>';
     }
 
     public static function c2PageTitle(ArrayObject $a): string
     {
-        return "<?php \$title = (string) dcCore::app()->blog->settings->cinecturlink2->public_title; if (empty(\$title)) { \$title = __('My cinecturlink'); } echo " . sprintf(dcCore::app()->tpl->getFilters($a), '$title') . '; ?>';
+        return "<?php \$title = (string) App::blog()->settings()->cinecturlink2->public_title; if (empty(\$title)) { \$title = __('My cinecturlink'); } echo " . sprintf(App::frontend()->template()->getFilters($a), '$title') . '; ?>';
     }
 
     public static function c2PageFeedURL(ArrayObject $a): string
     {
-        return '<?php echo ' . sprintf(dcCore::app()->tpl->getFilters($a), 'dcCore::app()->blog->url.dcCore::app()->url->getBase("' . My::id() . '")."/feed/' . (!empty($a['type']) && preg_match('#^(rss2|atom)$#', $a['type']) ? $a['type'] : 'atom') . '"') . '; ?>';
+        return '<?php echo ' . sprintf(App::frontend()->template()->getFilters($a), 'App::blog()->url().App::url()->getBase("' . My::id() . '")."/feed/' . (!empty($a['type']) && preg_match('#^(rss2|atom)$#', $a['type']) ? $a['type'] : 'atom') . '"') . '; ?>';
     }
 
     public static function c2PageFeedID(ArrayObject $a): string
     {
-        return 'urn:md5:<?php echo md5(dcCore::app()->blog->id."' . My::id() . '"); ?>';
+        return 'urn:md5:<?php echo md5(App::blog()->id()."' . My::id() . '"); ?>';
     }
 
     public static function c2PageDescription(ArrayObject $a): string
     {
-        return '<?php $description = (string) dcCore::app()->blog->settings->cinecturlink2->public_description; echo ' . sprintf(dcCore::app()->tpl->getFilters($a), '$description') . '; ?>';
+        return '<?php $description = (string) App::blog()->settings()->cinecturlink2->public_description; echo ' . sprintf(App::frontend()->template()->getFilters($a), '$description') . '; ?>';
     }
 
     public static function c2If(ArrayObject $a, string $c): string
     {
         $if = [];
 
-        $operator = isset($a['operator']) ? dcTemplate::getOperator($a['operator']) : '&&';
+        $operator = isset($a['operator']) ? Tpl::getOperator($a['operator']) : '&&';
 
         if (isset($a['request_link'])) {
             $sign = (bool) $a['request_link'] ? '' : '!';
-            $if[] = $sign . '(isset(dcCore::app()->ctx->c2_page_params["link_id"]) || isset(dcCore::app()->ctx->c2_page_params["link_title"]))';
+            $if[] = $sign . '(isset(App::frontend()->context()->c2_page_params["link_id"]) || isset(App::frontend()->context()->c2_page_params["link_title"]))';
         }
 
         if (isset($a['request_cat'])) {
             $sign = (bool) $a['request_cat'] ? '' : '!';
-            $if[] = $sign . '(isset(dcCore::app()->ctx->c2_page_params["cat_id"]) || isset(dcCore::app()->ctx->c2_page_params["cat_title"]))';
+            $if[] = $sign . '(isset(App::frontend()->context()->c2_page_params["cat_id"]) || isset(App::frontend()->context()->c2_page_params["cat_title"]))';
         }
 
         return empty($if) ? $c : '<?php if(' . implode(' ' . $operator . ' ', $if) . ") : ?>\n" . $c . "<?php endif; ?>\n";
@@ -106,35 +103,35 @@ class FrontendTemplate
 
         return
         "<?php \n" .
-        "\$params = is_array(dcCore::app()->ctx->c2_page_params) ? dcCore::app()->ctx->c2_page_params : array(); \n" .
+        "\$params = is_array(App::frontend()->context()->c2_page_params) ? App::frontend()->context()->c2_page_params : array(); \n" .
         $res .
-        "dcCore::app()->ctx->c2_params = \$params; unset(\$params);\n" .
-        "if (!dcCore::app()->ctx->exists('cinecturlink')) { dcCore::app()->ctx->cinecturlink = new " . Utils::class . "(); } \n" .
-        "dcCore::app()->ctx->c2_entries = dcCore::app()->ctx->cinecturlink->getLinks(dcCore::app()->ctx->c2_params); \n" .
-        'while (dcCore::app()->ctx->c2_entries->fetch()) : ?>' . $c . '<?php endwhile; ' . "\n" .
-        "dcCore::app()->ctx->pop('c2_entries'); dcCore::app()->ctx->pop('c2_params'); \n" .
+        "App::frontend()->context()->c2_params = \$params; unset(\$params);\n" .
+        "if (!App::frontend()->context()->exists('cinecturlink')) { App::frontend()->context()->cinecturlink = new " . Utils::class . "(); } \n" .
+        "App::frontend()->context()->c2_entries = App::frontend()->context()->cinecturlink->getLinks(App::frontend()->context()->c2_params); \n" .
+        'while (App::frontend()->context()->c2_entries->fetch()) : ?>' . $c . '<?php endwhile; ' . "\n" .
+        "App::frontend()->context()->pop('c2_entries'); App::frontend()->context()->pop('c2_params'); \n" .
         "?>\n";
     }
 
     public static function c2EntriesHeader(ArrayObject $a, string $c): string
     {
-        return '<?php if (dcCore::app()->ctx->c2_entries->isStart()) : ?>' . $c . '<?php endif; ?>';
+        return '<?php if (App::frontend()->context()->c2_entries->isStart()) : ?>' . $c . '<?php endif; ?>';
     }
 
     public static function c2EntriesFooter(ArrayObject $a, string $c): string
     {
-        return '<?php if (dcCore::app()->ctx->c2_entries->isEnd()) : ?>' . $c . '<?php endif; ?>';
+        return '<?php if (App::frontend()->context()->c2_entries->isEnd()) : ?>' . $c . '<?php endif; ?>';
     }
 
     public static function c2EntryIf(ArrayObject $a, string $c): string
     {
         $if = [];
 
-        $operator = isset($a['operator']) ? dcTemplate::getOperator($a['operator']) : '&&';
+        $operator = isset($a['operator']) ? Tpl::getOperator($a['operator']) : '&&';
 
         if (isset($a['has_category'])) {
             $sign = (bool) $a['has_category'] ? '!' : '=';
-            $if[] = '(dcCore::app()->ctx->exists("c2_entries") && "" ' . $sign . '= dcCore::app()->ctx->c2_entries->cat_title)';
+            $if[] = '(App::frontend()->context()->exists("c2_entries") && "" ' . $sign . '= App::frontend()->context()->c2_entries->cat_title)';
         }
 
         return empty($if) ? $c : '<?php if(' . implode(' ' . $operator . ' ', $if) . ") : ?>\n" . $c . "<?php endif; ?>\n";
@@ -142,105 +139,105 @@ class FrontendTemplate
 
     public static function c2EntryIfFirst(ArrayObject $a): string
     {
-        return '<?php if (dcCore::app()->ctx->c2_entries->index() == 0) { echo "' . (isset($a['return']) ? addslashes(Html::escapeHTML($a['return'])) : 'first') . '"; } ?>';
+        return '<?php if (App::frontend()->context()->c2_entries->index() == 0) { echo "' . (isset($a['return']) ? addslashes(Html::escapeHTML($a['return'])) : 'first') . '"; } ?>';
     }
 
     public static function c2EntryIfOdd(ArrayObject $a): string
     {
-        return '<?php if ((dcCore::app()->ctx->c2_entries->index()+1)%2 == 1) { echo "' . (isset($a['return']) ? addslashes(Html::escapeHTML($a['return'])) : 'odd') . '"; } ?>';
+        return '<?php if ((App::frontend()->context()->c2_entries->index()+1)%2 == 1) { echo "' . (isset($a['return']) ? addslashes(Html::escapeHTML($a['return'])) : 'odd') . '"; } ?>';
     }
 
     public static function c2EntryFeedID(ArrayObject $a): string
     {
-        return 'urn:md5:<?php echo md5(dcCore::app()->ctx->c2_entries->blog_id.dcCore::app()->ctx->c2_entries->link_id.dcCore::app()->ctx->c2_entries->link_creadt); ?>';
+        return 'urn:md5:<?php echo md5(App::frontend()->context()->c2_entries->blog_id.App::frontend()->context()->c2_entries->link_id.App::frontend()->context()->c2_entries->link_creadt); ?>';
     }
 
     public static function c2EntryID(ArrayObject $a): string
     {
-        return self::getGenericValue('dcCore::app()->ctx->c2_entries->link_id', $a);
+        return self::getGenericValue('App::frontend()->context()->c2_entries->link_id', $a);
     }
 
     public static function c2EntryTitle(ArrayObject $a): string
     {
-        return self::getGenericValue('dcCore::app()->ctx->c2_entries->link_title', $a);
+        return self::getGenericValue('App::frontend()->context()->c2_entries->link_title', $a);
     }
 
     public static function c2EntryDescription(ArrayObject $a): string
     {
-        return self::getGenericValue('dcCore::app()->ctx->c2_entries->link_desc', $a);
+        return self::getGenericValue('App::frontend()->context()->c2_entries->link_desc', $a);
     }
 
     public static function c2EntryAuthorCommonName(ArrayObject $a): string
     {
-        return self::getGenericValue('dcUtils::getUserCN(dcCore::app()->ctx->c2_entries->user_id,dcCore::app()->ctx->c2_entries->user_name,dcCore::app()->ctx->c2_entries->user_firstname,dcCore::app()->ctx->c2_entries->user_displayname)', $a);
+        return self::getGenericValue('App::users()->getUserCN(App::frontend()->context()->c2_entries->user_id,App::frontend()->context()->c2_entries->user_name,App::frontend()->context()->c2_entries->user_firstname,App::frontend()->context()->c2_entries->user_displayname)', $a);
     }
 
     public static function c2EntryAuthorDisplayName(ArrayObject $a): string
     {
-        return self::getGenericValue('dcCore::app()->ctx->c2_entries->user_displayname', $a);
+        return self::getGenericValue('App::frontend()->context()->c2_entries->user_displayname', $a);
     }
 
     public static function c2EntryAuthorID(ArrayObject $a): string
     {
-        return self::getGenericValue('dcCore::app()->ctx->c2_entries->user_id', $a);
+        return self::getGenericValue('App::frontend()->context()->c2_entries->user_id', $a);
     }
 
     public static function c2EntryAuthorEmail(ArrayObject $a): string
     {
-        return self::getGenericValue((isset($a['spam_protected']) && !$a['spam_protected'] ? 'dcCore::app()->ctx->c2_entries->user_email' : "strtr(dcCore::app()->ctx->c2_entries->user_email,array('@'=>'%40','.'=>'%2e'))"), $a);
+        return self::getGenericValue((isset($a['spam_protected']) && !$a['spam_protected'] ? 'App::frontend()->context()->c2_entries->user_email' : "strtr(App::frontend()->context()->c2_entries->user_email,array('@'=>'%40','.'=>'%2e'))"), $a);
     }
 
     public static function c2EntryAuthorLink(ArrayObject $a): string
     {
-        return self::getGenericValue('sprintf((dcCore::app()->ctx->c2_entries->user_url ? \'<a href="%2$s">%1$s</a>\' : \'%1$s\'),html::escapeHTML(dcUtils::getUserCN(dcCore::app()->ctx->c2_entries->user_id,dcCore::app()->ctx->c2_entries->user_name,dcCore::app()->ctx->c2_entries->user_firstname,dcCore::app()->ctx->c2_entries->user_displayname)),html::escapeHTML(dcCore::app()->ctx->c2_entries->user_url))', $a);
+        return self::getGenericValue('sprintf((App::frontend()->context()->c2_entries->user_url ? \'<a href="%2$s">%1$s</a>\' : \'%1$s\'),html::escapeHTML(App::users()->getUserCN(App::frontend()->context()->c2_entries->user_id,App::frontend()->context()->c2_entries->user_name,App::frontend()->context()->c2_entries->user_firstname,App::frontend()->context()->c2_entries->user_displayname)),html::escapeHTML(App::frontend()->context()->c2_entries->user_url))', $a);
     }
 
     public static function c2EntryAuthorURL(ArrayObject $a): string
     {
-        return self::getGenericValue('dcCore::app()->ctx->c2_entries->user_url', $a);
+        return self::getGenericValue('App::frontend()->context()->c2_entries->user_url', $a);
     }
 
     public static function c2EntryFromAuthor(ArrayObject $a): string
     {
-        return self::getGenericValue('dcCore::app()->ctx->c2_entries->link_author', $a);
+        return self::getGenericValue('App::frontend()->context()->c2_entries->link_author', $a);
     }
 
     public static function c2EntryLang(ArrayObject $a): string
     {
-        return self::getGenericValue('dcCore::app()->ctx->c2_entries->link_lang', $a);
+        return self::getGenericValue('App::frontend()->context()->c2_entries->link_lang', $a);
     }
 
     public static function c2EntryURL(ArrayObject $a): string
     {
-        return self::getGenericValue('dcCore::app()->ctx->c2_entries->link_url', $a);
+        return self::getGenericValue('App::frontend()->context()->c2_entries->link_url', $a);
     }
 
     public static function c2EntryCategory(ArrayObject $a): string
     {
-        return self::getGenericValue('dcCore::app()->ctx->c2_entries->cat_title', $a);
+        return self::getGenericValue('App::frontend()->context()->c2_entries->cat_title', $a);
     }
 
     public static function c2EntryCategoryID(ArrayObject $a): string
     {
-        return self::getGenericValue('dcCore::app()->ctx->c2_entries->cat_id', $a);
+        return self::getGenericValue('App::frontend()->context()->c2_entries->cat_id', $a);
     }
 
     public static function c2EntryCategoryURL(ArrayObject $a): string
     {
-        return self::getGenericValue('dcCore::app()->blog->url.dcCore::app()->url->getBase("' . My::id() . '")."/".dcCore::app()->blog->settings->cinecturlink2->public_caturl."/".urlencode(dcCore::app()->ctx->c2_entries->cat_title)', $a);
+        return self::getGenericValue('App::blog()->url().App::url()->getBase("' . My::id() . '")."/".App::blog()->settings()->cinecturlink2->public_caturl."/".urlencode(App::frontend()->context()->c2_entries->cat_title)', $a);
     }
 
     public static function c2EntryImg(ArrayObject $a): string
     {
-        $f     = dcCore::app()->tpl->getFilters($a);
+        $f     = App::frontend()->template()->getFilters($a);
         $style = isset($a['style']) ? Html::escapeHTML($a['style']) : '';
 
         return
-        "<?php if (dcCore::app()->ctx->exists('c2_entries')) { " .
-        '$widthmax = (integer) dcCore::app()->blog->settings->cinecturlink2->widthmax; ' .
+        "<?php if (App::frontend()->context()->exists('c2_entries')) { " .
+        '$widthmax = (integer) App::blog()->settings()->cinecturlink2->widthmax; ' .
         "\$img = sprintf('<img src=\"%s\" alt=\"%s\" %s/>'," .
-        'dcCore::app()->ctx->c2_entries->link_img, ' .
-        "html::escapeHTML(dcCore::app()->ctx->c2_entries->link_title.' - '.dcCore::app()->ctx->c2_entries->link_author), " .
+        'App::frontend()->context()->c2_entries->link_img, ' .
+        "html::escapeHTML(App::frontend()->context()->c2_entries->link_title.' - '.App::frontend()->context()->c2_entries->link_author), " .
         "(\$widthmax ? ' style=\"width:'.\$widthmax.'px;$style\"' : '') " .
         '); ' .
         'echo ' . sprintf($f, '$img') . "; unset(\$img); } ?> \n";
@@ -251,13 +248,13 @@ class FrontendTemplate
         $format = !empty($a['format']) ? addslashes($a['format']) : '';
 
         if (!empty($a['rfc822'])) {
-            $p = 'dt::rfc822(strtotime(dcCore::app()->ctx->c2_entries->link_creadt), dcCore::app()->blog->settings->system->blog_timezone)';
+            $p = 'dt::rfc822(strtotime(App::frontend()->context()->c2_entries->link_creadt), App::blog()->settings()->system->blog_timezone)';
         } elseif (!empty($a['iso8601'])) {
-            $p = 'dt::iso8601(strtotime(dcCore::app()->ctx->c2_entries->link_creadt), dcCore::app()->blog->settings->system->blog_timezone)';
+            $p = 'dt::iso8601(strtotime(App::frontend()->context()->c2_entries->link_creadt), App::blog()->settings()->system->blog_timezone)';
         } elseif ($format) {
-            $p = "dt::dt2str('" . $format . "', dcCore::app()->ctx->c2_entries->link_creadt)";
+            $p = "dt::dt2str('" . $format . "', App::frontend()->context()->c2_entries->link_creadt)";
         } else {
-            $p = 'dt::dt2str(dcCore::app()->blog->settings->system->date_format, dcCore::app()->ctx->c2_entries->link_creadt)';
+            $p = 'dt::dt2str(App::blog()->settings()->system->date_format, App::frontend()->context()->c2_entries->link_creadt)';
         }
 
         return self::getGenericValue($p, $a);
@@ -265,17 +262,17 @@ class FrontendTemplate
 
     public static function c2EntryTime(ArrayObject $a): string
     {
-        return self::getGenericValue('dt::dt2str(' . (!empty($a['format']) ? "'" . addslashes($a['format']) . "'" : 'dcCore::app()->blog->settings->system->time_format') . ', dcCore::app()->ctx->c2_entries->link_creadt)', $a);
+        return self::getGenericValue('dt::dt2str(' . (!empty($a['format']) ? "'" . addslashes($a['format']) . "'" : 'App::blog()->settings()->system->time_format') . ', App::frontend()->context()->c2_entries->link_creadt)', $a);
     }
 
     public static function c2Pagination(ArrayObject $a, string $c): string
     {
         $p = "<?php\n" .
-        "\$params = dcCore::app()->ctx->c2_params;\n" .
-        "dcCore::app()->ctx->c2_pagination = dcCore::app()->ctx->cinecturlink->getLinks(\$params,true); unset(\$params);\n" .
+        "\$params = App::frontend()->context()->c2_params;\n" .
+        "App::frontend()->context()->c2_pagination = App::frontend()->context()->cinecturlink->getLinks(\$params,true); unset(\$params);\n" .
         "?>\n";
 
-        return isset($a['no_context']) ? $p . $c : $p . '<?php if (dcCore::app()->ctx->c2_pagination->f(0) > dcCore::app()->ctx->c2_entries->count()) : ?>' . $c . '<?php endif; ?>';
+        return isset($a['no_context']) ? $p . $c : $p . '<?php if (App::frontend()->context()->c2_pagination->f(0) > App::frontend()->context()->c2_entries->count()) : ?>' . $c . '<?php endif; ?>';
     }
 
     public static function c2PaginationCounter(ArrayObject $a): string
@@ -313,21 +310,21 @@ class FrontendTemplate
     {
         return
         "<?php \n" .
-        "if (!dcCore::app()->ctx->exists('cinecturlink')) { dcCore::app()->ctx->cinecturlink = new " . Utils::class . "(); } \n" .
-        "dcCore::app()->ctx->c2_categories = dcCore::app()->ctx->cinecturlink->getCategories(); \n" .
-        'while (dcCore::app()->ctx->c2_categories->fetch()) : ?>' . $c . '<?php endwhile; ' . "\n" .
-        "dcCore::app()->ctx->c2_categories = null; \n" .
+        "if (!App::frontend()->context()->exists('cinecturlink')) { App::frontend()->context()->cinecturlink = new " . Utils::class . "(); } \n" .
+        "App::frontend()->context()->c2_categories = App::frontend()->context()->cinecturlink->getCategories(); \n" .
+        'while (App::frontend()->context()->c2_categories->fetch()) : ?>' . $c . '<?php endwhile; ' . "\n" .
+        "App::frontend()->context()->c2_categories = null; \n" .
         "?>\n";
     }
 
     public static function c2CategoriesHeader(ArrayObject $a, string $c): string
     {
-        return '<?php if (dcCore::app()->ctx->c2_categories->isStart()) : ?>' . $c . '<?php endif; ?>';
+        return '<?php if (App::frontend()->context()->c2_categories->isStart()) : ?>' . $c . '<?php endif; ?>';
     }
 
     public static function c2CategoriesFooter(ArrayObject $a, string $c): string
     {
-        return '<?php if (dcCore::app()->ctx->c2_categories->isEnd()) : ?>' . $c . '<?php endif; ?>';
+        return '<?php if (App::frontend()->context()->c2_categories->isEnd()) : ?>' . $c . '<?php endif; ?>';
     }
 
     public static function c2CategoryIf(ArrayObject $a, string $c): string
@@ -340,7 +337,7 @@ class FrontendTemplate
         }
         if (isset($a['first'])) {
             $sign = (bool) $a['first'] ? '' : '!';
-            $if[] = $sign . 'dcCore::app()->ctx->c2_categories->isStart()';
+            $if[] = $sign . 'App::frontend()->context()->c2_categories->isStart()';
         }
 
         return empty($if) ? $c : '<?php if(' . implode(' && ', $if) . ') : ?>' . $c . '<?php endif; ?>';
@@ -354,36 +351,36 @@ class FrontendTemplate
             $p = 'atom';
         }
 
-        return '<?php echo ' . sprintf(dcCore::app()->tpl->getFilters($a), 'dcCore::app()->blog->url.dcCore::app()->url->getBase("' . My::id() . '")."/".dcCore::app()->blog->settings->cinecturlink2->public_caturl."/".urlencode(dcCore::app()->ctx->c2_categories->cat_title)."/feed/' . $p . '"') . '; ?>';
+        return '<?php echo ' . sprintf(App::frontend()->template()->getFilters($a), 'App::blog()->url().App::url()->getBase("' . My::id() . '")."/".App::blog()->settings()->cinecturlink2->public_caturl."/".urlencode(App::frontend()->context()->c2_categories->cat_title)."/feed/' . $p . '"') . '; ?>';
     }
 
     public static function c2CategoryFeedID(ArrayObject $a): string
     {
-        return 'urn:md5:<?php echo md5(dcCore::app()->blog->id."' . My::id() . '".dcCore::app()->ctx->c2_categories->cat_id); ?>';
+        return 'urn:md5:<?php echo md5(App::blog()->id()."' . My::id() . '".App::frontend()->context()->c2_categories->cat_id); ?>';
     }
 
     public static function c2CategoryID(ArrayObject $a): string
     {
-        return "<?php if (dcCore::app()->ctx->exists('c2_categories')) { echo " . sprintf(dcCore::app()->tpl->getFilters($a), 'dcCore::app()->ctx->c2_categories->cat_id') . '; } ?>';
+        return "<?php if (App::frontend()->context()->exists('c2_categories')) { echo " . sprintf(App::frontend()->template()->getFilters($a), 'App::frontend()->context()->c2_categories->cat_id') . '; } ?>';
     }
 
     public static function c2CategoryTitle(ArrayObject $a): string
     {
-        return "<?php if (dcCore::app()->ctx->exists('c2_categories')) { echo " . sprintf(dcCore::app()->tpl->getFilters($a), 'dcCore::app()->ctx->c2_categories->cat_title') . '; } ?>';
+        return "<?php if (App::frontend()->context()->exists('c2_categories')) { echo " . sprintf(App::frontend()->template()->getFilters($a), 'App::frontend()->context()->c2_categories->cat_title') . '; } ?>';
     }
 
     public static function c2CategoryDescription(ArrayObject $a): string
     {
-        return "<?php if (dcCore::app()->ctx->exists('c2_categories')) { echo " . sprintf(dcCore::app()->tpl->getFilters($a), 'dcCore::app()->ctx->c2_categories->cat_desc') . '; } ?>';
+        return "<?php if (App::frontend()->context()->exists('c2_categories')) { echo " . sprintf(App::frontend()->template()->getFilters($a), 'App::frontend()->context()->c2_categories->cat_desc') . '; } ?>';
     }
 
     public static function c2CategoryURL(ArrayObject $a): string
     {
-        return "<?php if (dcCore::app()->ctx->exists('c2_categories')) { echo " . sprintf(dcCore::app()->tpl->getFilters($a), 'dcCore::app()->blog->url.dcCore::app()->url->getBase("' . My::id() . '")."/".dcCore::app()->blog->settings->cinecturlink2->public_caturl."/".urlencode(dcCore::app()->ctx->c2_categories->cat_title)') . '; } ?>';
+        return "<?php if (App::frontend()->context()->exists('c2_categories')) { echo " . sprintf(App::frontend()->template()->getFilters($a), 'App::blog()->url().App::url()->getBase("' . My::id() . '")."/".App::blog()->settings()->cinecturlink2->public_caturl."/".urlencode(App::frontend()->context()->c2_categories->cat_title)') . '; } ?>';
     }
 
     protected static function getGenericValue(string $p, ArrayObject $a): string
     {
-        return "<?php if (dcCore::app()->ctx->exists('c2_entries')) { echo " . sprintf(dcCore::app()->tpl->getFilters($a), "$p") . '; } ?>';
+        return "<?php if (App::frontend()->context()->exists('c2_entries')) { echo " . sprintf(App::frontend()->template()->getFilters($a), "$p") . '; } ?>';
     }
 }

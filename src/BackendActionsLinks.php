@@ -1,21 +1,11 @@
 <?php
-/**
- * @brief cinecturlink2, a plugin for Dotclear 2
- *
- * @package Dotclear
- * @subpackage Plugin
- *
- * @author Jean-Christian Denis and Contributors
- *
- * @copyright Jean-Christian Denis
- * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
- */
+
 declare(strict_types=1);
 
 namespace Dotclear\Plugin\cinecturlink2;
 
 use ArrayObject;
-use dcCore;
+use Dotclear\App;
 use Dotclear\Core\Backend\Action\Actions;
 use Dotclear\Core\Backend\Page;
 use Dotclear\Database\MetaRecord;
@@ -25,9 +15,16 @@ use Dotclear\Helper\Html\Form\{
 };
 use Exception;
 
+/**
+ * @brief       cinecturlink2 links action class.
+ * @ingroup     cinecturlink2
+ *
+ * @author      Jean-Christian Denis (author)
+ * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
 class BackendActionsLinks extends Actions
 {
-    protected $use_render = true;
+    protected bool $use_render = true;
     public Utils $utils;
 
     public function __construct(string $uri, array $redirect_args = [])
@@ -49,7 +46,7 @@ class BackendActionsLinks extends Actions
         BackendActionsLinksDefault::addDefaultLinksActions($this);
 
         # --BEHAVIOR-- cinecturlink2AddDefaultLinksActions - BackendActionsLinks
-        dcCore::app()->callBehavior('cinecturlink2AddDefaultLinksActions', $this);
+        App::behavior()->callBehavior('cinecturlink2AddDefaultLinksActions', $this);
     }
 
     public function beginPage(string $breadcrumb = '', string $head = ''): void
@@ -75,7 +72,7 @@ class BackendActionsLinks extends Actions
 
     public function error(Exception $e): void
     {
-        dcCore::app()->error->add($e->getMessage());
+        App::error()->add($e->getMessage());
         $this->beginPage(
             Page::breadcrumb([
                 __('Plugins')           => '',

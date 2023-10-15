@@ -1,26 +1,22 @@
 <?php
-/**
- * @brief cinecturlink2, a plugin for Dotclear 2
- *
- * @package Dotclear
- * @subpackage Plugin
- *
- * @author Jean-Christian Denis and Contributors
- *
- * @copyright Jean-Christian Denis
- * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
- */
+
 declare(strict_types=1);
 
 namespace Dotclear\Plugin\cinecturlink2;
 
-use dcCore;
-use dcNamespace;
+use Dotclear\App;
 use Dotclear\Core\Process;
 use Dotclear\Database\Structure;
 use Dotclear\Database\Statement\UpdateStatement;
 use Exception;
 
+/**
+ * @brief       cinecturlink2 install class.
+ * @ingroup     cinecturlink2
+ *
+ * @author      Jean-Christian Denis (author)
+ * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
 class Install extends Process
 {
     public static function init(): bool
@@ -37,7 +33,7 @@ class Install extends Process
         try {
             self::upgradeSettings();
 
-            $s = new Structure(dcCore::app()->con, dcCore::app()->prefix);
+            $s = new Structure(App::con(), App::con()->prefix());
             $s->{My::CINECTURLINK_TABLE_NAME}
                 ->link_id('bigint', 0, false)
                 ->blog_id('varchar', 32, false)
@@ -77,7 +73,7 @@ class Install extends Process
                 ->index('idx_cinecturlink2_cat_blog_id', 'btree', 'blog_id')
                 ->unique('uk_cinecturlink2_cat_title', 'cat_title', 'blog_id');
 
-            (new Structure(dcCore::app()->con, dcCore::app()->prefix))->synchronize($s);
+            (new Structure(App::con(), App::con()->prefix()))->synchronize($s);
 
             $s = My::settings();
             $s->put('avtive', true, 'boolean', 'Enable cinecturlink2', false, true);
@@ -92,7 +88,7 @@ class Install extends Process
 
             return true;
         } catch (Exception $e) {
-            dcCore::app()->error->add($e->getMessage());
+            App::error()->add($e->getMessage());
 
             return false;
         }
@@ -100,7 +96,7 @@ class Install extends Process
 
     private static function upgradeSettings(): void
     {
-        if (version_compare((string) dcCore::app()->getVersion(My::id()), '2.0', '<')) {
+        if (version_compare(App::version()->getVersion(My::id()), '2.0', '<')) {
             $ids = [
                 'active',
                 'widthmax',
@@ -116,7 +112,7 @@ class Install extends Process
             foreach ($ids as $id) {
                 $sql = new UpdateStatement();
                 $sql
-                    ->ref(dcCore::app()->prefix . dcNamespace::NS_TABLE_NAME)
+                    ->ref(App::con()->prefix() . App::blogWorkspace()::NS_TABLE_NAME)
                     ->column('setting_id')
                     ->value($id)
                     ->where('setting_id = ' . $sql->quote('cinecturlink2_' . $id))

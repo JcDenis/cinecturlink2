@@ -1,22 +1,19 @@
 <?php
-/**
- * @brief cinecturlink2, a plugin for Dotclear 2
- *
- * @package Dotclear
- * @subpackage Plugin
- *
- * @author Jean-Christian Denis and Contributors
- *
- * @copyright Jean-Christian Denis
- * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
- */
+
 declare(strict_types=1);
 
 namespace Dotclear\Plugin\cinecturlink2;
 
-use dcCore;
+use Dotclear\App;
 use Dotclear\Plugin\activityReport\ActivityReport;
 
+/**
+ * @brief       cinecturlink2 activityReport class.
+ * @ingroup     cinecturlink2
+ *
+ * @author      Jean-Christian Denis (author)
+ * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
 class PluginActivityReport
 {
     public static function add()
@@ -30,7 +27,7 @@ class PluginActivityReport
             __('link creation'),
             __('A new cineturlink named "%s" was added by "%s"'),
             'cinecturlink2AfterAddLink',
-            [self::class, 'addLink']
+            self::addLink(...)
         );
         // from BEHAVIOR cinecturlink2AfterUpdLink in cinecturlink2/inc/class.cinecturlink2.php
         ActivityReport::instance()->addAction(
@@ -39,7 +36,7 @@ class PluginActivityReport
             __('updating link'),
             __('Cinecturlink named "%s" has been updated by "%s"'),
             'cinecturlink2AfterUpdLink',
-            [self::class, 'updLink']
+            self::updLink(...)
         );
         // from BEHAVIOR cinecturlink2BeforeDelLink in cinecturlink2/inc/class.cinecturlink2.php
         ActivityReport::instance()->addAction(
@@ -48,7 +45,7 @@ class PluginActivityReport
             __('link deletion'),
             __('Cinecturlink named "%s" has been deleted by "%s"'),
             'cinecturlink2BeforeDelLink',
-            [self::class, 'delLink']
+            self::delLink(...)
         );
     }
 
@@ -56,7 +53,7 @@ class PluginActivityReport
     {
         $logs = [
             $cur->link_title,
-            dcCore::app()->auth->getInfo('user_cn'),
+            App::auth()->getInfo('user_cn'),
         ];
         ActivityReport::instance()->addLog('cinecturlink2', 'create', $logs);
     }
@@ -68,7 +65,7 @@ class PluginActivityReport
 
         $logs = [
             $rs->link_title,
-            dcCore::app()->auth->getInfo('user_cn'),
+            App::auth()->getInfo('user_cn'),
         ];
         ActivityReport::instance()->addLog('cinecturlink2', 'update', $logs);
     }
@@ -80,7 +77,7 @@ class PluginActivityReport
 
         $logs = [
             $rs->link_title,
-            dcCore::app()->auth->getInfo('user_cn'),
+            App::auth()->getInfo('user_cn'),
         ];
         ActivityReport::instance()->addLog('cinecturlink2', 'delete', $logs);
     }

@@ -1,21 +1,11 @@
 <?php
-/**
- * @brief cinecturlink2, a plugin for Dotclear 2
- *
- * @package Dotclear
- * @subpackage Plugin
- *
- * @author Jean-Christian Denis and Contributors
- *
- * @copyright Jean-Christian Denis
- * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
- */
+
 declare(strict_types=1);
 
 namespace Dotclear\Plugin\cinecturlink2;
 
 use ArrayObject;
-use dcCore;
+use Dotclear\App;
 use Dotclear\Core\Backend\Filter\Filters;
 use Dotclear\Core\Backend\Listing\{
     Listing,
@@ -33,6 +23,13 @@ use Dotclear\Helper\Html\Form\{
 };
 use Dotclear\Helper\Html\Html;
 
+/**
+ * @brief       cinecturlink2 links list class.
+ * @ingroup     cinecturlink2
+ *
+ * @author      Jean-Christian Denis (author)
+ * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
 class BackendListingLinks extends Listing
 {
     private string $redir;
@@ -56,7 +53,7 @@ class BackendListingLinks extends Listing
             }
         }
 
-        $pager = new Pager((int) $filter->value('page'), $this->rs_count, (int) $filter->value('nb'), 10);
+        $pager = new Pager((int) $filter->value('page'), (int) $this->rs_count, (int) $filter->value('nb'), 10);
 
         $cols = new ArrayObject([
             'title' => (new Th())
@@ -161,7 +158,7 @@ class BackendListingLinks extends Listing
                 ->text(Html::escapeHTML($this->rs->link_note))
                 ->class('number'),
             'date' => (new Td())
-                ->text(Html::escapeHTML(Date::dt2str(__('%Y-%m-%d %H:%M'), $this->rs->link_upddt, (string) dcCore::app()->auth->getInfo('user_tz'))))
+                ->text(Html::escapeHTML(Date::dt2str(__('%Y-%m-%d %H:%M'), $this->rs->link_upddt, (string) App::auth()->getInfo('user_tz'))))
                 ->class('nowrap'),
         ]);
 

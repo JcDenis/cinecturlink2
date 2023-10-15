@@ -1,20 +1,10 @@
 <?php
-/**
- * @brief cinecturlink2, a plugin for Dotclear 2
- *
- * @package Dotclear
- * @subpackage Plugin
- *
- * @author Jean-Christian Denis and Contributors
- *
- * @copyright Jean-Christian Denis
- * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
- */
+
 declare(strict_types=1);
 
 namespace Dotclear\Plugin\cinecturlink2;
 
-use dcCore;
+use Dotclear\App;
 use Dotclear\Core\Backend\{
     Notices,
     Page
@@ -32,6 +22,13 @@ use Dotclear\Helper\Html\Form\{
 use Dotclear\Helper\Html\Html;
 use Exception;
 
+/**
+ * @brief       cinecturlink2 manage category class.
+ * @ingroup     cinecturlink2
+ *
+ * @author      Jean-Christian Denis (author)
+ * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
 class ManageCat extends Process
 {
     private static string $module_redir = '';
@@ -64,7 +61,7 @@ class ManageCat extends Process
                 if ($exists) {
                     throw new Exception(__('Category with same name already exists.'));
                 }
-                $cur = dcCore::app()->con->openCursor($utils->cat_table);
+                $cur = App::con()->openCursor($utils->cat_table);
                 $cur->setField('cat_title', self::$cattitle);
                 $cur->setField('cat_desc', self::$catdesc);
 
@@ -81,7 +78,7 @@ class ManageCat extends Process
                 if ($exists) {
                     throw new Exception(__('Category with same name already exists.'));
                 }
-                $cur = dcCore::app()->con->openCursor($C2->cat_table);
+                $cur = App::con()->openCursor($C2->cat_table);
                 $cur->setField('cat_title', self::$cattitle);
                 $cur->setField('cat_desc', self::$catdesc);
 
@@ -102,7 +99,7 @@ class ManageCat extends Process
                 My::redirect(['part' => 'cats']);
             }
         } catch (Exception $e) {
-            dcCore::app()->error->add($e->getMessage());
+            App::error()->add($e->getMessage());
         }
 
         return true;

@@ -16,7 +16,7 @@ It is hightly based on cinecturlink for Dotclear 1 by Tigroux and maintain by br
 
 ## REQUIREMENTS
 
-* Dotclear 2.27
+* Dotclear 2.28
 * PHP 8.1+
 * Dotclear admin permission for configuration
 * Dotclear contentadmin permission for management

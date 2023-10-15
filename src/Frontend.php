@@ -1,22 +1,19 @@
 <?php
-/**
- * @brief cinecturlink2, a plugin for Dotclear 2
- *
- * @package Dotclear
- * @subpackage Plugin
- *
- * @author Jean-Christian Denis and Contributors
- *
- * @copyright Jean-Christian Denis
- * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
- */
+
 declare(strict_types=1);
 
 namespace Dotclear\Plugin\cinecturlink2;
 
-use dcCore;
+use Dotclear\App;
 use Dotclear\Core\Process;
 
+/**
+ * @brief       cinecturlink2 frontend class.
+ * @ingroup     cinecturlink2
+ *
+ * @author      Jean-Christian Denis (author)
+ * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
 class Frontend extends Process
 {
     public static function init(): bool
@@ -30,8 +27,7 @@ class Frontend extends Process
             return false;
         }
 
-        dcCore::app()->addBehavior('initWidgets', [Widgets::class, 'initLinks']);
-        dcCore::app()->addBehavior('initWidgets', [Widgets::class, 'initCats']);
+        App::behavior()->addBehavior('initWidgets', Widgets::init(...));
 
         $values = [
             'c2PageFeedID',
@@ -91,16 +87,17 @@ class Frontend extends Process
             'c2CategoryIf',
         ];
 
-        if (My::settings()?->active) {
+        if (My::settings()->active) {
             foreach ($blocks as $v) {
-                dcCore::app()->tpl->addBlock($v, [FrontendTemplate::class, $v]);
+                App::frontend()->template()->addBlock($v, [FrontendTemplate::class, $v]);
             }
             foreach ($values as $v) {
-                dcCore::app()->tpl->addValue($v, [FrontendTemplate::class, $v]);
+                App::frontend()->template()->addValue($v, [FrontendTemplate::class, $v]);
             }
         } else {
             foreach (array_merge($blocks, $values) as $v) {
-                dcCore::app()->tpl->addBlock($v, [FrontendTemplate::class, 'disable']);
+                pdump($v);
+                App::frontend()->template()->addBlock($v, FrontendTemplate::disable(...));
             }
         }
 
