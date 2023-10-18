@@ -6,7 +6,6 @@ namespace Dotclear\Plugin\cinecturlink2;
 
 use ArrayObject;
 use Dotclear\App;
-use Dotclear\Core\BlogSettings;
 use Dotclear\Core\Backend\Favorites;
 use Dotclear\Core\Process;
 use Dotclear\Helper\Html\Form\{
@@ -21,6 +20,7 @@ use Dotclear\Helper\Html\Form\{
     Text
 };
 use Dotclear\Helper\File\Files;
+use Dotclear\Interface\Core\BlogSettingsInterface;
 
 /**
  * @brief       cinecturlink2 backend class.
@@ -88,7 +88,7 @@ class Backend extends Process
                 ]);
             },
 
-            'adminBlogPreferencesFormV2' => function (BlogSettings $blog_settings): void {
+            'adminBlogPreferencesFormV2' => function (BlogSettingsInterface $blog_settings): void {
                 $s            = $blog_settings->get(My::id());
                 $url          = App::blog()->url() . App::url()->getBase(My::id());
                 $public_nbrpp = (int) $s->get('public_nbrpp');
@@ -197,7 +197,7 @@ class Backend extends Process
                     ->render();
             },
 
-            'adminBeforeBlogSettingsUpdate' => function (BlogSettings $blog_settings): void {
+            'adminBeforeBlogSettingsUpdate' => function (BlogSettingsInterface $blog_settings): void {
                 $s                  = $blog_settings->get(My::id());
                 $active             = !empty($_POST[My::id() . 'active']);
                 $widthmax           = abs((int) $_POST[My::id() . 'widthmax']);

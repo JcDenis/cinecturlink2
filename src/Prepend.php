@@ -39,10 +39,6 @@ class Prepend extends Process
             'sitemapsURLsCollect' => PluginSitemaps::sitemapsURLsCollect(...),
         ]);
 
-        if (defined('ACTIVITY_REPORT_V2')) {
-            PluginActivityReport::add();
-        }
-
         return true;
     }
 }
