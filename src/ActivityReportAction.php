@@ -22,6 +22,10 @@ use Dotclear\Plugin\activityReport\{
  */
 class ActivityReportAction extends Process
 {
+    private const CINECTURLINK_CREATE = 'cinecturlink2Create';
+    private const CINECTURLINK_UPDATE = 'cinecturlink2Update';
+    private const CINECTURLINK_DELETE = 'cinecturlink2Delete';
+
     public static function init(): bool
     {
         return self::status(true);
@@ -37,7 +41,7 @@ class ActivityReportAction extends Process
 
         // from BEHAVIOR cinecturlink2AfterAddLink in cinecturlink2/inc/class.cinecturlink2.php
         $group->add(new Action(
-            'cinecturlink2Create',
+            self::CINECTURLINK_CREATE,
             __('link creation'),
             __('A new cineturlink named "%s" was added by "%s"'),
             'cinecturlink2AfterAddLink',
@@ -45,7 +49,7 @@ class ActivityReportAction extends Process
         ));
         // from BEHAVIOR cinecturlink2AfterUpdLink in cinecturlink2/inc/class.cinecturlink2.php
         $group->add(new Action(
-            'cinecturlink2Update',
+            self::CINECTURLINK_UPDATE,
             __('updating link'),
             __('Cinecturlink named "%s" has been updated by "%s"'),
             'cinecturlink2AfterUpdLink',
@@ -53,7 +57,7 @@ class ActivityReportAction extends Process
         ));
         // from BEHAVIOR cinecturlink2BeforeDelLink in cinecturlink2/inc/class.cinecturlink2.php
         $group->add(new Action(
-            'cinecturlink2Delete',
+            self::CINECTURLINK_DELETE,
             __('link deletion'),
             __('Cinecturlink named "%s" has been deleted by "%s"'),
             'cinecturlink2BeforeDelLink',
@@ -67,32 +71,33 @@ class ActivityReportAction extends Process
 
     public static function addLink(Cursor $cur): void
     {
-        $logs = [
-            (string) $cur->getField('link_title'),
-            (string) App::auth()->getInfo('user_cn'),
-        ];
-        ActivityReport::instance()->addLog('cinecturlink2', 'create', $logs);
+        self::addLog(
+            self::CINECTURLINK_CREATE,
+            (string) $cur->getField('link_title')
+        );
     }
 
     public static function updLink(Cursor $cur, int $id): void
     {
-        $rs = (new Utils())->getLinks(['link_id' => $id]);
-
-        $logs = [
-            (string) $rs->field('link_title'),
-            (string) App::auth()->getInfo('user_cn'),
-        ];
-        ActivityReport::instance()->addLog('cinecturlink2', 'update', $logs);
+        self::addLog(
+            self::CINECTURLINK_UPDATE,
+            (string) (new Utils())->getLinks(['link_id' => $id])->field('link_title')
+        );
     }
 
     public static function delLink(int $id): void
     {
-        $rs = (new Utils())->getLinks(['link_id' => $id]);
+        self::addLog(
+            self::CINECTURLINK_DELETE,
+            (string) (new Utils())->getLinks(['link_id' => $id])->field('link_title')
+        );
+    }
 
-        $logs = [
-            (string) $rs->field('link_title'),
+    private static function addLog(string $action, string $title)
+    {
+        ActivityReport::instance()->addLog(My::id(), $action, [
+            $title,
             (string) App::auth()->getInfo('user_cn'),
-        ];
-        ActivityReport::instance()->addLog('cinecturlink2', 'delete', $logs);
+        ]);
     }
 }
