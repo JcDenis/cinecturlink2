@@ -18,36 +18,57 @@ use Dotclear\Helper\Html\Html;
  */
 class FrontendTemplate
 {
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function disable(ArrayObject $a, ?string $c = null): string
     {
         return '';
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2PageURL(ArrayObject $a): string
     {
         return '<?php echo ' . sprintf(App::frontend()->template()->getFilters($a), 'App::blog()->url().App::url()->getBase(\'cinecturlink2\')') . '; ?>';
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2PageTitle(ArrayObject $a): string
     {
         return "<?php \$title = (string) App::blog()->settings()->cinecturlink2->public_title; if (empty(\$title)) { \$title = __('My cinecturlink'); } echo " . sprintf(App::frontend()->template()->getFilters($a), '$title') . '; ?>';
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2PageFeedURL(ArrayObject $a): string
     {
         return '<?php echo ' . sprintf(App::frontend()->template()->getFilters($a), 'App::blog()->url().App::url()->getBase("' . My::id() . '")."/feed/' . (!empty($a['type']) && preg_match('#^(rss2|atom)$#', $a['type']) ? $a['type'] : 'atom') . '"') . '; ?>';
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2PageFeedID(ArrayObject $a): string
     {
         return 'urn:md5:<?php echo md5(App::blog()->id()."' . My::id() . '"); ?>';
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2PageDescription(ArrayObject $a): string
     {
         return '<?php $description = (string) App::blog()->settings()->cinecturlink2->public_description; echo ' . sprintf(App::frontend()->template()->getFilters($a), '$description') . '; ?>';
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2If(ArrayObject $a, string $c): string
     {
         $if = [];
@@ -67,6 +88,9 @@ class FrontendTemplate
         return empty($if) ? $c : '<?php if(' . implode(' ' . $operator . ' ', $if) . ") : ?>\n" . $c . "<?php endif; ?>\n";
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2Entries(ArrayObject $a, string $c): string
     {
         $lastn = isset($a['lastn']) ? abs((int) $a['lastn']) + 0 : -1;
@@ -113,16 +137,25 @@ class FrontendTemplate
         "?>\n";
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2EntriesHeader(ArrayObject $a, string $c): string
     {
         return '<?php if (App::frontend()->context()->c2_entries->isStart()) : ?>' . $c . '<?php endif; ?>';
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2EntriesFooter(ArrayObject $a, string $c): string
     {
         return '<?php if (App::frontend()->context()->c2_entries->isEnd()) : ?>' . $c . '<?php endif; ?>';
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2EntryIf(ArrayObject $a, string $c): string
     {
         $if = [];
@@ -137,96 +170,153 @@ class FrontendTemplate
         return empty($if) ? $c : '<?php if(' . implode(' ' . $operator . ' ', $if) . ") : ?>\n" . $c . "<?php endif; ?>\n";
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2EntryIfFirst(ArrayObject $a): string
     {
         return '<?php if (App::frontend()->context()->c2_entries->index() == 0) { echo "' . (isset($a['return']) ? addslashes(Html::escapeHTML($a['return'])) : 'first') . '"; } ?>';
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2EntryIfOdd(ArrayObject $a): string
     {
         return '<?php if ((App::frontend()->context()->c2_entries->index()+1)%2 == 1) { echo "' . (isset($a['return']) ? addslashes(Html::escapeHTML($a['return'])) : 'odd') . '"; } ?>';
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2EntryFeedID(ArrayObject $a): string
     {
         return 'urn:md5:<?php echo md5(App::frontend()->context()->c2_entries->blog_id.App::frontend()->context()->c2_entries->link_id.App::frontend()->context()->c2_entries->link_creadt); ?>';
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2EntryID(ArrayObject $a): string
     {
         return self::getGenericValue('App::frontend()->context()->c2_entries->link_id', $a);
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2EntryTitle(ArrayObject $a): string
     {
         return self::getGenericValue('App::frontend()->context()->c2_entries->link_title', $a);
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2EntryDescription(ArrayObject $a): string
     {
         return self::getGenericValue('App::frontend()->context()->c2_entries->link_desc', $a);
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2EntryAuthorCommonName(ArrayObject $a): string
     {
         return self::getGenericValue('App::users()->getUserCN(App::frontend()->context()->c2_entries->user_id,App::frontend()->context()->c2_entries->user_name,App::frontend()->context()->c2_entries->user_firstname,App::frontend()->context()->c2_entries->user_displayname)', $a);
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2EntryAuthorDisplayName(ArrayObject $a): string
     {
         return self::getGenericValue('App::frontend()->context()->c2_entries->user_displayname', $a);
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2EntryAuthorID(ArrayObject $a): string
     {
         return self::getGenericValue('App::frontend()->context()->c2_entries->user_id', $a);
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2EntryAuthorEmail(ArrayObject $a): string
     {
         return self::getGenericValue((isset($a['spam_protected']) && !$a['spam_protected'] ? 'App::frontend()->context()->c2_entries->user_email' : "strtr(App::frontend()->context()->c2_entries->user_email,array('@'=>'%40','.'=>'%2e'))"), $a);
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2EntryAuthorLink(ArrayObject $a): string
     {
         return self::getGenericValue('sprintf((App::frontend()->context()->c2_entries->user_url ? \'<a href="%2$s">%1$s</a>\' : \'%1$s\'),html::escapeHTML(App::users()->getUserCN(App::frontend()->context()->c2_entries->user_id,App::frontend()->context()->c2_entries->user_name,App::frontend()->context()->c2_entries->user_firstname,App::frontend()->context()->c2_entries->user_displayname)),html::escapeHTML(App::frontend()->context()->c2_entries->user_url))', $a);
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2EntryAuthorURL(ArrayObject $a): string
     {
         return self::getGenericValue('App::frontend()->context()->c2_entries->user_url', $a);
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2EntryFromAuthor(ArrayObject $a): string
     {
         return self::getGenericValue('App::frontend()->context()->c2_entries->link_author', $a);
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2EntryLang(ArrayObject $a): string
     {
         return self::getGenericValue('App::frontend()->context()->c2_entries->link_lang', $a);
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2EntryURL(ArrayObject $a): string
     {
         return self::getGenericValue('App::frontend()->context()->c2_entries->link_url', $a);
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2EntryCategory(ArrayObject $a): string
     {
         return self::getGenericValue('App::frontend()->context()->c2_entries->cat_title', $a);
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2EntryCategoryID(ArrayObject $a): string
     {
         return self::getGenericValue('App::frontend()->context()->c2_entries->cat_id', $a);
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2EntryCategoryURL(ArrayObject $a): string
     {
         return self::getGenericValue('App::blog()->url().App::url()->getBase("' . My::id() . '")."/".App::blog()->settings()->cinecturlink2->public_caturl."/".urlencode(App::frontend()->context()->c2_entries->cat_title)', $a);
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2EntryImg(ArrayObject $a): string
     {
         $f     = App::frontend()->template()->getFilters($a);
@@ -243,6 +333,9 @@ class FrontendTemplate
         'echo ' . sprintf($f, '$img') . "; unset(\$img); } ?> \n";
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2EntryDate(ArrayObject $a): string
     {
         $format = !empty($a['format']) ? addslashes($a['format']) : '';
@@ -260,11 +353,17 @@ class FrontendTemplate
         return self::getGenericValue($p, $a);
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2EntryTime(ArrayObject $a): string
     {
         return self::getGenericValue('dt::dt2str(' . (!empty($a['format']) ? "'" . addslashes($a['format']) . "'" : 'App::blog()->settings()->system->time_format') . ', App::frontend()->context()->c2_entries->link_creadt)', $a);
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2Pagination(ArrayObject $a, string $c): string
     {
         $p = "<?php\n" .
@@ -275,16 +374,25 @@ class FrontendTemplate
         return isset($a['no_context']) ? $p . $c : $p . '<?php if (App::frontend()->context()->c2_pagination->f(0) > App::frontend()->context()->c2_entries->count()) : ?>' . $c . '<?php endif; ?>';
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2PaginationCounter(ArrayObject $a): string
     {
         return self::getGenericValue(FrontendContext::class . '::PaginationNbPages()', $a);
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2PaginationCurrent(ArrayObject $a): string
     {
         return self::getGenericValue(FrontendContext::class . '::PaginationPosition(' . (isset($a['offset']) ? (int) $a['offset'] : 0) . ')', $a);
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2PaginationIf(ArrayObject $a, string $c): string
     {
         $if = [];
@@ -301,11 +409,17 @@ class FrontendTemplate
         return empty($if) ? $c : '<?php if(' . implode(' && ', $if) . ') : ?>' . $c . '<?php endif; ?>';
     }
 
-    public static function c2PaginationURL($a): string
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
+    public static function c2PaginationURL(ArrayObject $a): string
     {
         return self::getGenericValue(FrontendContext::class . '::PaginationURL(' . (isset($a['offset']) ? (int) $a['offset'] : 0) . ')', $a);
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2Categories(ArrayObject $a, string $c): string
     {
         return
@@ -317,16 +431,25 @@ class FrontendTemplate
         "?>\n";
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2CategoriesHeader(ArrayObject $a, string $c): string
     {
         return '<?php if (App::frontend()->context()->c2_categories->isStart()) : ?>' . $c . '<?php endif; ?>';
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2CategoriesFooter(ArrayObject $a, string $c): string
     {
         return '<?php if (App::frontend()->context()->c2_categories->isEnd()) : ?>' . $c . '<?php endif; ?>';
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2CategoryIf(ArrayObject $a, string $c): string
     {
         $if = [];
@@ -343,6 +466,9 @@ class FrontendTemplate
         return empty($if) ? $c : '<?php if(' . implode(' && ', $if) . ') : ?>' . $c . '<?php endif; ?>';
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2CategoryFeedURL(ArrayObject $a): string
     {
         $p = !empty($a['type']) ? $a['type'] : 'atom';
@@ -354,31 +480,49 @@ class FrontendTemplate
         return '<?php echo ' . sprintf(App::frontend()->template()->getFilters($a), 'App::blog()->url().App::url()->getBase("' . My::id() . '")."/".App::blog()->settings()->cinecturlink2->public_caturl."/".urlencode(App::frontend()->context()->c2_categories->cat_title)."/feed/' . $p . '"') . '; ?>';
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2CategoryFeedID(ArrayObject $a): string
     {
         return 'urn:md5:<?php echo md5(App::blog()->id()."' . My::id() . '".App::frontend()->context()->c2_categories->cat_id); ?>';
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2CategoryID(ArrayObject $a): string
     {
         return "<?php if (App::frontend()->context()->exists('c2_categories')) { echo " . sprintf(App::frontend()->template()->getFilters($a), 'App::frontend()->context()->c2_categories->cat_id') . '; } ?>';
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2CategoryTitle(ArrayObject $a): string
     {
         return "<?php if (App::frontend()->context()->exists('c2_categories')) { echo " . sprintf(App::frontend()->template()->getFilters($a), 'App::frontend()->context()->c2_categories->cat_title') . '; } ?>';
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2CategoryDescription(ArrayObject $a): string
     {
         return "<?php if (App::frontend()->context()->exists('c2_categories')) { echo " . sprintf(App::frontend()->template()->getFilters($a), 'App::frontend()->context()->c2_categories->cat_desc') . '; } ?>';
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     public static function c2CategoryURL(ArrayObject $a): string
     {
         return "<?php if (App::frontend()->context()->exists('c2_categories')) { echo " . sprintf(App::frontend()->template()->getFilters($a), 'App::blog()->url().App::url()->getBase("' . My::id() . '")."/".App::blog()->settings()->cinecturlink2->public_caturl."/".urlencode(App::frontend()->context()->c2_categories->cat_title)') . '; } ?>';
     }
 
+    /**
+     * @param      ArrayObject<string, mixed>  $a   The attributes
+     */
     protected static function getGenericValue(string $p, ArrayObject $a): string
     {
         return "<?php if (App::frontend()->context()->exists('c2_entries')) { echo " . sprintf(App::frontend()->template()->getFilters($a), "$p") . '; } ?>';

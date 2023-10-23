@@ -36,15 +36,7 @@ use Exception;
 class ManageLink extends Process
 {
     private static string $module_redir = '';
-    private static int $linkid          = 0;
-    private static string $linktitle    = '';
-    private static string $linkdesc     = '';
-    private static string $linkauthor   = '';
-    private static string $linkurl      = '';
-    private static ?string $linkcat     = '';
-    private static string $linklang     = '';
-    private static string $linkimage    = '';
-    private static string $linknote     = '';
+    private static RecordLinksRow $row;
 
     public static function init(): bool
     {
@@ -57,18 +49,9 @@ class ManageLink extends Process
             return false;
         }
 
-        $utils = new Utils();
-
         self::$module_redir = $_REQUEST['redir'] ?? '';
-        self::$linkid       = (int) ($_REQUEST['linkid'] ?? 0);
-        self::$linktitle    = $_POST['linktitle']  ?? '';
-        self::$linkdesc     = $_POST['linkdesc']   ?? '';
-        self::$linkauthor   = $_POST['linkauthor'] ?? '';
-        self::$linkurl      = $_POST['linkurl']    ?? '';
-        self::$linkcat      = $_POST['linkcat']    ?? null;
-        self::$linklang     = $_POST['linklang']   ?? App::auth()->getInfo('user_lang');
-        self::$linkimage    = $_POST['linkimage']  ?? '';
-        self::$linknote     = $_POST['linknote']   ?? '';
+        self::$row          = new RecordLinksRow();
+        $utils              = new Utils();
 
         if (!empty($_POST['save'])) {
             try {
@@ -76,44 +59,34 @@ class ManageLink extends Process
                     App::config()->dotclearRoot() . '/' . App::blog()->settings()->system->get('public_path'),
                     My::settings()->folder
                 );
-                if (empty(self::$linktitle)) {
+                if (empty(self::$row->link_title)) {
                     throw new Exception(__('You must provide a title.'));
                 }
-                if (empty(self::$linkauthor)) {
+                if (empty(self::$row->link_author)) {
                     throw new Exception(__('You must provide an author.'));
                 }
-                if (!preg_match('/https?:\/\/.+/', self::$linkimage)) {
+                if (!preg_match('/https?:\/\/.+/', self::$row->link_img)) {
                     //throw new Exception(__('You must provide a link to an image.'));
                 }
 
-                $cur = App::con()->openCursor($utils->table);
-                $cur->setField('link_title', self::$linktitle);
-                $cur->setField('link_desc', self::$linkdesc);
-                $cur->setField('link_author', self::$linkauthor);
-                $cur->setField('link_url', self::$linkurl);
-                $cur->setField('cat_id', self::$linkcat == '' ? null : self::$linkcat);
-                $cur->setField('link_lang', self::$linklang);
-                $cur->setField('link_img', self::$linkimage);
-                $cur->setField('link_note', self::$linknote);
-
                 // create a link
-                if (empty(self::$linkid)) {
-                    $exists = $utils->getLinks(['link_title' => self::$linktitle], true)->f(0);
+                if (!self::$row->link_id) {
+                    $exists = $utils->getLinks(['link_title' => self::$row->link_title], true)->f(0);
                     if ($exists) {
                         throw new Exception(__('Link with same name already exists.'));
                     }
-                    self::$linkid = $utils->addLink($cur);
+                    $link_id = $utils->addLink(self::$row->getCursor());
 
                     Notices::addSuccessNotice(
                         __('Link successfully created.')
                     );
                     // update a link
                 } else {
-                    $exists = $utils->getLinks(['link_id' => self::$linkid], true)->f(0);
+                    $exists = $utils->getLinks(['link_id' => self::$row->link_id], true)->f(0);
                     if (!$exists) {
                         throw new Exception(__('Unknown link.'));
                     }
-                    $utils->updLink(self::$linkid, $cur);
+                    $link_id = $utils->updLink(self::$row->link_id, self::$row->getCursor());
 
                     Notices::addSuccessNotice(
                         __('Link successfully updated.')
@@ -121,9 +94,9 @@ class ManageLink extends Process
                 }
                 My::redirect(
                     [
-                        'part'   => 'link',
-                        'linkid' => self::$linkid,
-                        'redir'  => self::$module_redir,
+                        'part'    => 'link',
+                        'link_id' => $link_id,
+                        'redir'   => self::$module_redir,
                     ]
                 );
             } catch (Exception $e) {
@@ -131,9 +104,9 @@ class ManageLink extends Process
             }
         }
 
-        if (!empty($_POST['delete']) && !empty(self::$linkid)) {
+        if (!empty($_POST['delete']) && self::$row->link_id) {
             try {
-                $utils->delLink(self::$linkid);
+                $utils->delLink(self::$row->link_id);
 
                 Notices::addSuccessNotice(
                     __('Link successfully deleted.')
@@ -148,18 +121,10 @@ class ManageLink extends Process
             }
         }
 
-        if (!empty(self::$linkid)) {
-            $link = $utils->getLinks(['link_id' => self::$linkid]);
-            if (!$link->isEmpty()) {
-                self::$linktitle  = (string) $link->f('link_title');
-                self::$linkdesc   = (string) $link->f('link_desc');
-                self::$linkauthor = (string) $link->f('link_author');
-                self::$linkurl    = (string) $link->f('link_url');
-                self::$linkcat    = (string) $link->f('cat_id');
-                self::$linklang   = (string) $link->f('link_lang');
-                self::$linkimage  = (string) $link->f('link_img');
-                self::$linknote   = (string) $link->f('link_note');
-            }
+        if (self::$row->link_id) {
+            self::$row = new RecordLinksRow(
+                $utils->getLinks(['link_id' => self::$row->link_id])
+            );
         }
 
         return true;
@@ -181,9 +146,9 @@ class ManageLink extends Process
 
         echo
         Page::breadcrumb([
-            __('Plugins')                                             => '',
-            My::name()                                                => My::manageUrl(),
-            (empty(self::$linkid) ? __('New link') : __('Edit link')) => '',
+            __('Plugins')                                                   => '',
+            My::name()                                                      => My::manageUrl(),
+            (empty(self::$row->link_id) ? __('New link') : __('Edit link')) => '',
         ]) .
         Notices::getNotices();
 
@@ -213,38 +178,38 @@ class ManageLink extends Process
                                         (new Para())
                                             ->items([
                                                 (new Label(__('Title:'), Label::OUTSIDE_LABEL_BEFORE))
-                                                    ->for('linktitle'),
-                                                (new Input('linktitle'))
+                                                    ->for('link_title'),
+                                                (new Input('link_title'))
                                                     ->size(65)
                                                     ->maxlength(255)
-                                                    ->value(Html::escapeHTML(self::$linktitle)),
+                                                    ->value(Html::escapeHTML(self::$row->link_title)),
                                             ]),
                                         (new Para())
                                             ->items([
                                                 (new Label(__('Description:'), Label::OUTSIDE_LABEL_BEFORE))
-                                                    ->for('linkdesc'),
-                                                (new Input('linkdesc'))
+                                                    ->for('link_desc'),
+                                                (new Input('link_desc'))
                                                     ->size(65)
                                                     ->maxlength(255)
-                                                    ->value(Html::escapeHTML(self::$linkdesc)),
+                                                    ->value(Html::escapeHTML(self::$row->link_desc)),
                                             ]),
                                         (new Para())
                                             ->items([
                                                 (new Label(__('Author:'), Label::OUTSIDE_LABEL_BEFORE))
-                                                    ->for('linkauthor'),
-                                                (new Input('linkauthor'))
+                                                    ->for('link_author'),
+                                                (new Input('link_author'))
                                                     ->size(65)
                                                     ->maxlength(255)
-                                                    ->value(Html::escapeHTML(self::$linkauthor)),
+                                                    ->value(Html::escapeHTML(self::$row->link_author)),
                                             ]),
                                         (new Para())
                                             ->items([
                                                 (new Label(__('Details URL:'), Label::OUTSIDE_LABEL_BEFORE))
-                                                    ->for('linkurl'),
-                                                (new Input('linkurl'))
+                                                    ->for('link_url'),
+                                                (new Input('link_url'))
                                                     ->size(65)
                                                     ->maxlength(255)
-                                                    ->value(Html::escapeHTML(self::$linkurl)),
+                                                    ->value(Html::escapeHTML(self::$row->link_url)),
                                                 (new Link('newlinksearch'))
                                                     ->class('modal hidden-if-no-js')
                                                     ->href('http://google.com')
@@ -254,11 +219,11 @@ class ManageLink extends Process
                                         (new Para())
                                             ->items([
                                                 (new Label(__('Image URL:'), Label::OUTSIDE_LABEL_BEFORE))
-                                                    ->for('linkimage'),
-                                                (new Input('linkimage'))
+                                                    ->for('link_img'),
+                                                (new Input('link_img'))
                                                     ->size(65)
                                                     ->maxlength(255)
-                                                    ->value(Html::escapeHTML(self::$linkimage)),
+                                                    ->value(Html::escapeHTML(self::$row->link_img)),
                                                 (new Link('newimagesearch'))
                                                     ->class('modal hidden-if-no-js')
                                                     ->href('http://amazon.com')
@@ -296,27 +261,27 @@ class ManageLink extends Process
                                         (new Para())
                                             ->items([
                                                 (new Label(__('Category:'), Label::OUTSIDE_LABEL_BEFORE))
-                                                    ->for('linkcat'),
-                                                (new Select('linkcat'))
+                                                    ->for('cat_id'),
+                                                (new Select('cat_id'))
                                                     ->items(Combo::categoriesCombo())
-                                                    ->default(self::$linkcat),
+                                                    ->default((string) self::$row->cat_id),
                                             ]),
                                         (new Para())
                                             ->items([
                                                 (new Label(__('Lang:'), Label::OUTSIDE_LABEL_BEFORE))
-                                                    ->for('linklang'),
-                                                (new Select('linklang'))
+                                                    ->for('link_lang'),
+                                                (new Select('link_lang'))
                                                     ->items(Combo::langsCombo())
-                                                    ->default(self::$linklang),
+                                                    ->default(self::$row->link_lang),
                                             ]),
                                         (new Para())
                                             ->items([
                                                 (new Label(__('Rating:'), Label::OUTSIDE_LABEL_BEFORE))
-                                                    ->for('linknote'),
-                                                (new Number('linknote'))
+                                                    ->for('link_note'),
+                                                (new Number('link_note'))
                                                     ->min(0)
                                                     ->max(20)
-                                                    ->value(self::$linknote),
+                                                    ->value(self::$row->link_note),
                                             ]),
                                     ]),
                             ]),
@@ -338,9 +303,9 @@ class ManageLink extends Process
                                     ->value(__('Delete') . ' (d)')
                                     ->accesskey('d'),
                                 ... My::hiddenFields([
-                                    'linkid' => self::$linkid,
-                                    'part'   => 'link',
-                                    'redir'  => self::$module_redir,
+                                    'link_id' => self::$row->link_id,
+                                    'part'    => 'link',
+                                    'redir'   => self::$module_redir,
                                 ]),
                             ]),
                     ]),

@@ -17,14 +17,14 @@ use Dotclear\Module\MyPlugin;
 class My extends MyPlugin
 {
     /**
-     * Link table name.
+     * Links table name.
      *
      * @var     string  CINECTURLINK_TABLE_NAME
      */
     public const CINECTURLINK_TABLE_NAME = 'cinecturlink2';
 
     /**
-     * Category table name.
+     * Categories table name.
      *
      * @var     string  CATEGORY_TABLE_NAME
      */

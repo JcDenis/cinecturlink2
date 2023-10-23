@@ -96,7 +96,6 @@ class Frontend extends Process
             }
         } else {
             foreach (array_merge($blocks, $values) as $v) {
-                pdump($v);
                 App::frontend()->template()->addBlock($v, FrontendTemplate::disable(...));
             }
         }

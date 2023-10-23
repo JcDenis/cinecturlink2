@@ -8,6 +8,7 @@ use Dotclear\App;
 use Dotclear\Helper\Html\Html;
 use Dotclear\Plugin\widgets\WidgetsStack;
 use Dotclear\Plugin\widgets\WidgetsElement;
+use Exception;
 
 /**
  * @brief       cinecturlink2 widgets class.
@@ -18,6 +19,20 @@ use Dotclear\Plugin\widgets\WidgetsElement;
  */
 class Widgets
 {
+    /**
+     * Widget cinecturlink links ID.
+     *
+     * @var     string  WIDGET_ID_LINKS
+     */
+    private const WIDGET_ID_LINKS = 'cinecturlink2links';
+
+    /**
+     * Widget cinecturlink categories ID.
+     *
+     * @var     string  WIDGET_ID_CATS
+     */
+    private const WIDGET_ID_CATS = 'cinecturlink2cats';
+
     public static function init(WidgetsStack $w): void
     {
         $categories_combo = array_merge(
@@ -39,7 +54,7 @@ class Widgets
 
         $w
             ->create(
-                'cinecturlink2links',
+                self::WIDGET_ID_LINKS,
                 __('My cinecturlink'),
                 self::parseLinks(...),
                 null,
@@ -112,7 +127,7 @@ class Widgets
 
         $w
             ->create(
-                'cinecturlink2cats',
+                self::WIDGET_ID_CATS,
                 __('List of categories of cinecturlink'),
                 self::parseCats(...),
                 null,
@@ -139,30 +154,29 @@ class Widgets
             ->addOffline();
     }
 
-    public static function parseLinks(WidgetsElement $w): string
+    public static function parseLinks(WidgetsElement $widget): string
     {
-        if (!My::settings()->avtive
-            || !$w->checkHomeOnly(App::url()->type)
+        if (!My::settings()->get('active')
+            || !$widget->checkHomeOnly(App::url()->type)
         ) {
             return '';
         }
 
-        $C2     = new Utils();
+        $wdesc  = new WidgetLinksDescriptor($widget);
+        $utils  = new Utils();
         $params = [];
 
-        if ($w->category) {
-            if ($w->category == 'null') {
+        if ($wdesc->category) {
+            if ($wdesc->category == 'null') {
                 $params['sql'] = ' AND L.cat_id IS NULL ';
-            } elseif (is_numeric($w->category)) {
-                $params['cat_id'] = (int) $w->category;
+            } elseif (is_numeric($wdesc->category)) {
+                $params['cat_id'] = (int) $wdesc->category;
             }
         }
 
-        $limit = abs((int) $w->limit);
-
         // Tirage aléatoire: Consomme beaucoup de ressources!
-        if ($w->sortby == 'RANDOM') {
-            $big_rs = $C2->getLinks($params);
+        if ($wdesc->sortby == 'RANDOM') {
+            $big_rs = $utils->getLinks($params);
 
             if ($big_rs->isEmpty()) {
                 return '';
@@ -173,94 +187,93 @@ class Widgets
                 $ids[] = $big_rs->link_id;
             }
             shuffle($ids);
-            $ids = array_slice($ids, 0, $limit);
+            $ids = array_slice($ids, 0, $wdesc->limit);
 
             $params['link_id'] = [];
             foreach ($ids as $id) {
                 $params['link_id'][] = $id;
             }
-        } elseif ($w->sortby == 'COUNTER') {
+        } elseif ($wdesc->sortby == 'COUNTER') {
             $params['order'] = 'link_count asc';
-            $params['limit'] = $limit;
+            $params['limit'] = $wdesc->limit;
         } else {
-            $params['order'] = $w->sortby;
-            $params['order'] .= $w->sort == 'asc' ? ' asc' : ' desc';
-            $params['limit'] = $limit;
+            $params['order'] = $wdesc->sortby . ' ' . $wdesc->sort;
+            $params['limit'] = $wdesc->limit;
         }
 
-        $rs = $C2->getLinks($params);
+        $rs = $utils->getLinks($params);
 
         if ($rs->isEmpty()) {
             return '';
         }
 
-        $widthmax = (int) My::settings()->widthmax;
+        $widthmax = (int) My::settings()->get('widthmax');
         $style    = $widthmax ? ' style="width:' . $widthmax . 'px;"' : '';
 
         $entries = [];
         while ($rs->fetch()) {
-            $url    = $rs->link_url;
-            $img    = $rs->link_img;
-            $title  = Html::escapeHTML($rs->link_title);
-            $author = Html::escapeHTML($rs->link_author);
-            $cat    = Html::escapeHTML($rs->cat_title);
-            $note   = $w->shownote ? ' <em>(' . $rs->link_note . '/20)</em>' : '';
-            $desc   = $w->showdesc ? '<br /><em>' . Html::escapeHTML($rs->link_desc) . '</em>' : '';
-            $lang   = $rs->link_lang ? ' hreflang="' . $rs->link_lang . '"' : '';
-            $count  = abs((int) $rs->link_count);
+            $row = new RecordLinksRow($rs);
 
             # --BEHAVIOR-- cinecturlink2WidgetLinks
-            $bhv = App::behavior()->callBehavior('cinecturlink2WidgetLinks', $rs->link_id);
+            $bhv = App::behavior()->callBehavior('cinecturlink2WidgetLinks', $row->link_id);
 
-            $entries[] = '<p style="text-align:center;">' .
-            ($w->withlink && !empty($url) ? '<a href="' . $url . '"' . $lang . ' title="' . $cat . '">' : '') .
-            '<strong>' . $title . '</strong>' . $note . '<br />' .
-            ($w->showauthor ? $author . '<br />' : '') . '<br />' .
-            '<img src="' . $img . '" alt="' . $title . ' - ' . $author . '"' . $style . ' />' .
-            $desc .
-            ($w->withlink && !empty($url) ? '</a>' : '') .
-            '</p>' . $bhv;
+            $tmp = '';
+            if ($wdesc->withlink && !empty($row->link_url)) {
+                $tmp .= '<a href="' . $row->link_url . '"' . ($row->link_lang ? ' hreflang="' . $row->link_lang . '"' : '') . ' title="' . Html::escapeHTML($row->cat_title) . '">';
+            }
+            $tmp .= '<strong>' . Html::escapeHTML($row->link_title) . '</strong>' . ($wdesc->shownote ? ' <em>(' . $row->link_note . '/20)</em>' : '') . '<br />';
+            if ($wdesc->showauthor) {
+                $tmp .= Html::escapeHTML($row->link_author) . '<br />';
+            }
+            $tmp .= '<br /><img src="' . $row->link_img . '" alt="' . Html::escapeHTML($row->link_title) . ' - ' . Html::escapeHTML($row->link_author) . '"' . $style . ' />';
+            if ($wdesc->showdesc) {
+                $tmp .= '<br /><em>' . Html::escapeHTML($row->link_desc) . '</em>';
+            }
+            if ($wdesc->withlink && !empty($row->link_url)) {
+                $tmp .= '</a>';
+            }
+
+            $entries[] = '<p style="text-align:center;">' . $tmp . '</p>' . $bhv;
 
             try {
-                $cur             = App::con()->openCursor($C2->table);
-                $cur->link_count = ($count + 1);
-                $C2->updLink((int) $rs->link_id, $cur, false);
-            } catch (Exception $e) {
+                $cur = App::con()->openCursor($utils->table);
+                $cur->setField('link_count', ($row->link_count + 1));
+                $utils->updLink($row->link_id, $cur, false);
+            } catch (Exception) {
             }
         }
         # Tirage aléatoire
-        if ($w->sortby    == 'RANDOM'
-            || $w->sortby == 'COUNTER'
-        ) {
+        if (in_array($wdesc->sortby, ['RANDOM', 'COUNTER'])) {
             shuffle($entries);
-            if (My::settings()->triggeronrandom) {
+            if (My::settings()->get('triggeronrandom')) {
                 App::blog()->triggerBlog();
             }
         }
 
-        return $w->renderDiv(
-            (bool) $w->content_only,
-            'cinecturlink2list ' . $w->class,
+        return $widget->renderDiv(
+            $wdesc->content_only,
+            $widget->id() . ' ' . $wdesc->class,
             '',
-            ($w->title ? $w->renderTitle(Html::escapeHTML($w->title)) : '') . implode(' ', $entries) .
+            ($wdesc->title ? $widget->renderTitle(Html::escapeHTML($wdesc->title)) : '') . implode(' ', $entries) .
             (
-                $w->showpagelink && My::settings()->public_active ?
+                $wdesc->showpagelink && My::settings()->get('public_active') ?
                 '<p><a href="' . App::blog()->url() . App::url()->getBase(My::id()) . '" title="' . __('view all links') . '">' . __('More links') . '</a></p>' : ''
             )
         );
     }
 
-    public static function parseCats(WidgetsElement $w): string
+    public static function parseCats(WidgetsElement $widget): string
     {
-        if (!My::settings()->avtive
-            || !My::settings()->public_active
-            || !$w->checkHomeOnly(App::url()->type)
+        if (!My::settings()->get('active')
+            || !My::settings()->get('public_active')
+            || !$widget->checkHomeOnly(App::url()->type)
         ) {
             return '';
         }
 
-        $C2 = new Utils();
-        $rs = $C2->getCategories([]);
+        $wdesc = new WidgetCatsDescriptor($widget);
+        $utils = new Utils();
+        $rs    = $utils->getCategories([]);
         if ($rs->isEmpty()) {
             return '';
         }
@@ -269,26 +282,28 @@ class Widgets
         $res[] = '<li><a href="' .
             App::blog()->url() . App::url()->getBase(My::id()) .
             '" title="' . __('view all links') . '">' . __('all links') .
-            '</a>' . ($w->shownumlink ? ' (' . ($C2->getLinks([], true)->f(0)) . ')' : '') .
+            '</a>' . ($wdesc->shownumlink ? ' (' . ($utils->getLinks([], true)->f(0)) . ')' : '') .
             '</li>';
 
         while ($rs->fetch()) {
+            $row = new RecordCatsRow($rs);
+
             $res[] = '<li><a href="' .
                 App::blog()->url() . App::url()->getBase('cinecturlink2') . '/' .
-                My::settings()->public_caturl . '/' .
-                urlencode($rs->cat_title) .
+                My::settings()->get('public_caturl') . '/' .
+                urlencode($row->cat_title) .
                 '" title="' . __('view links of this category') . '">' .
-                Html::escapeHTML($rs->cat_title) .
-                '</a>' . ($w->shownumlink ? ' (' .
-                    ($C2->getLinks(['cat_id' => $rs->cat_id], true)->f(0)) . ')' : '') .
+                Html::escapeHTML($row->cat_title) .
+                '</a>' . ($wdesc->shownumlink ? ' (' .
+                    ($utils->getLinks(['cat_id' => $row->cat_id], true)->f(0)) . ')' : '') .
                 '</li>';
         }
 
-        return $w->renderDiv(
-            (bool) $w->content_only,
-            'cinecturlink2cat ' . $w->class,
+        return $widget->renderDiv(
+            $wdesc->content_only,
+            $widget->id() . ' ' . $wdesc->class,
             '',
-            ($w->title ? $w->renderTitle(Html::escapeHTML($w->title)) : '') .
+            ($wdesc->title ? $widget->renderTitle(Html::escapeHTML($wdesc->title)) : '') .
             '<ul>' . implode(' ', $res) . '</ul>'
         );
     }

@@ -10,7 +10,6 @@ use Dotclear\Core\Backend\Filter\{
     Filters,
     FiltersLibrary
 };
-use Dotclear\Core\Backend\Listing\Listing;
 use Dotclear\Core\Backend\{
     Notices,
     Page
@@ -40,7 +39,7 @@ class ManageLinks extends Process
 {
     private static Actions $module_action;
     private static Filters $module_filter;
-    private static Listing $module_listing;
+    private static BackendListingLinks $module_listing;
     private static int $module_counter    = 0;
     private static ?bool $module_rendered = null;
 
@@ -67,7 +66,7 @@ class ManageLinks extends Process
         self::$module_filter->add(FiltersLibrary::getPageFilter());
         self::$module_filter->add(FiltersLibrary::getSearchFilter());
         self::$module_filter->add(FiltersLibrary::getSelectFilter(
-            'catid',
+            'cat_id',
             __('Category:'),
             Combo::categoriesCombo(),
             'cat_id'
@@ -171,7 +170,7 @@ class ManageLinks extends Process
                                     (new Label(__('Selected links action:'), Label::OUTSIDE_LABEL_BEFORE))
                                         ->for('action'),
                                     (new Select('action'))
-                                        ->items(self::$module_action->getCombo()),
+                                        ->items(self::$module_action->getCombo() ?? []),
                                     (new Submit('do-action'))
                                         ->value(__('ok')),
                                     ... My::hiddenFields(self::$module_filter->values(true)),

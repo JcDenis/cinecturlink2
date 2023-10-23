@@ -107,7 +107,8 @@ class ManageCats extends Process
         $items = [];
         $i     = 0;
         while ($categories->fetch()) {
-            $id = $categories->f('cat_id');
+            $row = new RecordCatsRow($categories);
+            $id  = (string) $row->cat_id;
 
             $items[] = (new Tr('l_' . $i))
                 ->class('line')
@@ -120,7 +121,7 @@ class ManageCats extends Process
                                 ->max($categories->count())
                                 ->value($i + 1)
                                 ->class('position')
-                                ->title(Html::escapeHTML(sprintf(__('position of %s'), (string) $categories->f('cat_title')))),
+                                ->title(Html::escapeHTML(sprintf(__('position of %s'), $row->cat_title))),
                             (new Hidden(['dynorder[]', 'dynorder-' . $i], $id)),
                         ]),
                     (new Td())
@@ -134,19 +135,19 @@ class ManageCats extends Process
                         ->items([
                             (new Link())
                                 ->href(My::manageUrl([
-                                    'part'  => 'cat',
-                                    'catid' => $id,
-                                    'redir' => My::manageUrl([
+                                    'part'   => 'cat',
+                                    'cat_id' => $id,
+                                    'redir'  => My::manageUrl([
                                         'part'  => 'cats',
                                         'redir' => self::$module_redir,
                                     ]),
                                 ]))
                                 ->title(__('Edit'))
-                                ->text(Html::escapeHTML((string) $categories->f('cat_title'))),
+                                ->text(Html::escapeHTML($row->cat_title)),
                         ]),
                     (new Td())
                         ->class('maximal')
-                        ->text(Html::escapeHTML((string) $categories->f('cat_desc'))),
+                        ->text(Html::escapeHTML($row->cat_desc)),
                 ]);
 
             $i++;
@@ -187,7 +188,7 @@ class ManageCats extends Process
                 (new Link())
                     ->class('button add')
                     ->href(My::manageUrl(['part' => 'cat', 'redir' => My::manageUrl(['part' => 'cats'])]))
-                    ->text(__('New Link')),
+                    ->text(__('New Category')),
             ])
             ->render();
 

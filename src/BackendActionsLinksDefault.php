@@ -46,6 +46,9 @@ class BackendActionsLinksDefault
         );
     }
 
+    /**
+     * @param   ArrayObject<string, int|string>     $post
+     */
     public static function doDeleteLinks(BackendActionsLinks $ap, ArrayObject $post): void
     {
         $ids = $ap->getIDs();
@@ -57,7 +60,7 @@ class BackendActionsLinksDefault
         }
 
         foreach ($ids as $id) {
-            $ap->utils->delLink($id);
+            $ap->utils->delLink((int) $id);
         }
 
         Notices::addSuccessNotice(sprintf(
@@ -71,6 +74,9 @@ class BackendActionsLinksDefault
         $ap->redirect(true);
     }
 
+    /**
+     * @param   ArrayObject<string, int|string>     $post
+     */
     public static function doChangeCategory(BackendActionsLinks $ap, ArrayObject $post): void
     {
         if (isset($post['upd_cat_id'])) {
@@ -88,7 +94,7 @@ class BackendActionsLinksDefault
             foreach ($ids as $id) {
                 $cur->clean();
                 $cur->setField('cat_id', $cat_id == 0 ? null : $cat_id);
-                $ap->utils->updLink($id, $cur);
+                $ap->utils->updLink((int) $id, $cur);
             }
 
             Notices::addSuccessNotice(sprintf(
@@ -133,6 +139,9 @@ class BackendActionsLinksDefault
         }
     }
 
+    /**
+     * @param   ArrayObject<string, int|string>     $post
+     */
     public static function doChangeNote(BackendActionsLinks $ap, ArrayObject $post): void
     {
         if (isset($post['upd_link_note'])) {
@@ -153,7 +162,7 @@ class BackendActionsLinksDefault
             foreach ($ids as $id) {
                 $cur->clean();
                 $cur->setField('link_note', $link_note);
-                $ap->utils->updLink($id, $cur);
+                $ap->utils->updLink((int) $id, $cur);
             }
 
             Notices::addSuccessNotice(sprintf(

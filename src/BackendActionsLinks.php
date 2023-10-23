@@ -27,6 +27,12 @@ class BackendActionsLinks extends Actions
     protected bool $use_render = true;
     public Utils $utils;
 
+    /**
+     * Constructs a new instance.
+     *
+     * @param   string                  $uri            The form uri
+     * @param   array<string, string>   $redirect_args  The redirection $_GET arguments,
+     */
     public function __construct(string $uri, array $redirect_args = [])
     {
         $this->utils = new Utils();
@@ -92,7 +98,7 @@ class BackendActionsLinks extends Actions
 
             $rs = $this->utils->getLinks($params);
             while ($rs->fetch()) {
-                $this->entries[$rs->f('link_id')] = $rs->f('link_title');
+                $this->entries[(string) $rs->f('link_id')] = $rs->f('link_title');
             }
             $this->rs = $rs;
         } else {

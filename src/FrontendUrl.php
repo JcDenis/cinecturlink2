@@ -17,7 +17,7 @@ use Dotclear\Helper\File\Path;
  */
 class FrontendUrl extends Url
 {
-    public static function c2Page(?string $args)
+    public static function c2Page(?string $args): null
     {
         $args = (string) $args;
 

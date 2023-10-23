@@ -69,7 +69,7 @@ class Combo
                 if (!in_array($file->extension, My::ALLOWED_MEDIA_EXTENSION)) {
                     continue;
                 }
-                $tmp[$file->media_title] = $file->file_url;
+                $tmp[(string) $file->media_title] = (string) $file->file_url;
             }
             if (!empty($tmp)) {
                 $stack = array_merge(['-' => ''], $tmp);

@@ -65,35 +65,33 @@ class ActivityReportAction extends Process
         return true;
     }
 
-    public static function addLink(Cursor $cur)
+    public static function addLink(Cursor $cur): void
     {
         $logs = [
-            $cur->link_title,
-            App::auth()->getInfo('user_cn'),
+            (string) $cur->getField('link_title'),
+            (string) App::auth()->getInfo('user_cn'),
         ];
         ActivityReport::instance()->addLog('cinecturlink2', 'create', $logs);
     }
 
-    public static function updLink(Cursor $cur, int $id)
+    public static function updLink(Cursor $cur, int $id): void
     {
-        $C2 = new Utils();
-        $rs = $C2->getLinks(['link_id' => $id]);
+        $rs = (new Utils())->getLinks(['link_id' => $id]);
 
         $logs = [
-            $rs->link_title,
-            App::auth()->getInfo('user_cn'),
+            (string) $rs->field('link_title'),
+            (string) App::auth()->getInfo('user_cn'),
         ];
         ActivityReport::instance()->addLog('cinecturlink2', 'update', $logs);
     }
 
-    public static function delLink(int $id)
+    public static function delLink(int $id): void
     {
-        $C2 = new Utils();
-        $rs = $C2->getLinks(['link_id' => $id]);
+        $rs = (new Utils())->getLinks(['link_id' => $id]);
 
         $logs = [
-            $rs->link_title,
-            App::auth()->getInfo('user_cn'),
+            (string) $rs->field('link_title'),
+            (string) App::auth()->getInfo('user_cn'),
         ];
         ActivityReport::instance()->addLog('cinecturlink2', 'delete', $logs);
     }

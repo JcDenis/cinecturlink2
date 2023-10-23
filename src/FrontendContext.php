@@ -15,26 +15,26 @@ use Dotclear\App;
  */
 class FrontendContext
 {
-    public static function PaginationNbPages()
+    public static function PaginationNbPages(): int
     {
         if (App::frontend()->context()->c2_pagination === null) {
-            return false;
+            return 0;
         }
         $nb_posts    = App::frontend()->context()->c2_pagination->f(0);
         $nb_per_page = App::frontend()->context()->c2_params['limit'][1];
         $nb_pages    = ceil($nb_posts / $nb_per_page);
 
-        return $nb_pages;
+        return (int) $nb_pages;
     }
 
-    public static function PaginationPosition($offset = 0)
+    public static function PaginationPosition(string|int $offset = 0): int
     {
         if (isset($GLOBALS['c2_page_number'])) {
             $p = $GLOBALS['c2_page_number'];
         } else {
             $p = 1;
         }
-        $p = $p + $offset;
+        $p = (int) $p + (int) $offset;
         $n = self::PaginationNbPages();
         if (!$n) {
             return $p;
@@ -43,25 +43,17 @@ class FrontendContext
         return $p > $n || $p <= 0 ? 1 : $p;
     }
 
-    public static function PaginationStart()
+    public static function PaginationStart(): bool
     {
-        if (isset($GLOBALS['c2_page_number'])) {
-            return self::PaginationPosition() == 1;
-        }
-
-        return true;
+        return isset($GLOBALS['c2_page_number']) ? self::PaginationPosition() == 1 : true;
     }
 
-    public static function PaginationEnd()
+    public static function PaginationEnd(): bool
     {
-        if (isset($GLOBALS['c2_page_number'])) {
-            return self::PaginationPosition() == self::PaginationNbPages();
-        }
-
-        return false;
+        return isset($GLOBALS['c2_page_number']) ? self::PaginationPosition() == self::PaginationNbPages() : false;
     }
 
-    public static function PaginationURL($offset = 0)
+    public static function PaginationURL(int|string $offset = 0): string
     {
         $args = $_SERVER['URL_REQUEST_PART'];
 
@@ -84,7 +76,7 @@ class FrontendContext
         return $url;
     }
 
-    public static function categoryCurrent()
+    public static function categoryCurrent(): bool
     {
         if (!isset(App::frontend()->context()->c2_page_params['cat_id'])
             && !isset(App::frontend()->context()->c2_page_params['cat_title'])

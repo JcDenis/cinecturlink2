@@ -84,7 +84,7 @@ class BackendListingLinks extends Listing
 
         $lines = [];
         while ($this->rs->fetch()) {
-            $lines[] = $this->linkLine(isset($links[$this->rs->link_id]));
+            $lines[] = $this->linkLine(new RecordLinksRow($this->rs), isset($links[$this->rs->f('link_id')]));
         }
 
         echo
@@ -112,60 +112,61 @@ class BackendListingLinks extends Listing
         $pager->getLinks();
     }
 
-    private function linkLine(bool $checked): Para
+    private function linkLine(RecordLinksRow $row, bool $checked): Para
     {
         $cols = new ArrayObject([
             'check' => (new Td())
                 ->class('nowrap minimal')
                 ->items([
                     (new Checkbox(['entries[]'], $checked))
-                        ->value($this->rs->link_id),
+                        ->value((string) $row->link_id),
                 ]),
             'title' => (new Td())
                 ->class('maximal')
                 ->items([
                     (new Link())
-                        ->href(My::manageUrl(['part' => 'link', 'linkid' => $this->rs->link_id, 'redir' => $this->redir]))
+                        ->href(My::manageUrl(['part' => 'link', 'link_id' => $row->link_id, 'redir' => $this->redir]))
                         ->title(__('Edit'))
-                        ->text(Html::escapeHTML($this->rs->link_title)),
+                        ->text(Html::escapeHTML($row->link_title)),
                 ]),
             'author' => (new Td())
-                ->text(Html::escapeHTML($this->rs->link_author))
+                ->text(Html::escapeHTML($row->link_author))
                 ->class('nowrap'),
             'desc' => (new Td())
-                ->text(Html::escapeHTML($this->rs->link_desc))
+                ->text(Html::escapeHTML($row->link_desc))
                 ->class('nowrap'),
-            'link' => (new Text('td'))
+            'link' => (new Td())
                 ->separator(' ')
                 ->items([
                     (new Link())
-                        ->href($this->rs->link_url)
+                        ->href($row->link_url)
                         ->title(__('URL'))
-                        ->text(Html::escapeHTML($this->rs->link_title)),
+                        ->text(Html::escapeHTML($row->link_title)),
                     (new Link())
-                        ->href($this->rs->link_img)
+                        ->href($row->link_img)
                         ->title(__('image'))
-                        ->text(Html::escapeHTML($this->rs->link_title)),
-                ]),
+                        ->text(Html::escapeHTML($row->link_title)),
+                ])
+                ->class('nowrap'),
             'cat' => (new Td())
                 ->items([
                     (new Link())
-                        ->href(My::manageUrl(['part' => 'cat', 'catid' => $this->rs->cat_id, 'redir' => $this->redir]))
+                        ->href(My::manageUrl(['part' => 'cat', 'cat_id' => (string) $row->cat_id, 'redir' => $this->redir]))
                         ->title(__('Edit'))
-                        ->text(Html::escapeHTML($this->rs->cat_title)),
+                        ->text(Html::escapeHTML($row->cat_title)),
                 ]),
             'note' => (new Td())
-                ->text(Html::escapeHTML($this->rs->link_note))
+                ->text(Html::escapeHTML($row->link_note))
                 ->class('number'),
             'date' => (new Td())
-                ->text(Html::escapeHTML(Date::dt2str(__('%Y-%m-%d %H:%M'), $this->rs->link_upddt, (string) App::auth()->getInfo('user_tz'))))
+                ->text(Html::escapeHTML(Date::dt2str(__('%Y-%m-%d %H:%M'), $row->link_upddt, (string) App::auth()->getInfo('user_tz'))))
                 ->class('nowrap'),
         ]);
 
         $this->userColumns(My::id(), $cols);
 
         return
-        (new Para('p' . $this->rs->kut_id, 'tr'))
+        (new Para('p' . $row->link_id, 'tr'))
             ->class('line')
             ->items(iterator_to_array($cols));
     }

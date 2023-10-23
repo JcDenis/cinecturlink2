@@ -32,9 +32,7 @@ use Exception;
 class ManageCat extends Process
 {
     private static string $module_redir = '';
-    private static int $catid           = 0;
-    private static string $cattitle     = '';
-    private static string $catdesc      = '';
+    private static RecordCatsRow $row;
 
     public static function init(): bool
     {
@@ -47,25 +45,18 @@ class ManageCat extends Process
             return false;
         }
 
-        $utils = new Utils();
-
         self::$module_redir = $_REQUEST['redir'] ?? '';
-        self::$catid        = (int) ($_REQUEST['catid'] ?? 0);
-        self::$cattitle     = $_POST['cattitle'] ?? '';
-        self::$catdesc      = $_POST['catdesc']  ?? '';
+        self::$row          = new RecordCatsRow();
+        $utils              = new Utils();
 
         try {
             // create category
-            if (!empty($_POST['save']) && empty(self::$catid) && !empty(self::$cattitle) && !empty(self::$catdesc)) {
-                $exists = $utils->getCategories(['cat_title' => self::$cattitle], true)->f(0);
+            if (!empty($_POST['save']) && empty(self::$row->cat_id) && !empty(self::$row->cat_title) && !empty(self::$row->cat_desc)) {
+                $exists = $utils->getCategories(['cat_title' => self::$row->cat_title], true)->f(0);
                 if ($exists) {
                     throw new Exception(__('Category with same name already exists.'));
                 }
-                $cur = App::con()->openCursor($utils->cat_table);
-                $cur->setField('cat_title', self::$cattitle);
-                $cur->setField('cat_desc', self::$catdesc);
-
-                $catid = $utils->addCategory($cur);
+                $cat_id = $utils->addCategory(self::$row->getCursor());
 
                 Notices::addSuccessNotice(
                     __('Category successfully created.')
@@ -73,16 +64,12 @@ class ManageCat extends Process
                 My::redirect(['part' => 'cats']);
             }
             // update category
-            if (!empty($_POST['save']) && !empty(self::$catid) && !empty(self::$cattitle) && !empty(self::$catdesc)) {
-                $exists = $utils->getCategories(['cat_title' => self::$cattitle, 'exclude_cat_id' => self::$catid], true)->f(0);
+            if (!empty($_POST['save']) && !empty(self::$row->cat_id) && !empty(self::$row->cat_title) && !empty(self::$row->cat_desc)) {
+                $exists = $utils->getCategories(['cat_title' => self::$row->cat_title, 'exclude_cat_id' => self::$row->cat_id], true)->f(0);
                 if ($exists) {
                     throw new Exception(__('Category with same name already exists.'));
                 }
-                $cur = App::con()->openCursor($C2->cat_table);
-                $cur->setField('cat_title', self::$cattitle);
-                $cur->setField('cat_desc', self::$catdesc);
-
-                $utils->updCategory(self::$catid, $cur);
+                $cat_id = $utils->updCategory(self::$row->cat_id, self::$row->getCursor());
 
                 Notices::addSuccessNotice(
                     __('Category successfully updated.')
@@ -90,13 +77,19 @@ class ManageCat extends Process
                 My::redirect(['part' => 'cats']);
             }
             // delete category
-            if (!empty($_POST['delete']) && !empty(self::$catid)) {
-                $utils->delCategory(self::$catid);
+            if (!empty($_POST['delete']) && !empty(self::$row->cat_id)) {
+                $utils->delCategory(self::$row->cat_id);
 
                 Notices::addSuccessNotice(
                     __('Category successfully deleted.')
                 );
                 My::redirect(['part' => 'cats']);
+            }
+
+            if (self::$row->cat_id) {
+                self::$row = new RecordCatsRow(
+                    $utils->getCategories(['cat_id' => self::$row->cat_id])
+                );
             }
         } catch (Exception $e) {
             App::error()->add($e->getMessage());
@@ -113,21 +106,13 @@ class ManageCat extends Process
 
         $utils = new Utils();
 
-        if (!empty(self::$catid)) {
-            $category = $utils->getCategories(['cat_id' => self::$catid]);
-            if (!$category->isEmpty()) {
-                self::$cattitle = (string) $category->f('cat_title');
-                self::$catdesc  = (string) $category->f('cat_desc');
-            }
-        }
-
         Page::openModule(My::name());
 
         echo
         Page::breadcrumb([
-            __('Plugins')                                                    => '',
-            My::name()                                                       => My::manageUrl(),
-            (empty(self::$catid) ? __('New category') : __('Edit category')) => '',
+            __('Plugins')                                                          => '',
+            My::name()                                                             => My::manageUrl(),
+            (empty(self::$row->cat_id) ? __('New category') : __('Edit category')) => '',
         ]) .
         Notices::getNotices();
 
@@ -142,8 +127,8 @@ class ManageCat extends Process
                 ->render();
         }
 
-        if (self::$catid) {
-            $links = (int) $utils->getLinks(['cat_id' => self::$catid], true)->f(0);
+        if (self::$row->cat_id) {
+            $links = (int) $utils->getLinks(['cat_id' => self::$row->cat_id], true)->f(0);
             echo (new Note())
                 ->class('info')
                 ->text(
@@ -161,20 +146,20 @@ class ManageCat extends Process
                 (new Para())
                     ->items([
                         (new Label(__('Title:'), Label::OUTSIDE_LABEL_BEFORE))
-                            ->for('cattitle'),
-                        (new Input('cattitle'))
+                            ->for('cat_title'),
+                        (new Input('cat_title'))
                             ->size(65)
                             ->maxlength(64)
-                            ->value(Html::escapeHTML(self::$cattitle)),
+                            ->value(Html::escapeHTML(self::$row->cat_title)),
                     ]),
                 (new Para())
                     ->items([
                         (new Label(__('Description:'), Label::OUTSIDE_LABEL_BEFORE))
-                            ->for('catdesc'),
-                        (new Input('catdesc'))
+                            ->for('cat_desc'),
+                        (new Input('cat_desc'))
                             ->size(65)
                             ->maxlength(64)
-                            ->value(Html::escapeHTML(self::$catdesc)),
+                            ->value(Html::escapeHTML(self::$row->cat_desc)),
                     ]),
                 (new Para())
                     ->class('border-top')
@@ -194,9 +179,9 @@ class ManageCat extends Process
                             ->value(__('Delete') . ' (d)')
                             ->accesskey('d'),
                         ... My::hiddenFields([
-                            'catid' => self::$catid,
-                            'part'  => 'cat',
-                            'redir' => self::$module_redir,
+                            'cat_id' => self::$row->cat_id,
+                            'part'   => 'cat',
+                            'redir'  => self::$module_redir,
                         ]),
                     ]),
             ])

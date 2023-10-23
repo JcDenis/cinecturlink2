@@ -72,8 +72,9 @@ class Utils
     /**
      * Get links.
      *
-     * @param   array   $params         Query params
-     * @param   bool    $count_only     Count only result
+     * @param   array<string, mixed>    $params         Query params
+     * @param   bool                    $count_only     Count only result
+     *
      * @return  MetaRecord  MetaRecord instance
      */
     public function getLinks(array $params = [], bool $count_only = false): MetaRecord
@@ -264,8 +265,10 @@ class Utils
      * @param   int     $id         Link ID
      * @param   Cursor  $cur        Cursor instance
      * @param   bool    $behavior   Call related behaviors
+     *
+     * @return  int     The link ID
      */
-    public function updLink(int $id, Cursor $cur, bool $behavior = true): void
+    public function updLink(int $id, Cursor $cur, bool $behavior = true): int
     {
         if (empty($id)) {
             throw new Exception(__('No such link ID'));
@@ -283,6 +286,8 @@ class Utils
             # --BEHAVIOR-- cinecturlink2AfterUpdLink
             App::behavior()->callBehavior('cinecturlink2AfterUpdLink', $cur, $id);
         }
+
+        return $id;
     }
 
     /**
@@ -318,18 +323,20 @@ class Utils
     {
         $sql = new SelectStatement();
 
-        return $sql
+        $rs = $sql
             ->column($sql->max('link_id'))
             ->from($this->table)
-            ->select()
-            ->f(0) + 1;
+            ->select();
+
+        return is_null($rs) ? 1 : (int) $rs->f(0) + 1;
     }
 
     /**
      * Get categories.
      *
-     * @param   array       $params         Query params
-     * @param   bool        $count_only     Count only result
+     * @param   array<string, mixed>    $params         Query params
+     * @param   bool                    $count_only     Count only result
+     *
      * @return  MetaRecord  Record instance
      */
     public function getCategories(array $params = [], bool $count_only = false): MetaRecord
@@ -451,8 +458,10 @@ class Utils
      *
      * @param   int     $id     Category ID
      * @param   Cursor  $cur    Cursor instance
+     *
+     * @return  int     The category ID
      */
-    public function updCategory(int $id, Cursor $cur): void
+    public function updCategory(int $id, Cursor $cur): int
     {
         if (empty($id)) {
             throw new Exception(__('No such category ID'));
@@ -467,6 +476,8 @@ class Utils
             ->update($cur);
 
         $this->trigger();
+
+        return $id;
     }
 
     /**
@@ -510,11 +521,12 @@ class Utils
     {
         $sql = new SelectStatement();
 
-        return $sql
+        $rs = $sql
             ->column($sql->max('cat_id'))
             ->from($this->cat_table)
-            ->select()
-            ->f(0) + 1;
+            ->select();
+
+        return is_null($rs) ? 1 : (int) $rs->f(0) + 1;
     }
 
     /**
@@ -526,12 +538,13 @@ class Utils
     {
         $sql = new SelectStatement();
 
-        return $sql
+        $rs = $sql
             ->column($sql->max('cat_pos'))
             ->from($this->cat_table)
             ->where('blog_id = ' . $sql->quote($this->blog))
-            ->select()
-            ->f(0) + 1;
+            ->select();
+
+        return is_null($rs) ? 1 : (int) $rs->f(0) + 1;
     }
 
     /**
@@ -569,12 +582,15 @@ class Utils
     /**
      * Get list of public directories.
      *
-     * @return  array<string,string>    Directories
+     * @return  array<string, string>    Directories
      */
     public static function getPublicDirs(): array
     {
         $dirs = [];
         $all  = Files::getDirList(App::blog()->publicPath());
+        if (empty($all['dirs'])) {
+            return $dirs;
+        }
         foreach ($all['dirs'] as $dir) {
             $dir        = substr($dir, strlen(App::blog()->publicPath()) + 1);
             $dirs[$dir] = $dir;
