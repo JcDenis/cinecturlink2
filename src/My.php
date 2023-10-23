@@ -40,8 +40,8 @@ class My extends MyPlugin
     public static function checkCustomContext(int $context): ?bool
     {
         return match ($context) {
-            self::MENU, self::MANAGE, self::BACKEND => App::task()->checkContext('BACKEND')
-                && App::blog()->isDefined()
+            // Add content admin perm to backend
+            self::MENU, self::MANAGE => App::task()->checkContext('BACKEND')
                 && App::auth()->check(App::auth()->makePermissions([
                     App::auth()::PERMISSION_CONTENT_ADMIN,
                 ]), App::blog()->id()),
