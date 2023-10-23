@@ -216,7 +216,7 @@ class ManageLink extends Process
                                                     ->for('linktitle'),
                                                 (new Input('linktitle'))
                                                     ->size(65)
-                                                    ->maxlenght(255)
+                                                    ->maxlength(255)
                                                     ->value(Html::escapeHTML(self::$linktitle)),
                                             ]),
                                         (new Para())
@@ -225,7 +225,7 @@ class ManageLink extends Process
                                                     ->for('linkdesc'),
                                                 (new Input('linkdesc'))
                                                     ->size(65)
-                                                    ->maxlenght(255)
+                                                    ->maxlength(255)
                                                     ->value(Html::escapeHTML(self::$linkdesc)),
                                             ]),
                                         (new Para())
@@ -234,7 +234,7 @@ class ManageLink extends Process
                                                     ->for('linkauthor'),
                                                 (new Input('linkauthor'))
                                                     ->size(65)
-                                                    ->maxlenght(255)
+                                                    ->maxlength(255)
                                                     ->value(Html::escapeHTML(self::$linkauthor)),
                                             ]),
                                         (new Para())
@@ -243,7 +243,7 @@ class ManageLink extends Process
                                                     ->for('linkurl'),
                                                 (new Input('linkurl'))
                                                     ->size(65)
-                                                    ->maxlenght(255)
+                                                    ->maxlength(255)
                                                     ->value(Html::escapeHTML(self::$linkurl)),
                                                 (new Link('newlinksearch'))
                                                     ->class('modal hidden-if-no-js')
@@ -257,7 +257,7 @@ class ManageLink extends Process
                                                     ->for('linkimage'),
                                                 (new Input('linkimage'))
                                                     ->size(65)
-                                                    ->maxlenght(255)
+                                                    ->maxlength(255)
                                                     ->value(Html::escapeHTML(self::$linkimage)),
                                                 (new Link('newimagesearch'))
                                                     ->class('modal hidden-if-no-js')

@@ -164,7 +164,7 @@ class ManageCat extends Process
                             ->for('cattitle'),
                         (new Input('cattitle'))
                             ->size(65)
-                            ->maxlenght(64)
+                            ->maxlength(64)
                             ->value(Html::escapeHTML(self::$cattitle)),
                     ]),
                 (new Para())
@@ -173,7 +173,7 @@ class ManageCat extends Process
                             ->for('catdesc'),
                         (new Input('catdesc'))
                             ->size(65)
-                            ->maxlenght(64)
+                            ->maxlength(64)
                             ->value(Html::escapeHTML(self::$catdesc)),
                     ]),
                 (new Para())

@@ -124,7 +124,7 @@ class Backend extends Process
                                     ->for(My::id() . 'newdir'),
                                 (new Input(My::id() . 'newdir'))
                                     ->size(65)
-                                    ->maxlenght(255)
+                                    ->maxlength(255)
                                     ->value(''),
                             ]),
                         (new Para())
@@ -171,7 +171,7 @@ class Backend extends Process
                                     ->for(My::id() . 'public_title'),
                                 (new Input(My::id() . 'public_title'))
                                     ->size(65)
-                                    ->maxlenght(255)
+                                    ->maxlength(255)
                                     ->value((string) $s->get('public_title')),
                             ]),
                         (new Para())
@@ -180,7 +180,7 @@ class Backend extends Process
                                     ->for(My::id() . 'public_description'),
                                 (new Input(My::id() . 'public_description'))
                                     ->size(65)
-                                    ->maxlenght(255)
+                                    ->maxlength(255)
                                     ->value((string) $s->get('public_description')),
                             ]),
                         (new Para())
