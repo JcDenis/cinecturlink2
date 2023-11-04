@@ -1,3 +1,9 @@
+cinecturlink2 2.3.1 - 2023.11.04
+===========================================================
+* Require Dotclear 2.28
+* Require PHP 8.1
+* Use last minute changes from Dotclear 2.28
+
 cinecturlink2 2.3 - 2023.10.23
 ===========================================================
 * Require Dotclear 2.28

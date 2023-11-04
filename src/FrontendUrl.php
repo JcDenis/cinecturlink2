@@ -6,7 +6,6 @@ namespace Dotclear\Plugin\cinecturlink2;
 
 use Dotclear\App;
 use Dotclear\Core\Frontend\Url;
-use Dotclear\Helper\File\Path;
 
 /**
  * @brief       cinecturlink2 frontend URLclass.
@@ -27,8 +26,10 @@ class FrontendUrl extends Url
         }
 
         $tplset = App::themes()->getDefine(App::blog()->settings()->get('system')->get('theme'))->get('tplset');
-        $tpldir = Path::real(App::plugins()->getDefine(My::id())->get('root')) . DIRECTORY_SEPARATOR . App::frontend()::TPL_ROOT . DIRECTORY_SEPARATOR;
-        App::frontend()->template()->setPath(App::frontend()->template()->getPath(), $tpldir . (!empty($tplset) && is_dir($tpldir . $tplset) ? $tplset : App::config()->defaultTplset()));
+        if (empty($tplset) || !is_dir(implode(DIRECTORY_SEPARATOR, [My::path(), 'default-templates', $tplset]))) {
+            $tplset = App::config()->defaultTplset();
+        }
+        App::frontend()->template()->appendPath(implode(DIRECTORY_SEPARATOR, [My::path(), 'default-templates', $tplset]));
 
         $params = [];
 

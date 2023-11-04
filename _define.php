@@ -21,7 +21,7 @@ $this->registerModule(
     'Cinecturlink 2',
     'Widgets and pages about books, musics, films, blogs you are interested in',
     'Jean-Christian Denis and Contributors',
-    '2.3',
+    '2.3.1',
     [
         'requires'    => [['core', '2.28']],
         'settings'    => ['blog' => '#params.' . basename(__DIR__) . '_params'],

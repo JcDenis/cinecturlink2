@@ -165,8 +165,7 @@ class BackendListingLinks extends Listing
 
         $this->userColumns(My::id(), $cols);
 
-        return
-        (new Para('p' . $row->link_id, 'tr'))
+        return (new Para('p' . $row->link_id, 'tr'))
             ->class('line')
             ->items(iterator_to_array($cols));
     }
