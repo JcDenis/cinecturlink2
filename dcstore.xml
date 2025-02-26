@@ -7,7 +7,7 @@
     <desc>Widgets and pages about books, musics, films, blogs you are interested in</desc>
     <file>https://github.com/JcDenis/cinecturlink2/releases/download/v2.3.1/plugin-cinecturlink2.zip</file>
     <da:dcmin>2.28</da:dcmin>
-    <da:details>https://git.dotclear.watch/JcDenis/cinecturlink2/src/branch/master/README.md</da:details>
-    <da:support>https://git.dotclear.watch/JcDenis/cinecturlink2/issues</da:support>
+    <da:details>https://github.com/JcDenis/cinecturlink2/src/branch/master/README.md</da:details>
+    <da:support>https://github.com/JcDenis/cinecturlink2/issues</da:support>
   </module>
 </modules>
