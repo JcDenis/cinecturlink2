@@ -5,7 +5,7 @@
 ![Date](https://img.shields.io/github/release-date/jcdenis/cinecturlink2?color=red)
 [![Dotclear](https://img.shields.io/badge/dotclear-v2.33-137bbb.svg)](https://fr.dotclear.org/download)
 [![Dotaddict](https://img.shields.io/badge/dotaddict-official-9ac123.svg)](https://plugins.dotaddict.org/dc2/details/cinecturlink2)
-[![License](https://img.shields.io/github/license/jcdenis/cinecturlink2?color=white)](https://github.com/JcDenis/cinecturlink2/src/branch/master/LICENSE)
+[![License](https://img.shields.io/github/license/jcdenis/cinecturlink2?color=white)](https://github.com/JcDenis/cinecturlink2/blob/master/LICENSE)
 
 ## ABOUT
 
@@ -42,7 +42,7 @@ to your theme tpl path and adapt them.
 
 ## LINKS
 
-* [License](https://github.com/JcDenis/cinecturlink2/src/branch/master/LICENSE)
+* [License](https://github.com/JcDenis/cinecturlink2/blob/master/LICENSE)
 * [Packages & details](https://github.com/JcDenis/cinecturlink2/releases) (or on [Dotaddict](https://plugins.dotaddict.org/dc2/details/cinecturlink2))
 * [Sources & contributions](https://github.com/JcDenis/cinecturlink2)
 * [Issues & security](https://github.com/JcDenis/cinecturlink2/issues)
