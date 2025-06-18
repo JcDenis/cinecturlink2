@@ -1,3 +1,7 @@
+cinecturlink2 2.3.3 - 2025.06.18
+===========================================================
+* Remove temlates behaviors (not in posts context)
+
 cinecturlink2 2.3.2 - 2025.03.02
 ===========================================================
 * Require Dotclear 2.28
