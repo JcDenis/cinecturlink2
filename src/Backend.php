@@ -8,18 +8,8 @@ use ArrayObject;
 use Dotclear\App;
 use Dotclear\Core\Backend\Favorites;
 use Dotclear\Core\Process;
-use Dotclear\Helper\Html\Form\{
-    Checkbox,
-    Div,
-    Input,
-    Label,
-    Note,
-    Number,
-    Para,
-    Select,
-    Text
-};
 use Dotclear\Helper\File\Files;
+use Dotclear\Helper\Html\Form\{ Checkbox, Fieldset, Img, Input, Label, Legend, Note, Number, Para, Select, Text };
 use Dotclear\Interface\Core\BlogSettingsInterface;
 
 /**
@@ -96,11 +86,9 @@ class Backend extends Process
                     $public_nbrpp = 10;
                 }
 
-                echo (new Div())
-                    ->class('fieldset')
+                echo (new Fieldset(My::id() . '_params'))
+                    ->legend(new Legend((new Img(My::icons()[0]))->class('icon-small')->render() . ' ' . My::name()))
                     ->items([
-                        (new Text('h4', My::name()))
-                            ->id(My::id() . '_params'),
                         (new Text('h5', __('General'))),
                         (new Para())
                             ->items([
