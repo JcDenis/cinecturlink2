@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\cinecturlink2;
 
 use Dotclear\App;
-use Dotclear\Core\Process;
+use Dotclear\Helper\Process\TraitProcess;
 use Dotclear\Database\Cursor;
 use Dotclear\Plugin\activityReport\{
     Action,
@@ -20,8 +20,10 @@ use Dotclear\Plugin\activityReport\{
  * @author      Jean-Christian Denis (author)
  * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-class ActivityReportAction extends Process
+class ActivityReportAction
 {
+    use TraitProcess;
+
     private const CINECTURLINK_CREATE = 'cinecturlink2Create';
     private const CINECTURLINK_UPDATE = 'cinecturlink2Update';
     private const CINECTURLINK_DELETE = 'cinecturlink2Delete';

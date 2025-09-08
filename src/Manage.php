@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\cinecturlink2;
 
-use Dotclear\Core\Process;
+use Dotclear\Helper\Process\TraitProcess;
 
 /**
  * @brief       cinecturlink2 manage class.
@@ -13,8 +13,10 @@ use Dotclear\Core\Process;
  * @author      Jean-Christian Denis (author)
  * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-class Manage extends Process
+class Manage
 {
+    use TraitProcess;
+
     public static function init(): bool
     {
         return self::status(match ($_REQUEST['part'] ?? 'links') {

@@ -7,7 +7,7 @@ namespace Dotclear\Plugin\cinecturlink2;
 use ArrayObject;
 use Dotclear\App;
 use Dotclear\Core\Backend\Favorites;
-use Dotclear\Core\Process;
+use Dotclear\Helper\Process\TraitProcess;
 use Dotclear\Helper\File\Files;
 use Dotclear\Helper\Html\Form\{ Checkbox, Fieldset, Img, Input, Label, Legend, Note, Number, Para, Select, Text };
 use Dotclear\Interface\Core\BlogSettingsInterface;
@@ -19,8 +19,10 @@ use Dotclear\Interface\Core\BlogSettingsInterface;
  * @author      Jean-Christian Denis (author)
  * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-class Backend extends Process
+class Backend
 {
+    use TraitProcess;
+
     public static function init(): bool
     {
         return self::status(My::checkContext(My::BACKEND));

@@ -9,7 +9,7 @@ use Dotclear\Core\Backend\{
     Notices,
     Page
 };
-use Dotclear\Core\Process;
+use Dotclear\Helper\Process\TraitProcess;
 use Dotclear\Helper\Html\Form\{
     Checkbox,
     Div,
@@ -33,8 +33,10 @@ use Exception;
  * @author      Jean-Christian Denis (author)
  * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-class ManageCats extends Process
+class ManageCats
 {
+    use TraitProcess;
+
     private static string $module_redir = '';
 
     public static function init(): bool
