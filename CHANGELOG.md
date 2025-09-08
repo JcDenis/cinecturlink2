@@ -1,3 +1,8 @@
+cinecturlink2 2.4 - 2025.09.08
+===========================================================
+* Bump Dotclear from 2.28 to 2.36
+* Use TraitProcess
+
 cinecturlink2 2.3.4 - 2025.06.26
 ===========================================================
 * Standardize backend blocs

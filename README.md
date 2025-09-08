@@ -3,7 +3,7 @@
 
 [![Release](https://img.shields.io/github/v/release/jcdenis/cinecturlink2?color=lightblue)](https://github.com/JcDenis/cinecturlink2/releases)
 ![Date](https://img.shields.io/github/release-date/jcdenis/cinecturlink2?color=red)
-[![Dotclear](https://img.shields.io/badge/dotclear-v2.33-137bbb.svg)](https://fr.dotclear.org/download)
+[![Dotclear](https://img.shields.io/badge/dotclear-v2.36-137bbb.svg)](https://fr.dotclear.org/download)
 [![Dotaddict](https://img.shields.io/badge/dotaddict-official-9ac123.svg)](https://plugins.dotaddict.org/dc2/details/cinecturlink2)
 [![License](https://img.shields.io/github/license/jcdenis/cinecturlink2?color=white)](https://github.com/JcDenis/cinecturlink2/blob/master/LICENSE)
 
@@ -17,7 +17,7 @@ It is hightly based on cinecturlink for Dotclear 1 by Tigroux and maintain by br
 
 ## REQUIREMENTS
 
-* Dotclear 2.28
+* Dotclear 2.36
 * PHP 8.1+
 * Dotclear admin permission for configuration
 * Dotclear contentadmin permission for management
