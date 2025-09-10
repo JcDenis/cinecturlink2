@@ -32,7 +32,7 @@ class RecordCatsRow
 
     public function getCursor(): Cursor
     {
-        $cur = App::con()->openCursor(App::con()->prefix() . My::CATEGORY_TABLE_NAME);
+        $cur = App::db()->con()->openCursor(App::db()->con()->prefix() . My::CATEGORY_TABLE_NAME);
         $cur->setField('cat_title', $this->cat_title);
         $cur->setField('cat_desc', $this->cat_desc);
 

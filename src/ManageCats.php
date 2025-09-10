@@ -5,24 +5,26 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\cinecturlink2;
 
 use Dotclear\App;
-use Dotclear\Core\Backend\{
-    Notices,
-    Page
-};
+use Dotclear\Core\Backend\Notices;
+use Dotclear\Core\Backend\Page;
 use Dotclear\Helper\Process\TraitProcess;
-use Dotclear\Helper\Html\Form\{
-    Checkbox,
-    Div,
-    Form,
-    Hidden,
-    Label,
-    Link,
-    Note,
-    Number,
-    Para,
-    Submit,
-    Table, Thead, Tbody, Th, Tr, Td, Caption
-};
+use Dotclear\Helper\Html\Form\Checkbox;
+use Dotclear\Helper\Html\Form\Div;
+use Dotclear\Helper\Html\Form\Form;
+use Dotclear\Helper\Html\Form\Hidden;
+use Dotclear\Helper\Html\Form\Label;
+use Dotclear\Helper\Html\Form\Link;
+use Dotclear\Helper\Html\Form\Note;
+use Dotclear\Helper\Html\Form\Number;
+use Dotclear\Helper\Html\Form\Para;
+use Dotclear\Helper\Html\Form\Submit;
+use Dotclear\Helper\Html\Form\Table;
+use Dotclear\Helper\Html\Form\Thead;
+use Dotclear\Helper\Html\Form\Tbody;
+use Dotclear\Helper\Html\Form\Th;
+use Dotclear\Helper\Html\Form\Tr;
+use Dotclear\Helper\Html\Form\Td;
+use Dotclear\Helper\Html\Form\Caption;
 use Dotclear\Helper\Html\Html;
 use Exception;
 
@@ -72,7 +74,7 @@ class ManageCats
                 $i = 0;
                 foreach ($catorder as $id) {
                     $i++;
-                    $cur = App::con()->openCursor($utils->cat_table);
+                    $cur = App::db()->con()->openCursor($utils->cat_table);
                     $cur->setField('cat_pos', $i);
                     $utils->updCategory((int) $id, $cur);
                 }

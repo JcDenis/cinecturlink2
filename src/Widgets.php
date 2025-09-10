@@ -236,7 +236,7 @@ class Widgets
             $entries[] = '<p style="text-align:center;">' . $tmp . '</p>' . $bhv;
 
             try {
-                $cur = App::con()->openCursor($utils->table);
+                $cur = App::db()->con()->openCursor($utils->table);
                 $cur->setField('link_count', ($row->link_count + 1));
                 $utils->updLink($row->link_id, $cur, false);
             } catch (Exception) {

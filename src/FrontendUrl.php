@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\cinecturlink2;
 
 use Dotclear\App;
-use Dotclear\Core\Frontend\Url;
+use Dotclear\Core\Url;
 
 /**
  * @brief       cinecturlink2 frontend URLclass.
@@ -85,7 +85,7 @@ class FrontendUrl extends Url
     protected static function getPageArgs(string &$args, string $part): string
     {
         if (preg_match('#(^|/)' . $part . '/([^/]+)#', $args, $m)) {
-            $args = preg_replace('#(^|/)' . $part . '/([^/]+)#', '', $args);
+            $args = (string) preg_replace('#(^|/)' . $part . '/([^/]+)#', '', $args);
 
             return $m[2];
         }

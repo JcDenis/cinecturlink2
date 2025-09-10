@@ -5,18 +5,14 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\cinecturlink2;
 
 use Dotclear\App;
-use Dotclear\Database\{
-    AbstractHandler,
-    Cursor,
-    MetaRecord
-};
-use Dotclear\Database\Statement\{
-    DeleteStatement,
-    JoinStatement,
-    SelectStatement,
-    UpdateStatement
-};
-use Dotclear\Interface\Core\ConnectionInterface;
+use Dotclear\Database\AbstractHandler;
+use Dotclear\Database\Cursor;
+use Dotclear\Database\MetaRecord;
+use Dotclear\Database\Statement\DeleteStatement;
+use Dotclear\Database\Statement\JoinStatement;
+use Dotclear\Database\Statement\SelectStatement;
+use Dotclear\Database\Statement\UpdateStatement;
+use Dotclear\Interface\Database\ConnectionInterface;
 use Dotclear\Helper\File\Files;
 use Dotclear\Helper\Text;
 use Exception;
@@ -63,9 +59,9 @@ class Utils
      */
     public function __construct()
     {
-        $this->con       = App::con();
-        $this->table     = App::con()->prefix() . My::CINECTURLINK_TABLE_NAME;
-        $this->cat_table = App::con()->prefix() . My::CATEGORY_TABLE_NAME;
+        $this->con       = App::db()->con();
+        $this->table     = App::db()->con()->prefix() . My::CINECTURLINK_TABLE_NAME;
+        $this->cat_table = App::db()->con()->prefix() . My::CATEGORY_TABLE_NAME;
         $this->blog      = App::blog()->id();
     }
 
@@ -118,7 +114,7 @@ class Utils
             ->join(
                 (new JoinStatement())
                     ->inner()
-                    ->from($sql->as(App::con()->prefix() . App::auth()::USER_TABLE_NAME, 'U'))
+                    ->from($sql->as(App::db()->con()->prefix() . App::auth()::USER_TABLE_NAME, 'U'))
                     ->on('U.user_id = L.user_id')
                     ->statement()
             )

@@ -6,26 +6,20 @@ namespace Dotclear\Plugin\cinecturlink2;
 
 use Dotclear\App;
 use Dotclear\Core\Backend\Action\Actions;
-use Dotclear\Core\Backend\Filter\{
-    Filters,
-    FiltersLibrary
-};
-use Dotclear\Core\Backend\{
-    Notices,
-    Page
-};
+use Dotclear\Core\Backend\Filter\Filters;
+use Dotclear\Core\Backend\Filter\FiltersLibrary;
+use Dotclear\Core\Backend\Notices;
+use Dotclear\Core\Backend\Page;
 use Dotclear\Helper\Process\TraitProcess;
-use Dotclear\Helper\Html\Form\{
-    Div,
-    Form,
-    Hidden,
-    Label,
-    Link,
-    Para,
-    Select,
-    Submit,
-    Text
-};
+use Dotclear\Helper\Html\Form\Div;
+use Dotclear\Helper\Html\Form\Form;
+use Dotclear\Helper\Html\Form\Hidden;
+use Dotclear\Helper\Html\Form\Label;
+use Dotclear\Helper\Html\Form\Link;
+use Dotclear\Helper\Html\Form\Para;
+use Dotclear\Helper\Html\Form\Select;
+use Dotclear\Helper\Html\Form\Submit;
+use Dotclear\Helper\Html\Form\Text;
 use Exception;
 
 /**

@@ -6,19 +6,15 @@ namespace Dotclear\Plugin\cinecturlink2;
 
 use ArrayObject;
 use Dotclear\App;
-use Dotclear\Core\Backend\{
-    Notices,
-    Page
-};
-use Dotclear\Helper\Html\Form\{
-    Form,
-    Hidden,
-    Label,
-    Para,
-    Select,
-    Submit,
-    Text
-};
+use Dotclear\Core\Backend\Notices;
+use Dotclear\Core\Backend\Page;
+use Dotclear\Helper\Html\Form\Form;
+use Dotclear\Helper\Html\Form\Hidden;
+use Dotclear\Helper\Html\Form\Label;
+use Dotclear\Helper\Html\Form\Para;
+use Dotclear\Helper\Html\Form\Select;
+use Dotclear\Helper\Html\Form\Submit;
+use Dotclear\Helper\Html\Form\Text;
 use Exception;
 
 /**
@@ -90,7 +86,7 @@ class BackendActionsLinksDefault
 
             $cat_id = is_numeric($post['upd_cat_id']) ? abs((int) $post['upd_cat_id']) : null;
 
-            $cur = App::con()->openCursor($ap->utils->table);
+            $cur = App::db()->con()->openCursor($ap->utils->table);
             foreach ($ids as $id) {
                 $cur->clean();
                 $cur->setField('cat_id', $cat_id == 0 ? null : $cat_id);
@@ -158,7 +154,7 @@ class BackendActionsLinksDefault
                 $link_note = 10;
             }
 
-            $cur = App::con()->openCursor($ap->utils->table);
+            $cur = App::db()->con()->openCursor($ap->utils->table);
             foreach ($ids as $id) {
                 $cur->clean();
                 $cur->setField('link_note', $link_note);

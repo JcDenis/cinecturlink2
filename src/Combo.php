@@ -45,11 +45,11 @@ class Combo
     }
 
     /**
-     * @return  array<int, int>
+     * @return  string[]
      */
     public static function notesCombo(): array
     {
-        return range(0, 20);
+        return array_map(fn (int $v): string => (string) $v, range(0, 20));
     }
 
     /**
@@ -63,9 +63,9 @@ class Combo
         try {
             App::media()->chdir((string) My::settings()->get('folder'));
             App::media()->getDir();
-            $dir = & App::media()->dir;
+            $files = App::media()->getFiles();
 
-            foreach ($dir['files'] as $file) {
+            foreach ($files as $file) {
                 if (!in_array($file->extension, My::ALLOWED_MEDIA_EXTENSION)) {
                     continue;
                 }
@@ -74,6 +74,7 @@ class Combo
             if (!empty($tmp)) {
                 $stack = array_merge(['-' => ''], $tmp);
             }
+            unset($files);
         } catch (Exception $e) {
         }
 

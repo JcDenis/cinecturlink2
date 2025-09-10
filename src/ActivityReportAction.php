@@ -7,11 +7,9 @@ namespace Dotclear\Plugin\cinecturlink2;
 use Dotclear\App;
 use Dotclear\Helper\Process\TraitProcess;
 use Dotclear\Database\Cursor;
-use Dotclear\Plugin\activityReport\{
-    Action,
-    ActivityReport,
-    Group
-};
+use Dotclear\Plugin\activityReport\Action;
+use Dotclear\Plugin\activityReport\ActivityReport;
+use Dotclear\Plugin\activityReport\Group;
 
 /**
  * @brief       cinecturlink2 plugin activityReport class.

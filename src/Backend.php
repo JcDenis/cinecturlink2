@@ -9,7 +9,17 @@ use Dotclear\App;
 use Dotclear\Core\Backend\Favorites;
 use Dotclear\Helper\Process\TraitProcess;
 use Dotclear\Helper\File\Files;
-use Dotclear\Helper\Html\Form\{ Checkbox, Fieldset, Img, Input, Label, Legend, Note, Number, Para, Select, Text };
+use Dotclear\Helper\Html\Form\Checkbox;
+use Dotclear\Helper\Html\Form\Fieldset;
+use Dotclear\Helper\Html\Form\Img;
+use Dotclear\Helper\Html\Form\Input;
+use Dotclear\Helper\Html\Form\Label;
+use Dotclear\Helper\Html\Form\Legend;
+use Dotclear\Helper\Html\Form\Note;
+use Dotclear\Helper\Html\Form\Number;
+use Dotclear\Helper\Html\Form\Para;
+use Dotclear\Helper\Html\Form\Select;
+use Dotclear\Helper\Html\Form\Text;
 use Dotclear\Interface\Core\BlogSettingsInterface;
 
 /**

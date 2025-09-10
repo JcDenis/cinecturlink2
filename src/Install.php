@@ -6,7 +6,6 @@ namespace Dotclear\Plugin\cinecturlink2;
 
 use Dotclear\App;
 use Dotclear\Helper\Process\TraitProcess;
-use Dotclear\Database\Structure;
 use Dotclear\Database\Statement\UpdateStatement;
 use Exception;
 
@@ -35,24 +34,24 @@ class Install
         try {
             self::upgradeSettings();
 
-            $s = new Structure(App::con(), App::con()->prefix());
-            $s->{My::CINECTURLINK_TABLE_NAME}
-                ->link_id('bigint', 0, false)
-                ->blog_id('varchar', 32, false)
-                ->cat_id('bigint', 0, true)
-                ->user_id('varchar', 32, true)
-                ->link_type('varchar', 32, false, "'cinecturlink'")
-                ->link_title('varchar', 255, false)
-                ->link_desc('varchar', 255, false)
-                ->link_author('varchar', 255, false)
-                ->link_lang('varchar', 5, false, "'en'")
-                ->link_url('varchar', 255, false)
-                ->link_img('varchar', 255, false)
-                ->link_creadt('timestamp', 0, false, 'now()')
-                ->link_upddt('timestamp', 0, false, 'now()')
-                ->link_pos('smallint', 0, false, "'0'")
-                ->link_note('smallint', 0, false, "'10'")
-                ->link_count('bigint', 0, false, "'0'")
+            $s = App::db()->structure();
+            $s->table(My::CINECTURLINK_TABLE_NAME)
+                ->field('link_id', 'bigint', 0, false)
+                ->field('blog_id', 'varchar', 32, false)
+                ->field('cat_id', 'bigint', 0, true)
+                ->field('user_id', 'varchar', 32, true)
+                ->field('link_type', 'varchar', 32, false, "'cinecturlink'")
+                ->field('link_title', 'varchar', 255, false)
+                ->field('link_desc', 'varchar', 255, false)
+                ->field('link_author', 'varchar', 255, false)
+                ->field('link_lang', 'varchar', 5, false, "'en'")
+                ->field('link_url', 'varchar', 255, false)
+                ->field('link_img', 'varchar', 255, false)
+                ->field('link_creadt', 'timestamp', 0, false, 'now()')
+                ->field('link_upddt', 'timestamp', 0, false, 'now()')
+                ->field('link_pos', 'smallint', 0, false, "'0'")
+                ->field('link_note', 'smallint', 0, false, "'10'")
+                ->field('link_count', 'bigint', 0, false, "'0'")
 
                 ->primary('pk_cinecturlink2', 'link_id')
                 ->index('idx_cinecturlink2_title', 'btree', 'link_title')
@@ -62,20 +61,20 @@ class Install
                 ->index('idx_cinecturlink2_user_id', 'btree', 'user_id')
                 ->index('idx_cinecturlink2_type', 'btree', 'link_type');
 
-            $s->{My::CATEGORY_TABLE_NAME}
-                ->cat_id('bigint', 0, false)
-                ->blog_id('varchar', 32, false)
-                ->cat_title('varchar', 255, false)
-                ->cat_desc('varchar', 255, false)
-                ->cat_creadt('timestamp', 0, false, 'now()')
-                ->cat_upddt('timestamp', 0, false, 'now()')
-                ->cat_pos('smallint', 0, false, "'0'")
+            $s->table(My::CATEGORY_TABLE_NAME)
+                ->field('cat_id', 'bigint', 0, false)
+                ->field('blog_id', 'varchar', 32, false)
+                ->field('cat_title', 'varchar', 255, false)
+                ->field('cat_desc', 'varchar', 255, false)
+                ->field('cat_creadt', 'timestamp', 0, false, 'now()')
+                ->field('cat_upddt', 'timestamp', 0, false, 'now()')
+                ->field('cat_pos', 'smallint', 0, false, "'0'")
 
                 ->primary('pk_cinecturlink2_cat', 'cat_id')
                 ->index('idx_cinecturlink2_cat_blog_id', 'btree', 'blog_id')
                 ->unique('uk_cinecturlink2_cat_title', 'cat_title', 'blog_id');
 
-            (new Structure(App::con(), App::con()->prefix()))->synchronize($s);
+            App::db()->structure()->synchronize($s);
 
             $s = My::settings();
             $s->put('avtive', true, 'boolean', 'Enable cinecturlink2', false, true);
@@ -114,7 +113,7 @@ class Install
             foreach ($ids as $id) {
                 $sql = new UpdateStatement();
                 $sql
-                    ->ref(App::con()->prefix() . App::blogWorkspace()::NS_TABLE_NAME)
+                    ->ref(App::db()->con()->prefix() . App::blogWorkspace()::NS_TABLE_NAME)
                     ->column('setting_id')
                     ->value($id)
                     ->where('setting_id = ' . $sql->quote('cinecturlink2_' . $id))

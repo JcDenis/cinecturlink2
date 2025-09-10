@@ -48,7 +48,7 @@ class RecordLinksRow
 
     public function getCursor(): Cursor
     {
-        $cur = App::con()->openCursor(App::con()->prefix() . My::CINECTURLINK_TABLE_NAME);
+        $cur = App::db()->con()->openCursor(App::db()->con()->prefix() . My::CINECTURLINK_TABLE_NAME);
         $cur->setField('link_title', $this->link_title);
         $cur->setField('link_desc', $this->link_desc);
         $cur->setField('link_author', $this->link_author);

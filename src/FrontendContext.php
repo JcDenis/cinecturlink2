@@ -60,6 +60,9 @@ class FrontendContext
         $n = self::PaginationPosition($offset);
 
         $args = preg_replace('#(^|/)c2page/([0-9]+)$#', '', $args);
+        if (!is_string($args)) {
+            $args = '';
+        }
 
         $url = App::blog()->url() . $args;
 
