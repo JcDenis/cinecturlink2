@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\cinecturlink2;
 
 use Dotclear\App;
-use Dotclear\Core\Url;
 
 /**
  * @brief       cinecturlink2 frontend URLclass.
@@ -14,7 +13,7 @@ use Dotclear\Core\Url;
  * @author      Jean-Christian Denis (author)
  * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-class FrontendUrl extends Url
+class FrontendUrl
 {
     public static function c2Page(?string $args): null
     {
@@ -22,7 +21,7 @@ class FrontendUrl extends Url
 
         if (!My::settings()->avtive
          || !My::settings()->public_active) {
-            self::p404();
+            App::url()::p404();
         }
 
         $tplset = App::themes()->getDefine(App::blog()->settings()->get('system')->get('theme'))->get('tplset');
@@ -62,7 +61,7 @@ class FrontendUrl extends Url
             App::frontend()->context()->c2_page_params = $params;
 
             header('X-Robots-Tag: ' . App::frontend()->context()::robotsPolicy(App::blog()->settings()->get('system')->get('robots_policy'), ''));
-            self::serveDocument('cinecturlink2-' . $f . '.xml', $mime);
+            App::url()::serveDocument('cinecturlink2-' . $f . '.xml', $mime);
         } else {
             $d = self::getPageArgs($args, 'c2detail');
             if (!empty($d)) {
@@ -76,7 +75,7 @@ class FrontendUrl extends Url
             $params['limit']                           = (int) My::settings()->public_nbrpp;
             App::frontend()->context()->c2_page_params = $params;
 
-            self::serveDocument('cinecturlink2.html', 'text/html');
+            App::url()::serveDocument('cinecturlink2.html', 'text/html');
         }
 
         return null;
