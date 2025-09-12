@@ -6,7 +6,6 @@ namespace Dotclear\Plugin\cinecturlink2;
 
 use ArrayObject;
 use Dotclear\App;
-use Dotclear\Core\Frontend\Tpl;
 use Dotclear\Helper\Html\Html;
 
 /**
@@ -73,7 +72,7 @@ class FrontendTemplate
     {
         $if = [];
 
-        $operator = isset($a['operator']) ? Tpl::getOperator($a['operator']) : '&&';
+        $operator = isset($a['operator']) ? App::frontend()->template()::getOperator($a['operator']) : '&&';
 
         if (isset($a['request_link'])) {
             $sign = (bool) $a['request_link'] ? '' : '!';
@@ -160,7 +159,7 @@ class FrontendTemplate
     {
         $if = [];
 
-        $operator = isset($a['operator']) ? Tpl::getOperator($a['operator']) : '&&';
+        $operator = isset($a['operator']) ? App::frontend()->template()::getOperator($a['operator']) : '&&';
 
         if (isset($a['has_category'])) {
             $sign = (bool) $a['has_category'] ? '!' : '=';
