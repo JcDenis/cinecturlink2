@@ -81,7 +81,7 @@ class BackendListingLinks extends Listing
                 ->scope('col'),
         ]);
 
-        $this->userColumns(My::id(), $cols);
+        $this->userColumns(My::id(), $cols); // @phpstan-ignore-line use Component as array value in this plugin
 
         $lines = [];
         while ($this->rs->fetch()) {
@@ -164,7 +164,7 @@ class BackendListingLinks extends Listing
                 ->class('nowrap'),
         ]);
 
-        $this->userColumns(My::id(), $cols);
+        $this->userColumns(My::id(), $cols); // @phpstan-ignore-line use Component as array value in this plugin
 
         return (new Para('p' . $row->link_id, 'tr'))
             ->class('line')

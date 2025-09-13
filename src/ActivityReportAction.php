@@ -93,7 +93,7 @@ class ActivityReportAction
         );
     }
 
-    private static function addLog(string $action, string $title)
+    private static function addLog(string $action, string $title): void
     {
         ActivityReport::instance()->addLog(My::id(), $action, [
             $title,
