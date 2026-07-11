@@ -23,7 +23,7 @@ $this->registerModule(
     'Jean-Christian Denis and Contributors',
     '2.4.3',
     [
-        'requires'    => [['core', '2.36']],
+        'requires'    => [['core', '2.39']],
         'settings'    => ['blog' => '#params.' . $this->id . '_params'],
         'permissions' => 'My',
         'type'        => 'plugin',
