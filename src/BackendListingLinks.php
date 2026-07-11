@@ -85,7 +85,7 @@ class BackendListingLinks extends Listing
 
         $lines = [];
         while ($this->rs->fetch()) {
-            $lines[] = $this->linkLine(new RecordLinksRow($this->rs), isset($links[$this->rs->f('link_id')]));
+            $lines[] = $this->linkLine(new RecordLinksRow($this->rs), isset($links[$this->rs->strField('link_id')]));
         }
 
         echo

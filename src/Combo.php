@@ -28,7 +28,7 @@ class Combo
         try {
             $rs = (new Utils())->getCategories();
             while ($rs->fetch()) {
-                $stack[Html::escapeHTML((string) $rs->f('cat_title'))] = $rs->f('cat_id');
+                $stack[Html::escapeHTML($rs->strField('cat_title'))] = $rs->intField('cat_id');
             }
         } catch (Exception $e) {
         }

@@ -323,7 +323,7 @@ class FrontendTemplate
 
         return
         "<?php if (App::frontend()->context()->exists('c2_entries')) { " .
-        '$widthmax = (integer) App::blog()->settings()->cinecturlink2->widthmax; ' .
+        '$widthmax = (int) App::blog()->settings()->cinecturlink2->widthmax; ' .
         "\$img = sprintf('<img src=\"%s\" alt=\"%s\" %s/>'," .
         'App::frontend()->context()->c2_entries->link_img, ' .
         "html::escapeHTML(App::frontend()->context()->c2_entries->link_title.' - '.App::frontend()->context()->c2_entries->link_author), " .
@@ -370,7 +370,7 @@ class FrontendTemplate
         "App::frontend()->context()->c2_pagination = App::frontend()->context()->cinecturlink->getLinks(\$params,true); unset(\$params);\n" .
         "?>\n";
 
-        return isset($a['no_context']) ? $p . $c : $p . '<?php if (App::frontend()->context()->c2_pagination->f(0) > App::frontend()->context()->c2_entries->count()) : ?>' . $c . '<?php endif; ?>';
+        return isset($a['no_context']) ? $p . $c : $p . '<?php if (App::frontend()->context()->c2_pagination->cardinal() > App::frontend()->context()->c2_entries->count()) : ?>' . $c . '<?php endif; ?>';
     }
 
     /**

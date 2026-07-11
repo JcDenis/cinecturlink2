@@ -75,7 +75,7 @@ class ManageLinks
         try {
             $utils                = new Utils();
             $links                = $utils->getLinks($params);
-            self::$module_counter = (int) $utils->getLinks($params, true)->f(0);
+            self::$module_counter = (int) $utils->getLinks($params, true)->cardinal();
             self::$module_listing = new BackendListingLinks($links, self::$module_counter);
         } catch (Exception $e) {
             App::error()->add($e->getMessage());

@@ -157,7 +157,7 @@ class Widgets
     public static function parseLinks(WidgetsElement $widget): string
     {
         if (!My::settings()->get('active')
-            || !$widget->checkHomeOnly(App::url()->type)
+            || !$widget->checkHomeOnly(App::url()->getType())
         ) {
             return '';
         }
@@ -266,7 +266,7 @@ class Widgets
     {
         if (!My::settings()->get('active')
             || !My::settings()->get('public_active')
-            || !$widget->checkHomeOnly(App::url()->type)
+            || !$widget->checkHomeOnly(App::url()->getType())
         ) {
             return '';
         }
@@ -282,7 +282,7 @@ class Widgets
         $res[] = '<li><a href="' .
             App::blog()->url() . App::url()->getBase(My::id()) .
             '" title="' . __('view all links') . '">' . __('all links') .
-            '</a>' . ($wdesc->shownumlink ? ' (' . ($utils->getLinks([], true)->f(0)) . ')' : '') .
+            '</a>' . ($wdesc->shownumlink ? ' (' . ($utils->getLinks([], true)->cardinal()) . ')' : '') .
             '</li>';
 
         while ($rs->fetch()) {
@@ -295,7 +295,7 @@ class Widgets
                 '" title="' . __('view links of this category') . '">' .
                 Html::escapeHTML($row->cat_title) .
                 '</a>' . ($wdesc->shownumlink ? ' (' .
-                    ($utils->getLinks(['cat_id' => $row->cat_id], true)->f(0)) . ')' : '') .
+                    ($utils->getLinks(['cat_id' => $row->cat_id], true)->cardinal()) . ')' : '') .
                 '</li>';
         }
 

@@ -50,7 +50,7 @@ class ManageCat
         try {
             // create category
             if (!empty($_POST['save']) && empty(self::$row->cat_id) && !empty(self::$row->cat_title) && !empty(self::$row->cat_desc)) {
-                $exists = $utils->getCategories(['cat_title' => self::$row->cat_title], true)->f(0);
+                $exists = $utils->getCategories(['cat_title' => self::$row->cat_title], true)->cardinal();
                 if ($exists) {
                     throw new Exception(__('Category with same name already exists.'));
                 }
@@ -63,7 +63,7 @@ class ManageCat
             }
             // update category
             if (!empty($_POST['save']) && !empty(self::$row->cat_id) && !empty(self::$row->cat_title) && !empty(self::$row->cat_desc)) {
-                $exists = $utils->getCategories(['cat_title' => self::$row->cat_title, 'exclude_cat_id' => self::$row->cat_id], true)->f(0);
+                $exists = $utils->getCategories(['cat_title' => self::$row->cat_title, 'exclude_cat_id' => self::$row->cat_id], true)->cardinal();
                 if ($exists) {
                     throw new Exception(__('Category with same name already exists.'));
                 }
@@ -126,7 +126,7 @@ class ManageCat
         }
 
         if (self::$row->cat_id) {
-            $links = (int) $utils->getLinks(['cat_id' => self::$row->cat_id], true)->f(0);
+            $links = (int) $utils->getLinks(['cat_id' => self::$row->cat_id], true)->cardinal();
             echo (new Note())
                 ->class('info')
                 ->text(

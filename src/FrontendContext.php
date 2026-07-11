@@ -20,7 +20,7 @@ class FrontendContext
         if (App::frontend()->context()->c2_pagination === null) {
             return 0;
         }
-        $nb_posts    = App::frontend()->context()->c2_pagination->f(0);
+        $nb_posts    = App::frontend()->context()->c2_pagination->cardinal();
         $nb_per_page = App::frontend()->context()->c2_params['limit'][1];
         $nb_pages    = ceil($nb_posts / $nb_per_page);
 

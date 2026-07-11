@@ -324,7 +324,7 @@ class Utils
             ->from($this->table)
             ->select();
 
-        return is_null($rs) ? 1 : (int) $rs->f(0) + 1;
+        return is_null($rs) ? 1 : $rs->cardinal() + 1;
     }
 
     /**
@@ -522,7 +522,7 @@ class Utils
             ->from($this->cat_table)
             ->select();
 
-        return is_null($rs) ? 1 : (int) $rs->f(0) + 1;
+        return is_null($rs) ? 1 : $rs->cardinal() + 1;
     }
 
     /**
@@ -540,7 +540,7 @@ class Utils
             ->where('blog_id = ' . $sql->quote($this->blog))
             ->select();
 
-        return is_null($rs) ? 1 : (int) $rs->f(0) + 1;
+        return is_null($rs) ? 1 : $rs->cardinal() + 1;
     }
 
     /**

@@ -69,7 +69,7 @@ class ManageLink
 
                 // create a link
                 if (!self::$row->link_id) {
-                    $exists = $utils->getLinks(['link_title' => self::$row->link_title], true)->f(0);
+                    $exists = $utils->getLinks(['link_title' => self::$row->link_title], true)->cardinal();
                     if ($exists) {
                         throw new Exception(__('Link with same name already exists.'));
                     }
@@ -80,7 +80,7 @@ class ManageLink
                     );
                     // update a link
                 } else {
-                    $exists = $utils->getLinks(['link_id' => self::$row->link_id], true)->f(0);
+                    $exists = $utils->getLinks(['link_id' => self::$row->link_id], true)->cardinal();
                     if (!$exists) {
                         throw new Exception(__('Unknown link.'));
                     }
