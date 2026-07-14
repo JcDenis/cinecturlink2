@@ -32,18 +32,20 @@ class RecordLinksRow
 
     public function __construct(?MetaRecord $rs = null)
     {
-        $this->link_id     = (int) ($rs?->field('link_id') ?? $_REQUEST['link_id'] ?? 0);
-        $this->link_title  = (string) ($rs?->field('link_title') ?? $_POST['link_title'] ?? '');
-        $this->link_desc   = (string) ($rs?->field('link_desc') ?? $_POST['link_desc'] ?? '');
-        $this->link_author = (string) ($rs?->field('link_author') ?? $_POST['link_author'] ?? '');
-        $this->link_url    = (string) ($rs?->field('link_url') ?? $_POST['link_url'] ?? '');
-        $this->cat_id      = $rs?->field('cat_id') ? (int) $rs->field('cat_id') : (isset($_POST['cat_id']) ? (int) $_POST['cat_id'] : null);
-        $this->cat_title   = (string) ($rs?->field('cat_title') ?? $_POST['cat_title'] ?? '');
-        $this->link_lang   = (string) ($rs?->field('link_lang') ?? $_POST['link_lang'] ?? App::auth()->getInfo('user_lang'));
-        $this->link_img    = (string) ($rs?->field('link_img') ?? $_POST['link_img'] ?? '');
-        $this->link_note   = (string) ($rs?->field('link_note') ?? $_POST['link_note'] ?? '');
-        $this->link_upddt  = (string) ($rs?->field('link_upddt') ?? '');
-        $this->link_count  = abs((int) $rs?->field('link_count'));
+        $link_lang = is_string(App::auth()->getInfo('user_lang')) ? App::auth()->getInfo('user_lang') : '';
+
+        $this->link_id     = isset($_REQUEST['link_id']) && is_numeric($_REQUEST['link_id']) ? (int) $_REQUEST['link_id'] : (!is_null($rs) ? $rs->intField('link_id') : 0);
+        $this->link_title  = isset($_POST['link_title']) && is_string($_POST['link_title']) ? $_POST['link_title'] : (!is_null($rs) ? $rs->strField('link_title') : '');
+        $this->link_desc   = isset($_POST['link_desc']) && is_string($_POST['link_desc']) ? $_POST['link_desc'] : (!is_null($rs) ? $rs->strField('link_desc') : '');
+        $this->link_author = isset($_POST['link_author']) && is_string($_POST['link_author']) ? $_POST['link_author'] : (!is_null($rs) ? $rs->strField('link_author') : '');
+        $this->link_url    = isset($_POST['link_url']) && is_string($_POST['link_url']) ? $_POST['link_url'] : (!is_null($rs) ? $rs->strField('link_url') : '');
+        $this->cat_id      = isset($_POST['cat_id']) && is_numeric($_POST['cat_id']) ? (int) $_POST['cat_id'] : (!is_null($rs) ? $rs->intField('cat_id', true) : null);
+        $this->cat_title   = isset($_POST['cat_title']) && is_string($_POST['cat_title']) ? $_POST['cat_title'] : (!is_null($rs) ? $rs->strField('cat_title') : '');
+        $this->link_lang   = isset($_POST['link_lang']) && is_string($_POST['link_lang']) ? $_POST['link_lang'] : (!is_null($rs) ? $rs->strField('link_lang') : $link_lang);
+        $this->link_img    = isset($_POST['link_img']) && is_string($_POST['link_img']) ? $_POST['link_img'] : (!is_null($rs) ? $rs->strField('link_img') : '');
+        $this->link_note   = isset($_POST['link_note']) && is_string($_POST['link_note']) ? $_POST['link_note'] : (!is_null($rs) ? $rs->strField('link_note') : '');
+        $this->link_upddt  = !is_null($rs) ? $rs->strField('link_upddt') : '';
+        $this->link_count  = !is_null($rs) ? abs($rs->intField('link_count')) : 0;
     }
 
     public function getCursor(): Cursor

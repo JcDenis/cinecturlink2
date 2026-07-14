@@ -38,7 +38,7 @@ class FrontendTemplate
      */
     public static function c2PageTitle(ArrayObject $a): string
     {
-        return "<?php \$title = (string) App::blog()->settings()->cinecturlink2->public_title; if (empty(\$title)) { \$title = __('My cinecturlink'); } echo " . sprintf(App::frontend()->template()->getFilters($a), '$title') . '; ?>';
+        return "<?php \$title = (string) App::blog()->settings()->get('cinecturlink2')->getStr('public_title', false); if (empty(\$title)) { \$title = __('My cinecturlink'); } echo " . sprintf(App::frontend()->template()->getFilters($a), '$title') . '; ?>';
     }
 
     /**
@@ -46,7 +46,7 @@ class FrontendTemplate
      */
     public static function c2PageFeedURL(ArrayObject $a): string
     {
-        return '<?php echo ' . sprintf(App::frontend()->template()->getFilters($a), 'App::blog()->url().App::url()->getBase("' . My::id() . '")."/feed/' . (!empty($a['type']) && preg_match('#^(rss2|atom)$#', $a['type']) ? $a['type'] : 'atom') . '"') . '; ?>';
+        return '<?php echo ' . sprintf(App::frontend()->template()->getFilters($a), 'App::blog()->url().App::url()->getBase("' . My::id() . '")."/feed/' . (isset($a['type']) && is_string($a['type']) && preg_match('#^(rss2|atom)$#', $a['type']) ? $a['type'] : 'atom') . '"') . '; ?>';
     }
 
     /**
@@ -62,7 +62,7 @@ class FrontendTemplate
      */
     public static function c2PageDescription(ArrayObject $a): string
     {
-        return '<?php $description = (string) App::blog()->settings()->cinecturlink2->public_description; echo ' . sprintf(App::frontend()->template()->getFilters($a), '$description') . '; ?>';
+        return '<?php $description = (string) App::blog()->settings()->get("cinecturlink2")->getStr("public_description", false); echo ' . sprintf(App::frontend()->template()->getFilters($a), '$description') . '; ?>';
     }
 
     /**
@@ -72,7 +72,7 @@ class FrontendTemplate
     {
         $if = [];
 
-        $operator = isset($a['operator']) ? App::frontend()->template()::getOperator($a['operator']) : '&&';
+        $operator = isset($a['operator']) && is_string($a['operator']) ? App::frontend()->template()::getOperator($a['operator']) : '&&';
 
         if (isset($a['request_link'])) {
             $sign = (bool) $a['request_link'] ? '' : '!';
@@ -92,7 +92,7 @@ class FrontendTemplate
      */
     public static function c2Entries(ArrayObject $a, string $c): string
     {
-        $lastn = isset($a['lastn']) ? abs((int) $a['lastn']) + 0 : -1;
+        $lastn = isset($a['lastn']) && is_numeric($a['lastn']) ? abs((int) $a['lastn']) + 0 : -1;
 
         $res = 'if (!isset($c2_page_number)) { $c2_page_number = 1; }' . "\n";
 
@@ -110,17 +110,17 @@ class FrontendTemplate
         }
 
         if (isset($a['category'])) {
-            if ($a['category'] == 'null') {
+            if ($a['category'] === 'null') {
                 $res .= "\$params['sql'] = ' AND L.cat_id IS NULL ';\n";
             } elseif (is_numeric($a['category'])) {
                 $res .= "\$params['cat_id'] = " . (int) $a['category'] . ";\n";
-            } else {
+            } elseif (is_string($a['category'])) {
                 $res .= "\$params['cat_title'] = '" . $a['category'] . "';\n";
             }
         }
 
         $sort   = isset($a['sort'])  && $a['sort'] == 'asc' ? ' asc' : ' desc';
-        $sortby = isset($a['order']) && in_array($a['order'], ['link_count','link_upddt','link_creadt','link_note','link_title']) ? $a['order'] : 'link_upddt';
+        $sortby = isset($a['order']) && is_string($a['order']) && in_array($a['order'], ['link_count','link_upddt','link_creadt','link_note','link_title']) ? $a['order'] : 'link_upddt';
 
         $res .= "\$params['order'] = '" . $sortby . $sort . "';\n";
 
@@ -159,7 +159,7 @@ class FrontendTemplate
     {
         $if = [];
 
-        $operator = isset($a['operator']) ? App::frontend()->template()::getOperator($a['operator']) : '&&';
+        $operator = isset($a['operator']) && is_string($a['operator']) ? App::frontend()->template()::getOperator($a['operator']) : '&&';
 
         if (isset($a['has_category'])) {
             $sign = (bool) $a['has_category'] ? '!' : '=';
@@ -174,7 +174,7 @@ class FrontendTemplate
      */
     public static function c2EntryIfFirst(ArrayObject $a): string
     {
-        return '<?php if (App::frontend()->context()->c2_entries->index() == 0) { echo "' . (isset($a['return']) ? addslashes(Html::escapeHTML($a['return'])) : 'first') . '"; } ?>';
+        return '<?php if (App::frontend()->context()->c2_entries->index() == 0) { echo "' . (isset($a['return']) && is_string($a['return']) ? addslashes(Html::escapeHTML($a['return'])) : 'first') . '"; } ?>';
     }
 
     /**
@@ -182,7 +182,7 @@ class FrontendTemplate
      */
     public static function c2EntryIfOdd(ArrayObject $a): string
     {
-        return '<?php if ((App::frontend()->context()->c2_entries->index()+1)%2 == 1) { echo "' . (isset($a['return']) ? addslashes(Html::escapeHTML($a['return'])) : 'odd') . '"; } ?>';
+        return '<?php if ((App::frontend()->context()->c2_entries->index()+1)%2 == 1) { echo "' . (isset($a['return']) && is_string($a['return']) ? addslashes(Html::escapeHTML($a['return'])) : 'odd') . '"; } ?>';
     }
 
     /**
@@ -310,7 +310,7 @@ class FrontendTemplate
      */
     public static function c2EntryCategoryURL(ArrayObject $a): string
     {
-        return self::getGenericValue('App::blog()->url().App::url()->getBase("' . My::id() . '")."/".App::blog()->settings()->cinecturlink2->public_caturl."/".urlencode(App::frontend()->context()->c2_entries->cat_title)', $a);
+        return self::getGenericValue('App::blog()->url().App::url()->getBase("' . My::id() . '")."/".App::blog()->settings()->get("cinecturlink2")->getStr("public_caturl", false)."/".urlencode(App::frontend()->context()->c2_entries->cat_title)', $a);
     }
 
     /**
@@ -319,11 +319,11 @@ class FrontendTemplate
     public static function c2EntryImg(ArrayObject $a): string
     {
         $f     = App::frontend()->template()->getFilters($a);
-        $style = isset($a['style']) ? Html::escapeHTML($a['style']) : '';
+        $style = isset($a['style']) && is_string($a['style']) ? Html::escapeHTML($a['style']) : '';
 
         return
         "<?php if (App::frontend()->context()->exists('c2_entries')) { " .
-        '$widthmax = (int) App::blog()->settings()->cinecturlink2->widthmax; ' .
+        '$widthmax = App::blog()->settings()->get("cinecturlink2")->getInt("widthmax", false); ' .
         "\$img = sprintf('<img src=\"%s\" alt=\"%s\" %s/>'," .
         'App::frontend()->context()->c2_entries->link_img, ' .
         "html::escapeHTML(App::frontend()->context()->c2_entries->link_title.' - '.App::frontend()->context()->c2_entries->link_author), " .
@@ -337,16 +337,16 @@ class FrontendTemplate
      */
     public static function c2EntryDate(ArrayObject $a): string
     {
-        $format = !empty($a['format']) ? addslashes($a['format']) : '';
+        $format = !empty($a['format']) && is_string($a['format']) ? addslashes($a['format']) : '';
 
         if (!empty($a['rfc822'])) {
-            $p = 'dt::rfc822(strtotime(App::frontend()->context()->c2_entries->link_creadt), App::blog()->settings()->system->blog_timezone)';
+            $p = 'dt::rfc822(strtotime(App::frontend()->context()->c2_entries->link_creadt), App::blog()->settings()->get("system")->getStr("blog_timezone", false))';
         } elseif (!empty($a['iso8601'])) {
-            $p = 'dt::iso8601(strtotime(App::frontend()->context()->c2_entries->link_creadt), App::blog()->settings()->system->blog_timezone)';
+            $p = 'dt::iso8601(strtotime(App::frontend()->context()->c2_entries->link_creadt), App::blog()->settings()->get("system")->getStr("blog_timezone", false))';
         } elseif ($format) {
             $p = "dt::dt2str('" . $format . "', App::frontend()->context()->c2_entries->link_creadt)";
         } else {
-            $p = 'dt::dt2str(App::blog()->settings()->system->date_format, App::frontend()->context()->c2_entries->link_creadt)';
+            $p = 'dt::dt2str(App::blog()->settings()->get("system")->getStr("date_format", false), App::frontend()->context()->c2_entries->link_creadt)';
         }
 
         return self::getGenericValue($p, $a);
@@ -357,7 +357,7 @@ class FrontendTemplate
      */
     public static function c2EntryTime(ArrayObject $a): string
     {
-        return self::getGenericValue('dt::dt2str(' . (!empty($a['format']) ? "'" . addslashes($a['format']) . "'" : 'App::blog()->settings()->system->time_format') . ', App::frontend()->context()->c2_entries->link_creadt)', $a);
+        return self::getGenericValue('dt::dt2str(' . (!empty($a['format']) && is_string($a['format']) ? "'" . addslashes($a['format']) . "'" : "App::blog()->settings()->get('system')->getStr('time_format', false)") . ', App::frontend()->context()->c2_entries->link_creadt)', $a);
     }
 
     /**
@@ -386,7 +386,7 @@ class FrontendTemplate
      */
     public static function c2PaginationCurrent(ArrayObject $a): string
     {
-        return self::getGenericValue(FrontendContext::class . '::PaginationPosition(' . (isset($a['offset']) ? (int) $a['offset'] : 0) . ')', $a);
+        return self::getGenericValue(FrontendContext::class . '::PaginationPosition(' . (isset($a['offset']) && is_numeric($a['offset']) ? (int) $a['offset'] : 0) . ')', $a);
     }
 
     /**
@@ -413,7 +413,7 @@ class FrontendTemplate
      */
     public static function c2PaginationURL(ArrayObject $a): string
     {
-        return self::getGenericValue(FrontendContext::class . '::PaginationURL(' . (isset($a['offset']) ? (int) $a['offset'] : 0) . ')', $a);
+        return self::getGenericValue(FrontendContext::class . '::PaginationURL(' . (isset($a['offset']) && is_numeric($a['offset']) ? (int) $a['offset'] : 0) . ')', $a);
     }
 
     /**
@@ -470,13 +470,13 @@ class FrontendTemplate
      */
     public static function c2CategoryFeedURL(ArrayObject $a): string
     {
-        $p = !empty($a['type']) ? $a['type'] : 'atom';
+        $p = !empty($a['type']) && is_string($a['type']) ? $a['type'] : 'atom';
 
         if (!preg_match('#^(rss2|atom)$#', $p)) {
             $p = 'atom';
         }
 
-        return '<?php echo ' . sprintf(App::frontend()->template()->getFilters($a), 'App::blog()->url().App::url()->getBase("' . My::id() . '")."/".App::blog()->settings()->cinecturlink2->public_caturl."/".urlencode(App::frontend()->context()->c2_categories->cat_title)."/feed/' . $p . '"') . '; ?>';
+        return '<?php echo ' . sprintf(App::frontend()->template()->getFilters($a), 'App::blog()->url().App::url()->getBase("' . My::id() . '")."/".App::blog()->settings()->get("cinecturlink2")->getStr("public_caturl",false)."/".urlencode(App::frontend()->context()->c2_categories->cat_title)."/feed/' . $p . '"') . '; ?>';
     }
 
     /**
@@ -516,7 +516,7 @@ class FrontendTemplate
      */
     public static function c2CategoryURL(ArrayObject $a): string
     {
-        return "<?php if (App::frontend()->context()->exists('c2_categories')) { echo " . sprintf(App::frontend()->template()->getFilters($a), 'App::blog()->url().App::url()->getBase("' . My::id() . '")."/".App::blog()->settings()->cinecturlink2->public_caturl."/".urlencode(App::frontend()->context()->c2_categories->cat_title)') . '; } ?>';
+        return "<?php if (App::frontend()->context()->exists('c2_categories')) { echo " . sprintf(App::frontend()->template()->getFilters($a), 'App::blog()->url().App::url()->getBase("' . My::id() . '")."/".App::blog()->settings()->get("cinecturlink2")->getStr("public_caturl",false)."/".urlencode(App::frontend()->context()->c2_categories->cat_title)') . '; } ?>';
     }
 
     /**

@@ -31,14 +31,14 @@ class WidgetLinksDescriptor
 
     public function __construct(WidgetsElement $w)
     {
-        $this->title        = (string) $w->get('title');
-        $this->class        = (string) $w->get('class');
+        $this->title        = is_string($w->get('title')) ? $w->get('title') : '';
+        $this->class        = is_string($w->get('class')) ? $w->get('class') : '';
         $this->content_only = !empty($w->get('content_only'));
 
-        $this->category     = (string) $w->get('category');
-        $this->sortby       = (string) $w->get('sortby');
+        $this->category     = is_string($w->get('category')) ? $w->get('category') : '';
+        $this->sortby       = is_string($w->get('sortby')) ? $w->get('sortby') : '';
         $this->sort         = $w->get('sort') == 'desc' ? 'desc' : 'asc';
-        $this->limit        = abs((int) $w->get('limit'));
+        $this->limit        = is_numeric($w->get('limit')) ? abs((int) $w->get('limit')) : 0;
         $this->shownote     = !empty($w->get('shownote'));
         $this->showdesc     = !empty($w->get('showdesc'));
         $this->withlink     = !empty($w->get('withlink'));

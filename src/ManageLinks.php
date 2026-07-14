@@ -97,7 +97,7 @@ class ManageLinks
         }
 
         $from_redir = $_REQUEST['redir'] ?? '';
-        $this_redir = My::manageUrl(self::$module_filter->values());
+        $this_redir = My::manageUrl(array_filter(self::$module_filter->values(), is_string(...)));
 
         Page::openModule(
             My::name(),
@@ -114,7 +114,7 @@ class ManageLinks
         ]) .
         Notices::getNotices();
 
-        if (!empty($from_redir)) {
+        if (!empty($from_redir) && is_string($from_redir)) {
             echo (new Para())
                 ->items([
                     (new Link())
@@ -166,10 +166,10 @@ class ManageLinks
                                     (new Label(__('Selected links action:'), Label::OUTSIDE_LABEL_BEFORE))
                                         ->for('action'),
                                     (new Select('action'))
-                                        ->items(self::$module_action->getCombo() ?? []),
+                                        ->items(self::$module_action->getCombo()),
                                     (new Submit('do-action'))
                                         ->value(__('ok')),
-                                    ... My::hiddenFields(self::$module_filter->values(true)),
+                                    ... My::hiddenFields(array_filter(self::$module_filter->values(true), is_string(...))),
                                 ]),
                         ]),
                 ])

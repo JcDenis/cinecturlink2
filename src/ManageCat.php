@@ -29,7 +29,6 @@ class ManageCat
 {
     use TraitProcess;
 
-    private static string $module_redir = '';
     private static RecordCatsRow $row;
 
     public static function init(): bool
@@ -43,7 +42,6 @@ class ManageCat
             return false;
         }
 
-        self::$module_redir = $_REQUEST['redir'] ?? '';
         self::$row          = new RecordCatsRow();
         $utils              = new Utils();
 
@@ -114,12 +112,12 @@ class ManageCat
         ]) .
         Notices::getNotices();
 
-        if (!empty(self::$module_redir)) {
+        if (Utils::getRedir() !== '') {
             echo (new Para())
                 ->items([
                     (new Link())
                         ->class('back')
-                        ->href(self::$module_redir)
+                        ->href(Utils::getRedir())
                         ->text(__('Back')),
                 ])
                 ->render();
@@ -179,7 +177,7 @@ class ManageCat
                         ... My::hiddenFields([
                             'cat_id' => self::$row->cat_id,
                             'part'   => 'cat',
-                            'redir'  => self::$module_redir,
+                            'redir'  => Utils::getRedir(),
                         ]),
                     ]),
             ])

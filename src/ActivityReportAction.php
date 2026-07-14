@@ -71,33 +71,33 @@ class ActivityReportAction
 
     public static function addLink(Cursor $cur): void
     {
-        self::addLog(
-            self::CINECTURLINK_CREATE,
-            (string) $cur->getField('link_title')
-        );
+        $v = $cur->getField('link_title');
+        if (is_string($v)) {
+            self::addLog(self::CINECTURLINK_CREATE, $v);
+        }
     }
 
     public static function updLink(Cursor $cur, int $id): void
     {
-        self::addLog(
-            self::CINECTURLINK_UPDATE,
-            (string) (new Utils())->getLinks(['link_id' => $id])->field('link_title')
-        );
+        $v = (new Utils())->getLinks(['link_id' => $id])->field('link_title');
+        if (is_string($v)) {
+            self::addLog(self::CINECTURLINK_UPDATE, $v);
+        }
     }
 
     public static function delLink(int $id): void
     {
-        self::addLog(
-            self::CINECTURLINK_DELETE,
-            (string) (new Utils())->getLinks(['link_id' => $id])->field('link_title')
-        );
+        $v = (new Utils())->getLinks(['link_id' => $id])->field('link_title');
+        if (is_string($v)) {
+            self::addLog(self::CINECTURLINK_DELETE, $v);
+        }
     }
 
     private static function addLog(string $action, string $title): void
     {
-        ActivityReport::instance()->addLog(My::id(), $action, [
-            $title,
-            (string) App::auth()->getInfo('user_cn'),
-        ]);
+        $v = App::auth()->getInfo('user_cn');
+        if (is_string($v)) {
+            ActivityReport::instance()->addLog(My::id(), $action, [$title, $v]);
+        }
     }
 }

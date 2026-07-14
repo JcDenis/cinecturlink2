@@ -156,7 +156,7 @@ class Widgets
 
     public static function parseLinks(WidgetsElement $widget): string
     {
-        if (!My::settings()->get('active')
+        if (!My::settings()->getBool('active', false)
             || !$widget->checkHomeOnly(App::url()->getType())
         ) {
             return '';
@@ -184,7 +184,7 @@ class Widgets
 
             $ids = [];
             while ($big_rs->fetch()) {
-                $ids[] = $big_rs->link_id;
+                $ids[] = $big_rs->intField('link_id');
             }
             shuffle($ids);
             $ids = array_slice($ids, 0, $wdesc->limit);
@@ -207,7 +207,7 @@ class Widgets
             return '';
         }
 
-        $widthmax = (int) My::settings()->get('widthmax');
+        $widthmax = My::settings()->getInt('widthmax', false);
         $style    = $widthmax ? ' style="width:' . $widthmax . 'px;"' : '';
 
         $entries = [];
@@ -245,7 +245,7 @@ class Widgets
         # Tirage aléatoire
         if (in_array($wdesc->sortby, ['RANDOM', 'COUNTER'])) {
             shuffle($entries);
-            if (My::settings()->get('triggeronrandom')) {
+            if (My::settings()->getBool('triggeronrandom', false)) {
                 App::blog()->triggerBlog();
             }
         }
@@ -256,7 +256,7 @@ class Widgets
             '',
             ($wdesc->title ? $widget->renderTitle(Html::escapeHTML($wdesc->title)) : '') . implode(' ', $entries) .
             (
-                $wdesc->showpagelink && My::settings()->get('public_active') ?
+                $wdesc->showpagelink && My::settings()->getBool('public_active', false) ?
                 '<p><a href="' . App::blog()->url() . App::url()->getBase(My::id()) . '" title="' . __('view all links') . '">' . __('More links') . '</a></p>' : ''
             )
         );
@@ -264,8 +264,8 @@ class Widgets
 
     public static function parseCats(WidgetsElement $widget): string
     {
-        if (!My::settings()->get('active')
-            || !My::settings()->get('public_active')
+        if (!My::settings()->getBool('active', false)
+            || !My::settings()->getBool('public_active', false)
             || !$widget->checkHomeOnly(App::url()->getType())
         ) {
             return '';
@@ -290,7 +290,7 @@ class Widgets
 
             $res[] = '<li><a href="' .
                 App::blog()->url() . App::url()->getBase('cinecturlink2') . '/' .
-                My::settings()->get('public_caturl') . '/' .
+                My::settings()->getStr('public_caturl', false) . '/' .
                 urlencode($row->cat_title) .
                 '" title="' . __('view links of this category') . '">' .
                 Html::escapeHTML($row->cat_title) .

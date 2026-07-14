@@ -18,15 +18,13 @@ class WidgetCatsDescriptor
     public readonly string $title;
     public readonly string $class;
     public readonly bool $content_only;
-
     public readonly bool $shownumlink;
 
     public function __construct(WidgetsElement $w)
     {
-        $this->title        = (string) $w->get('title');
-        $this->class        = (string) $w->get('class');
+        $this->title        = is_string($w->get('title')) ? $w->get('title') : '';
+        $this->class        = is_string($w->get('class')) ? $w->get('class') : '';
         $this->content_only = !empty($w->get('content_only'));
-
-        $this->shownumlink = !empty($w->get('shownumlink'));
+        $this->shownumlink  = !empty($w->get('shownumlink'));
     }
 }

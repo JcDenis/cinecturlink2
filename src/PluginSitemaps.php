@@ -30,18 +30,19 @@ class PluginSitemaps
     public static function sitemapsURLsCollect(Sitemap $sitemaps): void
     {
         if (App::plugins()->moduleExists('cinecturlink2')
-            && App::blog()->settings()->get('sitemaps')->get('sitemaps_cinecturlink2_url')
+            && App::blog()->settings()->get('sitemaps')->getStr('sitemaps_cinecturlink2_url', false) !== ''
         ) {
-            $freq = $sitemaps->getFrequency(App::blog()->settings()->get('sitemaps')->get('sitemaps_cinecturlink2_fq'));
-            $prio = $sitemaps->getPriority(App::blog()->settings()->get('sitemaps')->get('sitemaps_cinecturlink2_pr'));
+            $freq = $sitemaps->getFrequency(App::blog()->settings()->get('sitemaps')->getStr('sitemaps_cinecturlink2_fq', false));
+            $prio = $sitemaps->getPriority(App::blog()->settings()->get('sitemaps')->getStr('sitemaps_cinecturlink2_pr', false));
             $base = App::blog()->url() . App::url()->getBase('cinecturlink2');
 
             $sitemaps->addEntry($base, $prio, $freq);
 
             $C2   = new Utils();
             $cats = $C2->getCategories();
+
             while ($cats->fetch()) {
-                $sitemaps->addEntry($base . '/' . My::settings()->get('public_caturl') . '/' . urlencode((string) $cats->field('cat_title')), $prio, $freq);
+                $sitemaps->addEntry($base . '/' . My::settings()->getStr('public_caturl', false) . '/' . urlencode($cats->strField('cat_title')), $prio, $freq);
             }
         }
     }

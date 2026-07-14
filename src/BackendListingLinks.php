@@ -11,6 +11,7 @@ use Dotclear\Core\Backend\Listing\Listing;
 use Dotclear\Core\Backend\Listing\Pager;
 use Dotclear\Helper\Date;
 use Dotclear\Helper\Html\Form\Checkbox;
+use Dotclear\Helper\Html\Form\Component;
 use Dotclear\Helper\Html\Form\Div;
 use Dotclear\Helper\Html\Form\Link;
 use Dotclear\Helper\Html\Form\Note;
@@ -48,14 +49,21 @@ class BackendListingLinks extends Listing
 
         $this->redir = $redir;
         $links       = [];
-        if (isset($_REQUEST['entries'])) {
+        if (isset($_REQUEST['entries']) && is_array($_REQUEST['entries'])) {
             foreach ($_REQUEST['entries'] as $v) {
-                $links[(int) $v] = true;
+                if (is_numeric($v)) {
+                    $links[(int) $v] = true;
+                }
             }
         }
 
-        $pager = new Pager((int) $filter->value('page'), (int) $this->rs_count, (int) $filter->value('nb'), 10);
+        $page  = is_numeric($filter->value('page')) ? (int) $filter->value('page') : 0;
+        $nb    = is_numeric($filter->value('nb')) ? (int) $filter->value('nb') : 10;
+        $pager = new Pager($page, (int) $this->rs_count, $nb, 10);
 
+        /**
+         * @var ArrayObject<string, Component>
+         */
         $cols = new ArrayObject([
             'title' => (new Th())
                 ->text(__('Title'))
@@ -115,6 +123,9 @@ class BackendListingLinks extends Listing
 
     private function linkLine(RecordLinksRow $row, bool $checked): Para
     {
+        /**
+         * @var ArrayObject<string, Component>
+         */
         $cols = new ArrayObject([
             'check' => (new Td())
                 ->class('nowrap minimal')
@@ -160,7 +171,7 @@ class BackendListingLinks extends Listing
                 ->text(Html::escapeHTML($row->link_note))
                 ->class('number'),
             'date' => (new Td())
-                ->text(Html::escapeHTML(Date::dt2str(__('%Y-%m-%d %H:%M'), $row->link_upddt, (string) App::auth()->getInfo('user_tz'))))
+                ->text(Html::escapeHTML(Date::dt2str(__('%Y-%m-%d %H:%M'), $row->link_upddt, is_string(App::auth()->getInfo('user_tz')) ? App::auth()->getInfo('user_tz') : '')))
                 ->class('nowrap'),
         ]);
 

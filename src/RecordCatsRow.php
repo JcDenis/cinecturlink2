@@ -24,10 +24,10 @@ class RecordCatsRow
 
     public function __construct(?MetaRecord $rs = null)
     {
-        $this->cat_id    = (int) ($rs?->field('cat_id') ?? $_REQUEST['cat_id'] ?? 0);
-        $this->cat_title = (string) ($rs?->field('cat_title') ?? $_POST['cat_title'] ?? '');
-        $this->cat_desc  = (string) ($rs?->field('cat_desc') ?? $_POST['cat_desc'] ?? '');
-        $this->cat_pos   = (int) ($rs?->field('cat_pos') ?? 0);
+        $this->cat_id    = isset($_REQUEST['cat_id']) && is_numeric($_REQUEST['cat_id']) ? (int) $_REQUEST['cat_id'] : (!is_null($rs) ? $rs->intField('cat_id') : 0);
+        $this->cat_title = isset($_POST['cat_title']) && is_string($_POST['cat_title']) ? $_POST['cat_title'] : (!is_null($rs) ? $rs->strField('cat_title') : '');
+        $this->cat_desc  = isset($_POST['cat_desc']) && is_string($_POST['cat_desc']) ? $_POST['cat_desc'] : (!is_null($rs) ? $rs->strField('cat_desc') : '');
+        $this->cat_pos   = !is_null($rs) ? $rs->intField('cat_pos') : 0;
     }
 
     public function getCursor(): Cursor

@@ -28,7 +28,7 @@ class Combo
         try {
             $rs = (new Utils())->getCategories();
             while ($rs->fetch()) {
-                $stack[Html::escapeHTML($rs->strField('cat_title'))] = $rs->intField('cat_id');
+                $stack[Html::escapeHTML($rs->strField('cat_title'))] = $rs->strField('cat_id');
             }
         } catch (Exception $e) {
         }
@@ -61,7 +61,7 @@ class Combo
         $dir   = null;
 
         try {
-            App::media()->chdir((string) My::settings()->get('folder'));
+            App::media()->chdir(My::settings()->getStr('folder', false));
             App::media()->getDir();
             $files = App::media()->getFiles();
 

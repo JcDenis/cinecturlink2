@@ -93,7 +93,7 @@ class Backend
             'adminBlogPreferencesFormV2' => function (BlogSettingsInterface $blog_settings): void {
                 $s            = $blog_settings->get(My::id());
                 $url          = App::blog()->url() . App::url()->getBase(My::id());
-                $public_nbrpp = (int) $s->get('public_nbrpp');
+                $public_nbrpp = $s->getInt('public_nbrpp', false);
                 if ($public_nbrpp < 1) {
                     $public_nbrpp = 10;
                 }
@@ -104,7 +104,7 @@ class Backend
                         (new Text('h5', __('General'))),
                         (new Para())
                             ->items([
-                                (new Checkbox(My::id() . 'active', (bool) $s->get('avtive')))
+                                (new Checkbox(My::id() . 'active', $s->getBool('active', false)))
                                     ->value(1),
                                 (new Label(__('Enable plugin'), Label::OUTSIDE_LABEL_AFTER))
                                     ->class('classic')
@@ -116,7 +116,7 @@ class Backend
                                     ->for(My::id() . 'folder'),
                                 (new Select(My::id() . 'folder'))
                                     ->items(Utils::getPublicDirs())
-                                    ->default((string) $s->get('folder')),
+                                    ->default($s->getStr('folder', false)),
                             ]),
                         (new Para())
                             ->items([
@@ -135,14 +135,14 @@ class Backend
                                 (new Number(My::id() . 'widthmax'))
                                     ->min(10)
                                     ->max(512)
-                                    ->value((string) abs((int) $s->get('widthmax'))),
+                                    ->value((string) abs($s->getInt('widthmax', false))),
                             ]),
 
                         (new Text('hr')),
                         (new Text('h5', __('Widget'))),
                         (new Para())
                             ->items([
-                                (new Checkbox(My::id() . 'triggeronrandom', (bool) $s->get('triggeronrandom')))
+                                (new Checkbox(My::id() . 'triggeronrandom', $s->getBool('triggeronrandom', false)))
                                     ->value(1),
                                 (new Label(__('Update cache when use "Random" or "Number of view" order on widget (Need reload of widgets on change)'), Label::OUTSIDE_LABEL_AFTER))
                                     ->class('classic')
@@ -156,7 +156,7 @@ class Backend
                         (new Text('h5', __('Public page'))),
                         (new Para())
                             ->items([
-                                (new Checkbox(My::id() . 'public_active', (bool) $s->get('public_active')))
+                                (new Checkbox(My::id() . 'public_active', $s->getBool('public_active', false)))
                                     ->value(1),
                                 (new Label(__('Enable public page'), Label::OUTSIDE_LABEL_AFTER))
                                     ->class('classic')
@@ -172,7 +172,7 @@ class Backend
                                 (new Input(My::id() . 'public_title'))
                                     ->size(65)
                                     ->maxlength(255)
-                                    ->value((string) $s->get('public_title')),
+                                    ->value($s->getStr('public_title', false)),
                             ]),
                         (new Para())
                             ->items([
@@ -181,7 +181,7 @@ class Backend
                                 (new Input(My::id() . 'public_description'))
                                     ->size(65)
                                     ->maxlength(255)
-                                    ->value((string) $s->get('public_description')),
+                                    ->value($s->getStr('public_description', false)),
                             ]),
                         (new Para())
                             ->items([
@@ -200,14 +200,14 @@ class Backend
             'adminBeforeBlogSettingsUpdate' => function (BlogSettingsInterface $blog_settings): void {
                 $s                  = $blog_settings->get(My::id());
                 $active             = !empty($_POST[My::id() . 'active']);
-                $widthmax           = abs((int) $_POST[My::id() . 'widthmax']);
-                $newdir             = (string) Files::tidyFileName($_POST[My::id() . 'newdir']);
-                $folder             = empty($newdir) ? (string) Files::tidyFileName($_POST[My::id() . 'folder']) : $newdir;
+                $widthmax           = isset($_POST[My::id() . 'widthmax']) && is_numeric($_POST[My::id() . 'widthmax']) ? abs((int) $_POST[My::id() . 'widthmax']) : 0;
+                $newdir             = isset($_POST[My::id() . 'newdir']) && is_string($_POST[My::id() . 'newdir']) ? Files::tidyFileName($_POST[My::id() . 'newdir']) : '';
+                $folder             = empty($newdir) && isset($_POST[My::id() . 'folder']) && is_string($_POST[My::id() . 'folder']) ? (string) Files::tidyFileName($_POST[My::id() . 'folder']) : $newdir;
                 $triggeronrandom    = !empty($_POST[My::id() . 'triggeronrandom']);
                 $public_active      = !empty($_POST[My::id() . 'public_active']);
-                $public_title       = (string) $_POST[My::id() . 'public_title'];
-                $public_description = (string) $_POST[My::id() . 'public_description'];
-                $public_nbrpp       = (int) $_POST[My::id() . 'public_nbrpp'];
+                $public_title       = isset($_POST[My::id() . 'public_title']) && is_string($_POST[My::id() . 'public_title']) ? $_POST[My::id() . 'public_title'] : '';
+                $public_description = isset($_POST[My::id() . 'public_description']) && is_string($_POST[My::id() . 'public_description']) ? $_POST[My::id() . 'public_description'] : '';
+                $public_nbrpp       = isset($_POST[My::id() . 'public_nbrpp']) && is_numeric($_POST[My::id() . 'public_nbrpp']) ? (int) $_POST[My::id() . 'public_nbrpp'] : 0;
 
                 if ($public_nbrpp < 1) {
                     $public_nbrpp = 10;
@@ -218,7 +218,7 @@ class Backend
                     return;
                 }
                 Utils::makePublicDir(
-                    App::config()->dotclearRoot() . '/' . App::blog()->settings()->get('system')->get('public_path'),
+                    App::config()->dotclearRoot() . '/' . App::blog()->settings()->get('system')->getStr('public_path', false),
                     $folder,
                     true
                 );

@@ -19,12 +19,15 @@ class FrontendUrl
     {
         $args = (string) $args;
 
-        if (!My::settings()->avtive
-         || !My::settings()->public_active) {
+        if (!My::settings()->getBool('active', false)
+         || !My::settings()->getBool('public_active', false)) {
             App::url()::p404();
         }
 
-        $tplset = App::themes()->getDefine(App::blog()->settings()->get('system')->get('theme'))->get('tplset');
+        $tplset = App::themes()->getDefine(App::blog()->settings()->get('system')->getStr('theme', false))->get('tplset');
+        if (!is_string($tplset)) {
+            $tplset = '';
+        }
         if (empty($tplset) || !is_dir(implode(DIRECTORY_SEPARATOR, [My::path(), 'default-templates', $tplset]))) {
             $tplset = App::config()->defaultTplset();
         }
@@ -37,8 +40,8 @@ class FrontendUrl
             $GLOBALS['c2_page_number'] = $n;
         }
 
-        $caturl = My::settings()->public_caturl;
-        if (!$caturl) {
+        $caturl = My::settings()->getStr('public_caturl', false);
+        if ($caturl !== '') {
             $caturl = 'c2cat';
         }
 
@@ -57,10 +60,10 @@ class FrontendUrl
 
             //App::frontend()->context()->short_feed_items = App::blog()->settings()->system->short_feed_items;
 
-            $params['limit']                           = App::blog()->settings()->get('system')->get('nb_post_per_feed');
+            $params['limit']                           = App::blog()->settings()->get('system')->getInt('nb_post_per_feed', false);
             App::frontend()->context()->c2_page_params = $params;
 
-            header('X-Robots-Tag: ' . App::frontend()->context()::robotsPolicy(App::blog()->settings()->get('system')->get('robots_policy'), ''));
+            header('X-Robots-Tag: ' . App::frontend()->context()::robotsPolicy(App::blog()->settings()->get('system')->getStr('robots_policy', false), ''));
             App::url()::serveDocument('cinecturlink2-' . $f . '.xml', $mime);
         } else {
             $d = self::getPageArgs($args, 'c2detail');
@@ -72,8 +75,8 @@ class FrontendUrl
                 }
             }
 
-            $params['limit']                           = (int) My::settings()->public_nbrpp;
-            App::frontend()->context()->c2_page_params = $params;
+            $params['limit'] = My::settings()->getInt('public_nbrpp', false);
+            App::frontend()->context()->__set('c2_page_params', $params);
 
             App::url()::serveDocument('cinecturlink2.html', 'text/html');
         }

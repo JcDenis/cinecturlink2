@@ -39,8 +39,6 @@ class ManageCats
 {
     use TraitProcess;
 
-    private static string $module_redir = '';
-
     public static function init(): bool
     {
         return self::status(My::checkContext(My::MANAGE) && ($_REQUEST['part'] ?? 'links') == 'cats');
@@ -52,19 +50,17 @@ class ManageCats
             return false;
         }
 
-        self::$module_redir = $_REQUEST['redir'] ?? '';
-
         try {
             $utils = new Utils();
 
             // reorder categories
             if (!empty($_POST['save'])) {
                 $catorder = [];
-                if (empty($_POST['im_order']) && !empty($_POST['order'])) {
+                if (empty($_POST['im_order']) && !empty($_POST['order']) && is_array($_POST['order'])) {
                     $catorder = $_POST['order'];
                     asort($catorder);
                     $catorder = array_keys($catorder);
-                } elseif (!empty($_POST['im_order'])) {
+                } elseif (!empty($_POST['im_order']) && is_string($_POST['im_order'])) {
                     $catorder = $_POST['im_order'];
                     if (substr($catorder, -1) == ',') {
                         $catorder = substr($catorder, 0, strlen($catorder) - 1);
@@ -84,9 +80,11 @@ class ManageCats
                 My::redirect(['part' => 'cats']);
             }
             // delete categories
-            if (!empty($_POST['delete']) && !empty($_POST['items_selected'])) {
+            if (!empty($_POST['delete']) && !empty($_POST['items_selected']) && is_array($_POST['items_selected'])) {
                 foreach ($_POST['items_selected'] as $id) {
-                    $utils->delCategory((int) $id);
+                    if (is_numeric($id)) {
+                        $utils->delCategory((int) $id);
+                    }
                 }
                 Notices::addSuccessNotice(
                     __('Categories successfully deleted.')
@@ -143,7 +141,7 @@ class ManageCats
                                     'cat_id' => $id,
                                     'redir'  => My::manageUrl([
                                         'part'  => 'cats',
-                                        'redir' => self::$module_redir,
+                                        'redir' => Utils::getRedir(),
                                     ]),
                                 ]))
                                 ->title(__('Edit'))
@@ -174,12 +172,12 @@ class ManageCats
         ]) .
         Notices::getNotices();
 
-        if (!empty(self::$module_redir)) {
+        if (Utils::getRedir() !== '') {
             echo (new Para())
                 ->items([
                     (new Link())
                         ->class('back')
-                        ->href(self::$module_redir)
+                        ->href(Utils::getRedir())
                         ->text(__('Back')),
                 ])
                 ->render();
@@ -255,7 +253,7 @@ class ManageCats
                                     ... My::hiddenFields([
                                         'im_order' => '',
                                         'part'     => 'cats',
-                                        'redir'    => self::$module_redir,
+                                        'redir'    => Utils::getRedir(),
                                     ]),
                                 ]),
 

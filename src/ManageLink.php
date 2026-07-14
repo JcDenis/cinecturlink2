@@ -33,7 +33,6 @@ class ManageLink
 {
     use TraitProcess;
 
-    private static string $module_redir = '';
     private static RecordLinksRow $row;
 
     public static function init(): bool
@@ -47,15 +46,14 @@ class ManageLink
             return false;
         }
 
-        self::$module_redir = $_REQUEST['redir'] ?? '';
         self::$row          = new RecordLinksRow();
         $utils              = new Utils();
 
         if (!empty($_POST['save'])) {
             try {
                 Utils::makePublicDir(
-                    App::config()->dotclearRoot() . '/' . App::blog()->settings()->system->get('public_path'),
-                    My::settings()->folder
+                    App::config()->dotclearRoot() . '/' . App::blog()->settings()->get('system')->getStr('public_path', false),
+                    My::settings()->getStr('folder', false)
                 );
                 if (empty(self::$row->link_title)) {
                     throw new Exception(__('You must provide a title.'));
@@ -94,7 +92,7 @@ class ManageLink
                     [
                         'part'    => 'link',
                         'link_id' => $link_id,
-                        'redir'   => self::$module_redir,
+                        'redir'   => Utils::getRedir(),
                     ]
                 );
             } catch (Exception $e) {
@@ -110,7 +108,7 @@ class ManageLink
                     __('Link successfully deleted.')
                 );
                 if (!empty($_POST['redir'])) {
-                    Http::redirect(self::$module_redir);
+                    Http::redirect(Utils::getRedir());
                 } else {
                     My::redirect(['part' => 'links']);
                 }
@@ -150,12 +148,12 @@ class ManageLink
         ]) .
         Notices::getNotices();
 
-        if (!empty(self::$module_redir)) {
+        if (Utils::getRedir() !== '') {
             echo (new Para())
                 ->items([
                     (new Link())
                         ->class('back')
-                        ->href(self::$module_redir)
+                        ->href(Utils::getRedir())
                         ->text(__('Back')),
                 ])
                 ->render();
@@ -246,7 +244,7 @@ class ManageLink
                                                     ->items([
                                                         (new Link())
                                                             ->class('modal hidden-if-no-js')
-                                                            ->href(App::backend()->url()->get('admin.media', ['d' => (string) My::settings()->folder]))
+                                                            ->href(App::backend()->url()->get('admin.media', ['d' => My::settings()->getStr('folder', false)]))
                                                             ->title(__('Media manager'))
                                                             ->text(__('Go to media manager to add image to cinecturlink path.')),
                                                     ]),
@@ -303,7 +301,7 @@ class ManageLink
                                 ... My::hiddenFields([
                                     'link_id' => self::$row->link_id,
                                     'part'    => 'link',
-                                    'redir'   => self::$module_redir,
+                                    'redir'   => Utils::getRedir(),
                                 ]),
                             ]),
                     ]),

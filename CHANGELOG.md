@@ -1,6 +1,7 @@
-cinecturlink2 2.5 - xxxx.xx.xx
+cinecturlink2 2.x - xxxx.xx.xx
 ===========================================================
 * Bump Dotclear from 2.36 to 2.39
+* Code review (phpstan max)
 
 cinecturlink2 2.4 - 2025.09.08
 ===========================================================

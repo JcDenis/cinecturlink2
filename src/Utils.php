@@ -81,7 +81,7 @@ class Utils
             $sql->column($sql->count($sql->unique('L.link_id')));
         } else {
             if (!empty($params['columns']) && is_array($params['columns'])) {
-                $sql->columns($params['columns']);
+                $sql->columns(array_filter($params['columns'], is_string(...)));
             }
             $sql->columns([
                 'L.link_id',
@@ -127,55 +127,55 @@ class Utils
             );
 
         if (!empty($params['join'])) {
-            $sql->join($params['join']);
+            if (!is_array($params['join'])) {
+                $params['join'] = [$params['join']];
+            }
+            $sql->join(array_filter($params['join'], is_string(...)));
         }
 
         if (!empty($params['from'])) {
-            $sql->from($params['from']);
+            if (!is_array($params['from'])) {
+                $params['from'] = [$params['from']];
+            }
+            $sql->from(array_filter($params['from'], is_string(...)));
         }
 
         $sql->where('L.blog_id = ' . $sql->quote($this->blog));
 
         if (isset($params['link_type'])) {
-            if (is_array($params['link_type']) && !empty($params['link_type'])) {
-                $sql->and('L.link_type' . $sql->in($params['link_type']));
-            } elseif ($params['link_type'] != '') {
-                $sql->and('L.link_type = ' . $sql->quote($params['link_type']));
+            if (!is_array($params['link_type'])) {
+                $params['link_type'] = [$params['link_type']];
             }
+            $sql->and('L.link_type' . $sql->in(array_filter($params['link_type'], is_string(...))));
         } else {
             $sql->and('L.link_type = ' . $sql->quote('cinecturlink'));
         }
 
         if (!empty($params['link_id'])) {
-            if (is_array($params['link_id'])) {
-                array_walk($params['link_id'], function (&$v, $k) { if ($v !== null) { $v = (int) $v;}});
-            } else {
-                $params['link_id'] = [(int) $params['link_id']];
+            if (!is_array($params['link_id'])) {
+                $params['link_id'] = [$params['link_id']];
             }
-            $sql->and('L.link_id' . $sql->in($params['link_id']));
+            array_walk($params['link_id'], fn (mixed $v): int => is_numeric($v) ? (int) $v : 0);
+            $sql->and('L.link_id' . $sql->in(array_filter($params['link_id'], is_int(...))));
         }
 
         if (!empty($params['cat_id'])) {
-            if (is_array($params['cat_id'])) {
-                array_walk($params['cat_id'], function (&$v, $k) {
-                    if ($v !== null) {
-                        $v = (int) $v;
-                    }
-                });
-            } else {
-                $params['cat_id'] = [(int) $params['cat_id']];
+            if (!is_array($params['cat_id'])) {
+                $params['cat_id'] = [$params['cat_id']];
             }
-            $sql->and('L.cat_id' . $sql->in($params['cat_id']));
+            array_walk($params['cat_id'], fn (mixed $v): int => is_numeric($v) ? (int) $v : 0);
+            $sql->and('L.cat_id' . $sql->in(array_filter($params['cat_id'], is_int(...))));
         }
-        if (!empty($params['cat_title'])) {
+
+        if (!empty($params['cat_title']) && is_string($params['cat_title'])) {
             $sql->and('C.cat_title = ' . $sql->quote($params['cat_title']));
         }
 
-        if (!empty($params['link_title'])) {
+        if (!empty($params['link_title']) && is_string($params['link_title'])) {
             $sql->and('L.link_title = ' . $sql->quote($params['link_title']));
         }
 
-        if (!empty($params['link_lang'])) {
+        if (!empty($params['link_lang']) && is_string($params['link_lang'])) {
             $sql->and('L.link_lang = ' . $sql->quote($params['link_lang']));
         }
 
@@ -192,11 +192,14 @@ class Utils
         }
 
         if (!empty($params['sql'])) {
-            $sql->sql($params['sql']);
+            if (!is_array($params['sql'])) {
+                $params['sql'] = [$params['sql']];
+            }
+            $sql->sql(array_filter($params['sql'], is_string(...)));
         }
 
         if (!$count_only) {
-            if (!empty($params['order'])) {
+            if (!empty($params['order']) && is_string($params['order'])) {
                 $sql->order($sql->escape($params['order']));
             } else {
                 $sql->order('L.link_upddt DESC');
@@ -204,7 +207,21 @@ class Utils
         }
 
         if (!$count_only && !empty($params['limit'])) {
-            $sql->limit($params['limit']);
+            $values = is_array($params['limit']) ? array_values($params['limit']) : [$params['limit']];
+            // Make $values an array of integer values
+            $values = array_map(fn (mixed $v): int => is_numeric($v) ? (int) $v : 0, $values);
+
+            /**
+             * @var array{0: int, 1?: int}  $limit
+             */
+            $limit = [
+                $values[0],
+            ];
+            if (isset($values[1])) {
+                $limit[1] = $values[1];
+            }
+
+            $sql->limit($limit);
         }
 
         return $sql->select() ?? MetaRecord::newFromArray([]);
@@ -343,7 +360,7 @@ class Utils
             $sql->column($sql->count($sql->unique('C.cat_id')));
         } else {
             if (!empty($params['columns']) && is_array($params['columns'])) {
-                $sql->columns($params['columns']);
+                $sql->columns(array_filter($params['columns'], is_string(...)));
             }
             $sql->columns([
                 'C.cat_id',
@@ -359,55 +376,65 @@ class Utils
         $sql->from($sql->as($this->cat_table, 'C'));
 
         if (!empty($params['from'])) {
-            $sql->from($params['from']);
+            if (!is_array($params['from'])) {
+                $params['from'] = [$params['from']];
+            }
+            $sql->from(array_filter($params['from'], is_string(...)));
         }
 
         $sql->where('C.blog_id = ' . $sql->quote($this->blog));
 
         if (!empty($params['cat_id'])) {
-            if (is_array($params['cat_id'])) {
-                array_walk($params['cat_id'], function (&$v, $k) {
-                    if ($v !== null) {
-                        $v = (int) $v;
-                    }
-                });
-            } else {
-                $params['cat_id'] = [(int) $params['cat_id']];
+            if (!is_array($params['cat_id'])) {
+                $params['cat_id'] = [$params['cat_id']];
             }
-            $sql->and('C.cat_id ' . $sql->in($params['cat_id']));
+            array_walk($params['cat_id'], fn (mixed $v): int => is_numeric($v) ? (int) $v : 0);
+            $sql->and('L.cat_id' . $sql->in(array_filter($params['cat_id'], is_int(...))));
         }
 
         if (isset($params['exclude_cat_id']) && $params['exclude_cat_id'] !== '') {
-            if (is_array($params['exclude_cat_id'])) {
-                array_walk($params['exclude_cat_id'], function (&$v, $k) {
-                    if ($v !== null) {
-                        $v = (int) $v;
-                    }
-                });
-            } else {
-                $params['exclude_cat_id'] = [(int) $params['exclude_cat_id']];
+            if (!is_array($params['exclude_cat_id'])) {
+                $params['exclude_cat_id'] = [$params['exclude_cat_id']];
             }
-            $sql->and('C.cat_id NOT ' . $sql->in($params['exclude_cat_id']));
+            array_walk($params['exclude_cat_id'], fn (mixed $v): int => is_numeric($v) ? (int) $v : 0);
+            $sql->and('C.cat_id NOT ' . $sql->in(array_filter($params['exclude_cat_id'], is_int(...))));
         }
 
-        if (!empty($params['cat_title'])) {
+        if (!empty($params['cat_title']) && is_string($params['cat_title'])) {
             $sql->and('C.cat_title = ' . $sql->quote($params['cat_title']));
         }
 
         if (!empty($params['sql'])) {
-            $sql->sql($params['sql']);
+            if (!is_array($params['sql'])) {
+                $params['sql'] = [$params['sql']];
+            }
+            $sql->sql(array_filter($params['sql'], is_string(...)));
         }
 
         if (!$count_only) {
-            if (!empty($params['order'])) {
+            if (!empty($params['order']) && is_string($params['order'])) {
                 $sql->order($sql->escape($params['order']));
             } else {
-                $sql->order('cat_pos ASC');
+                $sql->order('cat_pos DESC');
             }
         }
 
         if (!$count_only && !empty($params['limit'])) {
-            $sql->limit($params['limit']);
+            $values = is_array($params['limit']) ? array_values($params['limit']) : [$params['limit']];
+            // Make $values an array of integer values
+            $values = array_map(fn (mixed $v): int => is_numeric($v) ? (int) $v : 0, $values);
+
+            /**
+             * @var array{0: int, 1?: int}  $limit
+             */
+            $limit = [
+                $values[0],
+            ];
+            if (isset($values[1])) {
+                $limit[1] = $values[1];
+            }
+
+            $sql->limit($limit);
         }
 
         return $sql->select() ?? MetaRecord::newFromArray([]);
@@ -593,5 +620,10 @@ class Utils
         }
 
         return $dirs;
+    }
+
+    public static function getRedir() : string
+    {
+        return isset($_REQUEST['redir']) && is_string($_REQUEST['redir']) ? $_REQUEST['redir'] : '';
     }
 }

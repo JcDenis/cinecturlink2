@@ -89,7 +89,7 @@ class Frontend
             'c2CategoryIf',
         ];
 
-        if (My::settings()->active) {
+        if (My::settings()->getBool('active', false)) {
             foreach ($blocks as $v) {
                 App::frontend()->template()->addBlock($v, [FrontendTemplate::class, $v]);
             }

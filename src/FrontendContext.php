@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\cinecturlink2;
 
 use Dotclear\App;
+use Dotclear\Database\MetaRecord;
 
 /**
  * @brief       cinecturlink2 frontend contxt class.
@@ -17,11 +18,11 @@ class FrontendContext
 {
     public static function PaginationNbPages(): int
     {
-        if (App::frontend()->context()->c2_pagination === null) {
+        if (!(App::frontend()->context()->c2_pagination instanceof MetaRecord)) {
             return 0;
         }
         $nb_posts    = App::frontend()->context()->c2_pagination->cardinal();
-        $nb_per_page = App::frontend()->context()->c2_params['limit'][1];
+        $nb_per_page = is_array(App::frontend()->context()->c2_params) && is_array(App::frontend()->context()->c2_params['limit'])  && is_numeric(App::frontend()->context()->c2_params['limit'][1]) ? (int) App::frontend()->context()->c2_params['limit'][1] : 10;
         $nb_pages    = ceil($nb_posts / $nb_per_page);
 
         return (int) $nb_pages;
@@ -29,7 +30,7 @@ class FrontendContext
 
     public static function PaginationPosition(string|int $offset = 0): int
     {
-        if (isset($GLOBALS['c2_page_number'])) {
+        if (isset($GLOBALS['c2_page_number']) && is_numeric($GLOBALS['c2_page_number'])) {
             $p = $GLOBALS['c2_page_number'];
         } else {
             $p = 1;
@@ -55,7 +56,7 @@ class FrontendContext
 
     public static function PaginationURL(int|string $offset = 0): string
     {
-        $args = $_SERVER['URL_REQUEST_PART'];
+        $args = isset($_SERVER['URL_REQUEST_PART']) && is_string($_SERVER['URL_REQUEST_PART']) ? $_SERVER['URL_REQUEST_PART'] : '';
 
         $n = self::PaginationPosition($offset);
 
@@ -71,7 +72,7 @@ class FrontendContext
             $url .= '/c2page/' . $n;
         }
         # If search param
-        if (!empty($_GET['q'])) {
+        if (!empty($_GET['q']) && is_string($_GET['q'])) {
             $s = strpos($url, '?') !== false ? '&amp;' : '?';
             $url .= $s . 'q=' . rawurlencode($_GET['q']);
         }
@@ -81,18 +82,23 @@ class FrontendContext
 
     public static function categoryCurrent(): bool
     {
+        if (!is_array(App::frontend()->context()->c2_page_params) 
+            || !(App::frontend()->context()->c2_categories instanceof MetaRecord)
+        ) {
+            return false;
+        }
         if (!isset(App::frontend()->context()->c2_page_params['cat_id'])
             && !isset(App::frontend()->context()->c2_page_params['cat_title'])
         ) {
             return false;
         }
         if (isset(App::frontend()->context()->c2_page_params['cat_id'])
-            && App::frontend()->context()->c2_page_params['cat_id'] == App::frontend()->context()->c2_categories->cat_id
+            && App::frontend()->context()->c2_page_params['cat_id'] === App::frontend()->context()->c2_categories->intField('cat_id')
         ) {
             return true;
         }
         if (isset(App::frontend()->context()->c2_page_params['cat_title'])
-            && App::frontend()->context()->c2_page_params['cat_title'] == App::frontend()->context()->c2_categories->cat_title
+            && App::frontend()->context()->c2_page_params['cat_title'] === App::frontend()->context()->c2_categories->strField('cat_title')
         ) {
             return true;
         }
