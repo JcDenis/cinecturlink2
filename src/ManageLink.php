@@ -136,7 +136,7 @@ class ManageLink
 
         Page::openModule(
             My::name(),
-            Page::jsVars(['dotclear.c2_lang' => App::auth()->getInfo('user_lang')]) .
+            Page::jsJson('c2link', ['lang' => is_string($lang = App::auth()->getInfo('user_lang')) ? $lang : 'en']) .
             My::jsLoad('c2link')
         );
 

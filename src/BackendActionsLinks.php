@@ -96,7 +96,7 @@ class BackendActionsLinks extends Actions
 
             $rs = $this->utils->getLinks($params);
             while ($rs->fetch()) {
-                $this->entries[$rs->strField('link_id')] = $rs->strField('link_title');
+                $this->entries[(string) $rs->intField('link_id')] = $rs->strField('link_title'); // @phpstan-ignore-line numeric string key is cast to int by PHP
             }
             $this->rs = $rs;
         } else {
