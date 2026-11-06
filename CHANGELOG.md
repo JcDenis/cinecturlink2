@@ -1,3 +1,7 @@
+cinecturlink2 2.7 - 2026.11.06
+===========================================================
+* Fix sitemaps settings names and types
+
 cinecturlink2 2.6 - 2026.11.04
 ===========================================================
 * Fix SQLite and link page JS
