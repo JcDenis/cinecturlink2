@@ -29,11 +29,11 @@ class PluginSitemaps
 
     public static function sitemapsURLsCollect(Sitemap $sitemaps): void
     {
-        if (App::plugins()->moduleExists('cinecturlink2')
-            && App::blog()->settings()->get('sitemaps')->getStr('sitemaps_cinecturlink2_url', false) !== ''
-        ) {
-            $freq = $sitemaps->getFrequency(App::blog()->settings()->get('sitemaps')->getStr('sitemaps_cinecturlink2_fq', false));
-            $prio = $sitemaps->getPriority(App::blog()->settings()->get('sitemaps')->getStr('sitemaps_cinecturlink2_pr', false));
+        // Settings are set by plugin sitemaps for each map part (see sitemapsDefineParts())
+        $settings = App::blog()->settings()->get('sitemaps');
+        if ($settings->getBool(My::id() . '_url', false)) {
+            $freq = $sitemaps->getFrequency($settings->getInt(My::id() . '_fq', false));
+            $prio = $sitemaps->getPriority($settings->getFloat(My::id() . '_pr', false));
             $base = App::blog()->url() . App::url()->getBase('cinecturlink2');
 
             $sitemaps->addEntry($base, $prio, $freq);
