@@ -43,7 +43,7 @@ class RecordLinksRow
         $this->cat_title   = isset($_POST['cat_title']) && is_string($_POST['cat_title']) ? $_POST['cat_title'] : (!is_null($rs) ? $rs->strField('cat_title') : '');
         $this->link_lang   = isset($_POST['link_lang']) && is_string($_POST['link_lang']) ? $_POST['link_lang'] : (!is_null($rs) ? $rs->strField('link_lang') : $link_lang);
         $this->link_img    = isset($_POST['link_img']) && is_string($_POST['link_img']) ? $_POST['link_img'] : (!is_null($rs) ? $rs->strField('link_img') : '');
-        $this->link_note   = isset($_POST['link_note']) && is_string($_POST['link_note']) ? $_POST['link_note'] : (!is_null($rs) ? $rs->strField('link_note') : '');
+        $this->link_note   = isset($_POST['link_note']) && is_string($_POST['link_note']) ? $_POST['link_note'] : (!is_null($rs) ? (string) $rs->intField('link_note') : '');
         $this->link_upddt  = !is_null($rs) ? $rs->strField('link_upddt') : '';
         $this->link_count  = !is_null($rs) ? abs($rs->intField('link_count')) : 0;
     }
