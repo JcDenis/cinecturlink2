@@ -177,7 +177,7 @@ class ManageLinks
             $this_redir
         );
 
-        Page::helpBlock(My::id());
+        Page::helpBlock(My::id() . '-links');
 
         Page::closeModule();
     }

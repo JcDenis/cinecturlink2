@@ -183,7 +183,7 @@ class ManageCat
             ])
             ->render();
 
-        Page::helpBlock(My::id());
+        Page::helpBlock(My::id() . '-cat');
 
         Page::closeModule();
     }
