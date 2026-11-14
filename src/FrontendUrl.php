@@ -41,7 +41,7 @@ class FrontendUrl
         }
 
         $caturl = My::settings()->getStr('public_caturl', false);
-        if ($caturl !== '') {
+        if ($caturl === '') {
             $caturl = 'c2cat';
         }
 
