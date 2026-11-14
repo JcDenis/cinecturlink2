@@ -6,6 +6,9 @@ namespace Dotclear\Plugin\cinecturlink2;
 
 use Dotclear\App;
 use Dotclear\Helper\Process\TraitProcess;
+use Dotclear\Database\MetaRecord;
+use Dotclear\Database\Statement\DeleteStatement;
+use Dotclear\Database\Statement\SelectStatement;
 use Dotclear\Database\Statement\UpdateStatement;
 use Exception;
 
@@ -77,7 +80,7 @@ class Install
             App::db()->structure()->synchronize($s);
 
             $s = My::settings();
-            $s->put('avtive', true, 'boolean', 'Enable cinecturlink2', false, true);
+            $s->put('active', true, 'boolean', 'Enable cinecturlink2', false, true);
             $s->put('widthmax', 100, 'integer', 'Maximum width of picture', false, true);
             $s->put('folder', 'cinecturlink', 'string', 'Public folder of pictures', false, true);
             $s->put('triggeronrandom', false, 'boolean', 'Open link in new window', false, true);
@@ -120,6 +123,54 @@ class Install
                     ->and('setting_ns = ' . $sql->quote(My::id()))
                     ->update();
             }
+        }
+
+        // Setting "active" was saved as "avtive" (typo)
+        if (version_compare(App::version()->getVersion(My::id()), '2.8', '<')) {
+            $table = App::db()->con()->prefix() . App::blogWorkspace()::NS_TABLE_NAME;
+
+            // Blogs settings (global one is set again on install)
+            $sql = new SelectStatement();
+            $rs  = $sql
+                ->column('blog_id')
+                ->from($table)
+                ->where('setting_id = ' . $sql->quote('avtive'))
+                ->and('setting_ns = ' . $sql->quote(My::id()))
+                ->and('blog_id IS NOT NULL')
+                ->select();
+
+            while ($rs instanceof MetaRecord && $rs->fetch()) {
+                $blog_id = $rs->strField('blog_id');
+
+                // Keep an existing "active" setting as it is the one used until now
+                $sql    = new SelectStatement();
+                $exists = $sql
+                    ->column($sql->count('setting_id'))
+                    ->from($table)
+                    ->where('setting_id = ' . $sql->quote('active'))
+                    ->and('setting_ns = ' . $sql->quote(My::id()))
+                    ->and('blog_id = ' . $sql->quote($blog_id))
+                    ->select()?->cardinal();
+
+                if (!$exists) {
+                    $sql = new UpdateStatement();
+                    $sql
+                        ->ref($table)
+                        ->column('setting_id')
+                        ->value('active')
+                        ->where('setting_id = ' . $sql->quote('avtive'))
+                        ->and('setting_ns = ' . $sql->quote(My::id()))
+                        ->and('blog_id = ' . $sql->quote($blog_id))
+                        ->update();
+                }
+            }
+
+            $sql = new DeleteStatement();
+            $sql
+                ->from($table)
+                ->where('setting_id = ' . $sql->quote('avtive'))
+                ->and('setting_ns = ' . $sql->quote(My::id()))
+                ->delete();
         }
     }
 }

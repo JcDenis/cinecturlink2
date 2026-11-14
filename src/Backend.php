@@ -223,7 +223,7 @@ class Backend
                     true
                 );
 
-                $s->put('avtive', $active);
+                $s->put('active', $active);
                 $s->put('public_active', $public_active);
                 $s->put('public_title', $public_title);
                 $s->put('public_description', $public_description);
