@@ -1,3 +1,15 @@
+cinecturlink2 2.8 - 2026.11.14
+===========================================================
+* Add Claude to contributors
+* Fix plugin activation setting name
+* Fix links and categories filters by ID
+* Fix rating field on SQLite
+* Fix blog settings form when public folder is missing
+* Fix custom category URL on public page
+* Fix translations typos
+* Add a user guide in French, with screenshots
+* Add admin help in English and French, one block per page
+
 cinecturlink2 2.7 - 2026.11.06
 ===========================================================
 * Fix sitemaps settings names and types
