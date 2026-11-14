@@ -190,7 +190,7 @@ class ManageCats
                 (new Link())
                     ->class('button add')
                     ->href(My::manageUrl(['part' => 'cat', 'redir' => My::manageUrl(['part' => 'cats'])]))
-                    ->text(__('New Category')),
+                    ->text(__('New category')),
             ])
             ->render();
 

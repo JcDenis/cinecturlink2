@@ -43,7 +43,7 @@ class ActivityReportAction
         $group->add(new Action(
             self::CINECTURLINK_CREATE,
             __('link creation'),
-            __('A new cineturlink named "%s" was added by "%s"'),
+            __('A new cinecturlink named "%s" was added by "%s"'),
             'cinecturlink2AfterAddLink',
             self::addLink(...)
         ));

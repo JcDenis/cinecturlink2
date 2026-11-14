@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: cinecturlink2 2.0\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-08-24T11:53:59+00:00\n"
-"Last-Translator: Jean-Christain Denis\n"
+"Last-Translator: Jean-Christian Denis\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -28,6 +28,9 @@ msgstr "lien"
 msgid "Rating"
 msgstr "Évaluation"
 
+msgid "Widget"
+msgstr "Widget"
+
 msgid "Links per page"
 msgstr "Liens par page"
 
@@ -38,7 +41,7 @@ msgid "Enable plugin"
 msgstr "Activer le plugin"
 
 msgid "Public folder of images (under public folder of blog):"
-msgstr "Dossier publique des images (dans le répertoire \"public\" du blog) :"
+msgstr "Dossier public des images (dans le répertoire \"public\" du blog) :"
 
 msgid "Or create a new public folder of images:"
 msgstr "Ou créer un nouveau dossier public :"
@@ -47,9 +50,9 @@ msgid "Maximum width of images (in pixel):"
 msgstr "Largeur maximum des images (en pixels) :"
 
 msgid "Update cache when use \"Random\" or \"Number of view\" order on widget (Need reload of widgets on change)"
-msgstr "Mettre à jour le cache lors de l'utilisation de l'ordre  \"Aléatoire\" ou \"Nombre d'affichages\" dans le widget (Nécessite le rechargement du widget)"
+msgstr "Mettre à jour le cache lors de l'utilisation de l'ordre \"Aléatoire\" ou \"Nombre d'affichages\" dans le widget (Nécessite le rechargement du widget)"
 
-msgid "This increases the random effect, but updates the cache of the blog whenever the widget is displayed, which reduces the perfomances of your blog."
+msgid "This increases the random effect, but updates the cache of the blog whenever the widget is displayed, which reduces the performances of your blog."
 msgstr "Ceci augmente l'effet aléatoire, mais met à jour le cache à chaque affichage du widget, ce qui diminue les performances du blog."
 
 msgid "Public page"
@@ -59,7 +62,7 @@ msgid "Enable public page"
 msgstr "Activer la page publique"
 
 msgid "Public page has url: %s"
-msgstr "La page publique à l'URL: %s"
+msgstr "La page publique a pour URL : %s"
 
 msgid "Title of the public page:"
 msgstr "Titre de la page publique :"
@@ -67,8 +70,8 @@ msgstr "Titre de la page publique :"
 msgid "Description of the public page:"
 msgstr "Description de la page publique :"
 
-msgid "Limit number of entries per page on pulic page to:"
-msgstr "Limiter le nombre d'entrée par page sur la page public à :"
+msgid "Limit number of entries per page on public page to:"
+msgstr "Limiter le nombre d'entrées par page sur la page publique à :"
 
 msgid "You must provide a specific folder for images."
 msgstr "Vous devez fournir un dossier spécifique pour les images."
@@ -88,6 +91,11 @@ msgstr "Changer l'évaluation"
 msgid "No links selected"
 msgstr "Aucun lien sélectionné"
 
+msgid "%d link has been successfully deleted."
+msgid_plural "%d links have been successfully deleted."
+msgstr[0] "%d lien a été supprimé."
+msgstr[1] "%d liens ont été supprimés."
+
 msgid "Category of %s link successfully changed."
 msgid_plural "Category of %s links successfully changed."
 msgstr[0] "Catégorie du lien changée"
@@ -99,7 +107,7 @@ msgstr[0] "Note du lien changée"
 msgstr[1] "Note des %s liens changée"
 
 msgid "Change note for this selection"
-msgstr "Changer la note pour la séletion"
+msgstr "Changer la note pour la sélection"
 
 msgid "Note:"
 msgstr "Note :"
@@ -123,13 +131,13 @@ msgid "Category with same name already exists."
 msgstr "Une catégorie portant le même nom existe déjà."
 
 msgid "Category successfully created."
-msgstr "Catégory créée."
+msgstr "Catégorie créée."
 
 msgid "Category successfully updated."
 msgstr "Catégorie mise à jour."
 
 msgid "Category successfully deleted."
-msgstr "Catégorie effacé."
+msgstr "Catégorie effacée."
 
 msgid "No link uses this category."
 msgstr "Aucun lien n'utilise cette catégorie."
@@ -161,7 +169,7 @@ msgid "You must provide a title."
 msgstr "Vous devez fournir un titre."
 
 msgid "You must provide an author."
-msgstr "Vous devez spécifier un auteur"
+msgstr "Vous devez spécifier un auteur."
 
 msgid "You must provide a link to an image."
 msgstr "Vous devez fournir un lien vers une image."
@@ -170,7 +178,7 @@ msgid "Link with same name already exists."
 msgstr "Un lien avec le même titre existe déjà."
 
 msgid "Link successfully created."
-msgstr "Lien crée."
+msgstr "Lien créé."
 
 msgid "Unknown link."
 msgstr "Lien inconnu."
@@ -185,7 +193,7 @@ msgid "New link"
 msgstr "Nouveau lien"
 
 msgid "Details URL:"
-msgstr "Liens vers les détails :"
+msgstr "Lien vers les détails :"
 
 msgid "Search with Google"
 msgstr "Rechercher avec Google"
@@ -197,13 +205,13 @@ msgid "Search with Amazon"
 msgstr "Rechercher avec Amazon"
 
 msgid "There is no image in cinecturlink media path."
-msgstr "Il n'y a pas d'image dans le chemin des média cinecturlink."
+msgstr "Il n'y a pas d'image dans le chemin des médias cinecturlink."
 
 msgid "or select from repository:"
-msgstr "ou selectionner depuis le dépôt :"
+msgstr "ou sélectionner depuis le dépôt :"
 
 msgid "Go to media manager to add image to cinecturlink path."
-msgstr "Aller dans le gestionnaire de média pour ajouter des images au chemin des cinecturlink."
+msgstr "Aller dans le gestionnaire de médias pour ajouter des images au chemin des cinecturlink."
 
 msgid "Rating:"
 msgstr "Évaluation :"
@@ -215,7 +223,7 @@ msgid "Edit categories"
 msgstr "Gérer les catégories"
 
 msgid "Selected links action:"
-msgstr "Action sur les liens selectionnés :"
+msgstr "Action sur les liens sélectionnés :"
 
 msgid "Plugin cinecturlink2"
 msgstr "Extension cinecturlink 2"
@@ -223,7 +231,7 @@ msgstr "Extension cinecturlink 2"
 msgid "link creation"
 msgstr "Création de lien"
 
-msgid "A new cineturlink named \"%s\" was added by \"%s\""
+msgid "A new cinecturlink named \"%s\" was added by \"%s\""
 msgstr "Un nouveau cinecturlink nommé \"%s\" a été ajouté par \"%s\""
 
 msgid "updating link"
@@ -257,7 +265,7 @@ msgid "No such category ID"
 msgstr "ID de catégorie inconnu"
 
 msgid "Failed to create public folder for images."
-msgstr "Impossible de créer le repertoire publique pour les images."
+msgstr "Impossible de créer le répertoire public pour les images."
 
 msgid "Update date"
 msgstr "Date de mise à jour"
@@ -272,10 +280,10 @@ msgid "Number of views"
 msgstr "Nombre d'affichages"
 
 msgid "Show selection of cinecturlinks"
-msgstr "Afficher une selection de cinecturlink"
+msgstr "Afficher une sélection de cinecturlink"
 
 msgid "Sort: (only for date, note and title)"
-msgstr "Ordre: (seulement pour date, note et titre)"
+msgstr "Ordre : (seulement pour date, note et titre)"
 
 msgid "Limit:"
 msgstr "Limite :"

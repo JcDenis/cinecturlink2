@@ -61,7 +61,7 @@ class BackendActionsLinksDefault
 
         Notices::addSuccessNotice(sprintf(
             __(
-                '%d links has been successfully deleted.',
+                '%d link has been successfully deleted.',
                 '%d links have been successfully deleted.',
                 count($ids)
             ),

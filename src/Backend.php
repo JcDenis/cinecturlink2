@@ -149,7 +149,7 @@ class Backend
                                     ->for(My::id() . 'triggeronrandom'),
                             ]),
                         (new Note())
-                            ->text(__('This increases the random effect, but updates the cache of the blog whenever the widget is displayed, which reduces the perfomances of your blog.'))
+                            ->text(__('This increases the random effect, but updates the cache of the blog whenever the widget is displayed, which reduces the performances of your blog.'))
                             ->class('form-note'),
 
                         (new Text('hr')),
@@ -185,7 +185,7 @@ class Backend
                             ]),
                         (new Para())
                             ->items([
-                                (new Label(__('Limit number of entries per page on pulic page to:'), Label::OUTSIDE_LABEL_BEFORE))
+                                (new Label(__('Limit number of entries per page on public page to:'), Label::OUTSIDE_LABEL_BEFORE))
                                     ->for(My::id() . 'public_nbrpp')
                                     ->class('classic'),
                                 (new Number(My::id() . 'public_nbrpp'))
