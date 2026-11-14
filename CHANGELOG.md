@@ -1,6 +1,5 @@
 cinecturlink2 2.8 - 2026.11.14
 ===========================================================
-* Add Claude to contributors
 * Fix plugin activation setting name
 * Fix links and categories filters by ID
 * Fix rating field on SQLite
