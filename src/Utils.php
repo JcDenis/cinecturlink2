@@ -155,7 +155,7 @@ class Utils
             if (!is_array($params['link_id'])) {
                 $params['link_id'] = [$params['link_id']];
             }
-            array_walk($params['link_id'], fn (mixed $v): int => is_numeric($v) ? (int) $v : 0);
+            $params['link_id'] = array_map(fn (mixed $v): int => is_numeric($v) ? (int) $v : 0, $params['link_id']);
             $sql->and('L.link_id' . $sql->in(array_filter($params['link_id'], is_int(...))));
         }
 
@@ -163,7 +163,7 @@ class Utils
             if (!is_array($params['cat_id'])) {
                 $params['cat_id'] = [$params['cat_id']];
             }
-            array_walk($params['cat_id'], fn (mixed $v): int => is_numeric($v) ? (int) $v : 0);
+            $params['cat_id'] = array_map(fn (mixed $v): int => is_numeric($v) ? (int) $v : 0, $params['cat_id']);
             $sql->and('L.cat_id' . $sql->in(array_filter($params['cat_id'], is_int(...))));
         }
 
@@ -388,15 +388,15 @@ class Utils
             if (!is_array($params['cat_id'])) {
                 $params['cat_id'] = [$params['cat_id']];
             }
-            array_walk($params['cat_id'], fn (mixed $v): int => is_numeric($v) ? (int) $v : 0);
-            $sql->and('L.cat_id' . $sql->in(array_filter($params['cat_id'], is_int(...))));
+            $params['cat_id'] = array_map(fn (mixed $v): int => is_numeric($v) ? (int) $v : 0, $params['cat_id']);
+            $sql->and('C.cat_id' . $sql->in(array_filter($params['cat_id'], is_int(...))));
         }
 
         if (isset($params['exclude_cat_id']) && $params['exclude_cat_id'] !== '') {
             if (!is_array($params['exclude_cat_id'])) {
                 $params['exclude_cat_id'] = [$params['exclude_cat_id']];
             }
-            array_walk($params['exclude_cat_id'], fn (mixed $v): int => is_numeric($v) ? (int) $v : 0);
+            $params['exclude_cat_id'] = array_map(fn (mixed $v): int => is_numeric($v) ? (int) $v : 0, $params['exclude_cat_id']);
             $sql->and('C.cat_id NOT ' . $sql->in(array_filter($params['exclude_cat_id'], is_int(...))));
         }
 
