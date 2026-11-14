@@ -15,6 +15,8 @@ _cinecturlink2_ is a plugin for the open-source web publishing software called [
 
 It is hightly based on cinecturlink for Dotclear 1 by Tigroux and maintain by brol.
 
+A user guide with screenshots is available in French: [guide d'utilisation](https://github.com/JcDenis/cinecturlink2/blob/master/docs/fr/utilisation.md).
+
 ## REQUIREMENTS
 
 * Dotclear 2.39
@@ -43,6 +45,7 @@ to your theme tpl path and adapt them.
 ## LINKS
 
 * [License](https://github.com/JcDenis/cinecturlink2/blob/master/LICENSE)
+* [User guide (in French)](https://github.com/JcDenis/cinecturlink2/blob/master/docs/fr/utilisation.md)
 * [Packages & details](https://github.com/JcDenis/cinecturlink2/releases) (or on [Repository](https://dotclear.org/plugin/detail/cinecturlink2))
 * [Sources & contributions](https://github.com/JcDenis/cinecturlink2)
 * [Issues & security](https://github.com/JcDenis/cinecturlink2/issues)
