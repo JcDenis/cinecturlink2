@@ -610,7 +610,10 @@ class Utils
     public static function getPublicDirs(): array
     {
         $dirs = [];
-        $all  = Files::getDirList(App::blog()->publicPath());
+        if (!is_dir(App::blog()->publicPath())) {
+            return $dirs;
+        }
+        $all = Files::getDirList(App::blog()->publicPath());
         if (empty($all['dirs'])) {
             return $dirs;
         }
