@@ -7,6 +7,7 @@ namespace Dotclear\Plugin\cinecturlink2;
 use ArrayObject;
 use Dotclear\App;
 use Dotclear\Core\Backend\Favorites;
+use Dotclear\Core\Backend\UserPrefFilter;
 use Dotclear\Helper\Process\TraitProcess;
 use Dotclear\Helper\File\Files;
 use Dotclear\Helper\Html\Form\Checkbox;
@@ -62,8 +63,9 @@ class Backend
                 ];
             },
 
-            'adminFiltersListsV2' => function (ArrayObject $sorts) {
-                $sorts[My::id()] = [
+            'adminFiltersListsV3' => function (ArrayObject $filters) {
+                $filters->append(new UserPrefFilter(
+                    My::id(),
                     My::name(),
                     [
                         __('Date')        => 'link_upddt',
@@ -76,8 +78,9 @@ class Backend
                     ],
                     'link_upddt',
                     'desc',
-                    [__('Links per page'), 30],
-                ];
+                    __('Links per page'),
+                    30
+                ));
             },
 
             'adminDashboardFavoritesV2' => function (Favorites $favs) {
