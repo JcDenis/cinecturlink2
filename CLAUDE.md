@@ -46,7 +46,7 @@ Required Dotclear and PHP versions: see `_define.php`.
 * `js/`: `c2cats.js`, `c2link.js`, `c2links.js`.
 * `default-templates/`: public templates.
 * Database tables `cinecturlink2`, `cinecturlink2_cat`.
-* Behaviors used: `initWidgets`, `adminColumnsListsV2`, `adminFiltersListsV2`, `adminDashboardFavoritesV2`, `adminBlogPreferencesFormV2`, `adminBeforeBlogSettingsUpdate`, `sitemapsDefineParts`, `sitemapsURLsCollect`.
+* Behaviors used: `initWidgets`, `adminColumnsListsV2`, `adminFiltersListsV3`, `adminDashboardFavoritesV2`, `adminBlogPreferencesFormV2`, `adminBeforeBlogSettingsUpdate`, `sitemapsDefineParts`, `sitemapsURLsCollect`.
 
 ## Pitfalls
 
