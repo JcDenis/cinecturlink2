@@ -17,7 +17,7 @@ Required Dotclear and PHP versions: see `_define.php`.
 
 ## Structure
 
-* `src/ClaudetteMcp/`: tools for the plugin ClaudetteMcp (`list_cinecturlinks`, `set_cinecturlink`, never required),
+* `src/ClaudetteMcp/`: tools for the plugin ClaudetteMcp (`list_cinecturlinks`, `set_cinecturlink`, optional dependency `ClaudetteMcp?` in `requires`),
   registered in `src/Frontend.php` with the behavior `ClaudetteMcpAddTool`. Not `list_links`: ClaudetteMcp uses it for the blogroll.
 * `src/ActivityReportAction.php`: plugin activityReport class.
 * `src/Backend.php`: admin side: menu entry, favorites, behaviors registration.

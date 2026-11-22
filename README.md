@@ -39,7 +39,7 @@ Once it's done you can manage your cinecturlink from menu
 
 With the plugin [ClaudetteMcp](https://github.com/JcDenis/ClaudetteMcp), an AI assistant connected to the blog
 can list the links and their categories (`list_cinecturlinks`) and add or update a link (`set_cinecturlink`),
-with the permissions of a content administrator, never deleting one. ClaudetteMcp is not required by _cinecturlink2_.
+with the permissions of a content administrator, never deleting one. ClaudetteMcp is optional for _cinecturlink2_ (version 0.5 or later).
 
 There are templates for public page. These template is adapted to 
 default Dotclear's theme. If you want to create your own template 
