@@ -1,3 +1,7 @@
+cinecturlink2 2.9 - 2026.11.22
+===========================================================
+* [compat] Use adminFiltersListsV3 behavior, require Dotclear 2.40
+
 cinecturlink2 2.8 - 2026.11.14
 ===========================================================
 * Fix plugin activation setting name
