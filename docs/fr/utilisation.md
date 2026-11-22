@@ -249,8 +249,11 @@ Il est réservé aux personnes ayant la permission de gérer tout le contenu du 
   dans les réglages de _Sitemaps_, sous le nom _Cinecturlink 2_.
 * Avec le plugin _Activity report_, la création, la mise à jour et la suppression d'un lien peuvent être ajoutées
   au rapport d'activité du blog.
+* Avec le plugin [ClaudetteMcp](https://github.com/JcDenis/ClaudetteMcp), un assistant IA connecté au blog
+  liste les liens et leurs catégories (outil `list_cinecturlinks`) et ajoute ou modifie un lien, avec sa note (outil `set_cinecturlink`),
+  si vous êtes administrateur de contenu. Il ne supprime jamais de lien.
 
-Aucun de ces deux plugins n'est nécessaire.
+Aucun de ces plugins n'est nécessaire.
 
 ## Désinstallation
 
