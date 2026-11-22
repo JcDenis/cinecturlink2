@@ -23,6 +23,14 @@ use Dotclear\Plugin\cinecturlink2\My;
 abstract class LinkTool extends McpTool
 {
     /**
+     * Family of tools for the keys of ClaudetteMcp (string, not constant: older ClaudetteMcp versions have none).
+     */
+    public function family(): string
+    {
+        return 'extras';
+    }
+
+    /**
      * Like in backend: the plugin must be active on the blog, its page is for content administrators.
      */
     public function available(): bool
